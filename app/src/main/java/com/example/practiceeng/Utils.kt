@@ -12,7 +12,8 @@ enum class TestType {
     Synonyms,
     Antonyms,
     Writing,
-    WritingListening
+    WritingListening,
+    ALL
 }
 
 enum class DictionaryAPI {

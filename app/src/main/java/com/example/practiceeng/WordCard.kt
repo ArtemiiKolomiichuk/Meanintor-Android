@@ -44,6 +44,11 @@ constructor(
         return mastery >= UserSettings.settings().masteredMargin
     }
 
+    /**
+     * Returns a relative value of how well the word is known
+     *
+     * Used to determine in which order [WordCard]s should be trained
+     */
     fun comprehension() : Double {
         TODO()
         //add dates difference
@@ -63,11 +68,24 @@ constructor(
     fun aptTraining() : TestType{
         var ordered = trainingOrder()
         for (type in ordered){
-            if (aptForTraining(type)){
+            if (isAptForTraining(type)){
                 return type
             }
         }
         return TestType.FlashCard
+    }
+
+    /**
+     * @see aptTraining
+     */
+    fun aptTraining(testTypes : Array<TestType>) : TestType{
+        var ordered = trainingOrder()
+        for (type in ordered){
+            if (isAptForTraining(type) && testTypes.contains(type)){
+                return type
+            }
+        }
+        return TestType.ALL
     }
 
     /**
@@ -89,7 +107,7 @@ constructor(
      * *Does NOT check if the word is [paused]*
      * @param testType type of the test
      */
-    fun aptForTraining(testType: TestType) : Boolean {
+    fun isAptForTraining(testType: TestType) : Boolean {
         return when(testType){
             TestType.FlashCard -> true
             TestType.TrueFalse -> true
@@ -100,6 +118,7 @@ constructor(
             TestType.Antonyms -> hasAntonyms()
             TestType.Writing -> true
             TestType.WritingListening -> hasPhonetic()
+            TestType.ALL -> throw IllegalArgumentException("\"ALL\" is not a valid test type")
         }
     }
 }
