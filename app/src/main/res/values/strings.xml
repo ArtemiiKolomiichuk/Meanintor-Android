@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">PracticeEng</string>
+    <string name="select_all">Select all</string>
+    <string name="true_false">True/False</string>
+    <string name="multiple_choice_definition">Multiple Choice (Definition)</string>
+    <string name="multiple_choice_word">Multiple Choice (Word)</string>
+    <string name="matching">Matching</string>
+    <string name="synonyms">Synonyms</string>
+    <string name="antonyms">Antonyms</string>
+    <string name="writing">Writing</string>
+    <string name="writing_listening">Writing (Listening)</string>
+    <string name="continue_button_text">Continue</string>
+    <string name="set_up_automatically">Set up automatically</string>
+</resources>

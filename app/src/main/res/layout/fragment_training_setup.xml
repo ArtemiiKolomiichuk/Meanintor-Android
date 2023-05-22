@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/select_all_training_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="@string/select_all"
+        android:textAllCaps="false"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:id="@+id/true_flase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/true_false" />
+
+        <CheckBox
+            android:id="@+id/multple_choice_definition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/multiple_choice_definition" />
+
+        <CheckBox
+            android:id="@+id/multiple_choice_word"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/multiple_choice_word" />
+
+        <CheckBox
+            android:id="@+id/matching"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/matching" />
+
+        <CheckBox
+            android:id="@+id/synonyms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/synonyms" />
+
+        <CheckBox
+            android:id="@+id/antonyms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/antonyms" />
+
+        <CheckBox
+            android:id="@+id/writing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/writing" />
+
+        <CheckBox
+            android:id="@+id/writing_listening"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/writing_listening" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/continue_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/continue_button_text" />
+
+    <Button
+        android:id="@+id/set_up_automatically"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/set_up_automatically" />
+</LinearLayout>
