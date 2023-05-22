@@ -8,8 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import com.example.practiceeng.APIHandler
+import com.example.practiceeng.DictionaryAPI
 import com.example.practiceeng.R
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 
 class WordSearchFragment : Fragment() {
@@ -36,6 +40,19 @@ class WordSearchFragment : Fragment() {
             wordSearch.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     binding.textView.text = "Text submit: " + query
+                    //TODO: remove logging
+                        val executor = Executors.newSingleThreadExecutor()
+                        val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.FreeDictionaryAPI) })
+                        val result = future.get()
+                        for (card in result) {
+                            Log.i("LOGGING DICTIONARY", card.toString())
+                        }
+                        val executor2 = Executors.newSingleThreadExecutor()
+                        val future2 = executor2.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.WordsAPI)})
+                        val result2 = future2.get()
+                        for (card in result2) {
+                            Log.i("LOGGING DICTIONARY", card.toString())
+                        }
                     return true
                 }
 

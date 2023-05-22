@@ -2,6 +2,7 @@ package com.example.practiceeng
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject;
+import java.lang.Exception
 
 class APIHandler{
     companion object {
@@ -32,6 +33,7 @@ class APIHandler{
         }
 
         fun getCards(word: String, api : DictionaryAPI) : Array<WordCard>{
+
             if(api == DictionaryAPI.WordsAPI) {
                 val client = OkHttpClient()
                 val request = Request.Builder()
@@ -45,7 +47,6 @@ class APIHandler{
                     .build()
                 val response = client.newCall(request).execute()
                 var responseString = response.body!!.string()
-                responseString = responseString.subSequence(1, responseString.length - 1).toString()
                 val jsonObject = JSONObject(responseString)
                 val wordString = jsonObject.optString("word")
                 val pronunciation = jsonObject.getJSONObject("pronunciation")
@@ -58,18 +59,26 @@ class APIHandler{
                     val partOfSpeech = result.optString("partOfSpeech")
                     val definition = result.optString("definition")
                     val card = WordCard(word, partOfSpeech, definition)
-                    val synonyms = result.getJSONArray("synonyms")
-                    for (j in 0 until synonyms.length()) {
-                        card.synonyms += synonyms.getString(j)
-                    }
-                    val antonyms = result.getJSONArray("antonyms")
-                    for (j in 0 until antonyms.length()) {
-                        card.antonyms += antonyms.getString(j)
-                    }
-                    val examples = result.getJSONArray("examples")
-                    for (j in 0 until examples.length()) {
-                        card.examples += examples.getString(j)
-                    }
+
+                    try {
+                        val synonyms = result.getJSONArray("synonyms")
+                        for (j in 0 until synonyms.length()) {
+                            card.synonyms += synonyms.getString(j)
+                        }
+                    }catch (e : Exception){}
+
+                    try {
+                        val antonyms = result.getJSONArray("antonyms")
+                        for (j in 0 until antonyms.length()) {
+                            card.antonyms += antonyms.getString(j)
+                        }
+                    }catch (e : Exception){}
+                    try{
+                        val examples = result.getJSONArray("examples")
+                        for (j in 0 until examples.length()) {
+                            card.examples += examples.getString(j)
+                        }
+                    }catch (e : Exception){}
                     cards += card
                 }
                 return cards
@@ -82,9 +91,7 @@ class APIHandler{
                     .build()
                 val response = client.newCall(request).execute()
                 var responseString = response.body!!.string()
-                println(responseString)
                 responseString = responseString.subSequence(1, responseString.length - 1).toString()
-                println(responseString)
                 val jsonObject = JSONObject(responseString)
                 val wordString = jsonObject.optString("word")
                 val phonetic = jsonObject.optString("phonetic")
@@ -120,8 +127,11 @@ class APIHandler{
                 }
                 return cards
             }
+
         }
     }
+
+
 }
 
 
