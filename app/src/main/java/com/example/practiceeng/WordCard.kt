@@ -1,6 +1,6 @@
 package com.example.practiceeng
 /**
- * Card for learning a word
+ * Card for learning a variant of [Word]
  */
 data class WordCard
 constructor(
@@ -10,6 +10,13 @@ constructor(
     var examples: Array<String> = arrayOf<String>(),
     var synonyms: Array<String> = arrayOf<String>(),
     var antonyms: Array<String> = arrayOf<String>(),
+    /*
+        var typesArray : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>()
+        var splitTypes = types.split("-")
+        for (i in splitTypes.indices){
+            typesArray += Pair(TestType.values()[i], splitTypes[i].toInt())
+        }
+    */
     var trainingHistory: TrainingHistory = TrainingHistory(),
     var bookmarked: Boolean = false,
     var paused : Boolean = false,
@@ -62,8 +69,7 @@ constructor(
     /**
      * Returns the most appropriate [TestType] for the next training
      *
-     * *Does NOT check if the word is [paused]*
-     * @return [TestType]
+     * *Does **not** check if the word is [paused]*
      */
     fun aptTraining() : TestType{
         var ordered = trainingOrder()
@@ -76,7 +82,10 @@ constructor(
     }
 
     /**
-     * @see aptTraining
+     * Returns the most appropriate [TestType] for the next training
+     * from the specified [testTypes]
+     *
+     * *Does **not** check if the word is [paused]*
      */
     fun aptTraining(testTypes : Array<TestType>) : TestType{
         var ordered = trainingOrder()
@@ -89,8 +98,7 @@ constructor(
     }
 
     /**
-     * Returns a preferred order of training types
-     * @return array of [TestType]
+     * Returns a preferred order of [TestType]s for training
      */
     private fun trainingOrder() : Array<TestType>{
         var sorted = trainingHistory.types.sortedBy { it.second }
@@ -104,7 +112,7 @@ constructor(
     /**
      * Returns true if the word can be trained in specified [TestType]
      *
-     * *Does NOT check if the word is [paused]*
+     * *Does **not** check if the word is [paused]*
      * @param testType type of the test
      */
     fun isAptForTraining(testType: TestType) : Boolean {
@@ -119,6 +127,7 @@ constructor(
             TestType.Writing -> true
             TestType.WritingListening -> hasPhonetic()
             TestType.ALL -> throw IllegalArgumentException("\"ALL\" is not a valid test type")
+            TestType.NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
         }
     }
 }

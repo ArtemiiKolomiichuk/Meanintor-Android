@@ -13,7 +13,8 @@ enum class TestType {
     Antonyms,
     Writing,
     WritingListening,
-    ALL
+    ALL,
+    NONE
 }
 
 enum class DictionaryAPI {
@@ -23,8 +24,9 @@ enum class DictionaryAPI {
      */
     FreeDictionaryAPI,
     /**
-     * WordsAPI with 2500 free requests per day
+     * WordsAPI with **2500** free requests per day
      * @see <a href="https://www.wordsapi.com/">WordsAPI</a>
      */
-    WordsAPI
+    WordsAPI,
+    ALL
 }
