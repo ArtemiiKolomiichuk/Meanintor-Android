@@ -26,11 +26,11 @@ constructor(
     fun word() : String {
         return word.word
     }
-    fun hasPhonetic(): Boolean {
-        return word.phonetic != ""
+    fun hasPhonetics(): Boolean {
+        return word.phonetics.isNotEmpty() && (!word.phonetics[0].isNullOrBlank() || !word.phonetics[1].isNullOrBlank() || !word.phonetics[2].isNullOrBlank())
     }
-    fun phonetic(): String {
-        return word.phonetic
+    fun phonetics(): Array<String> {
+        return word.phonetics
     }
     fun hasExamples(): Boolean {
         return examples.isNotEmpty()
@@ -125,7 +125,7 @@ constructor(
             TestType.Synonyms -> hasSynonyms()
             TestType.Antonyms -> hasAntonyms()
             TestType.Writing -> true
-            TestType.WritingListening -> hasPhonetic()
+            TestType.WritingListening -> hasPhonetics()
             TestType.ALL -> throw IllegalArgumentException("\"ALL\" is not a valid test type")
             TestType.NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
         }

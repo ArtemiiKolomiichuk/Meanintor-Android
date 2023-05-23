@@ -6,7 +6,10 @@ package com.example.practiceeng
 data class Word
 constructor(
     var word: String,
-    var phonetic: String = "",
+    /**
+     * Phonetic transcription of the word for All, Noun and Verb
+     */
+    var phonetics: Array<String> = Array<String>(3) {""; ""; ""},
     var bookmarked: Boolean = false)
 {
 

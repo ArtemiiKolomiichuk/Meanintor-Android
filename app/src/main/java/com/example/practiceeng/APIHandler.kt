@@ -6,9 +6,9 @@ import java.lang.Exception
 
 class APIHandler{
     companion object {
-        //TODO: not found words
         /**
-         * Get a list of [WordCard]s for a given word
+         * Get an array of [WordCard]s for a given word,
+         * may return empty array if word is not found
          * @param word the word to get cards for
          * @param api the api to use
          * @return an array of [WordCard]s
@@ -28,40 +28,57 @@ class APIHandler{
                         .build()
                     val response = client.newCall(request).execute()
                     var responseString = response.body!!.string()
-                    val jsonObject = JSONObject(responseString)
-                    val wordString = jsonObject.optString("word")
-                    val pronunciation = jsonObject.getJSONObject("pronunciation")
-                    val phonetic = pronunciation.optString("all")//TODO: noun, verb
-                    val word = Word(wordString, phonetic)
-                    var cards = arrayOf<WordCard>()
-                    val results = jsonObject.getJSONArray("results")
-                    for (i in 0 until results.length()) {
-                        val result = results.getJSONObject(i)
-                        val partOfSpeech = result.optString("partOfSpeech")
-                        val definition = result.optString("definition")
-                        val card = WordCard(word, partOfSpeech, definition)
-
-                        try {
-                            val synonyms = result.getJSONArray("synonyms")
-                            for (j in 0 until synonyms.length()) {
-                                card.synonyms += synonyms.getString(j)
-                            }
-                        } catch (e: Exception) {}
-
-                        try {
-                            val antonyms = result.getJSONArray("antonyms")
-                            for (j in 0 until antonyms.length()) {
-                                card.antonyms += antonyms.getString(j)
-                            }
-                        } catch (e: Exception) {}
-                        try {
-                            val examples = result.getJSONArray("examples")
-                            for (j in 0 until examples.length()) {
-                                card.examples += examples.getString(j)
-                            }
-                        } catch (e: Exception) {}
-                        cards += card
+                    if(responseString.contains("\"message\":\"word not found\"")){
+                        return arrayOf<WordCard>()
                     }
+                    val jsonObject = JSONObject(responseString)
+                    var word : Word;
+                    val wordString = jsonObject.optString("word")
+                    try {
+                        var phonetics = arrayOf("")
+                        val pronunciation = jsonObject.getJSONObject("pronunciation")
+                        phonetics += if(pronunciation.toString().contains("\"all\":\"")){
+                            pronunciation.optString("all")
+                        }else {""}
+                        phonetics += if(pronunciation.toString().contains("\"noun\":\"")) {
+                            pronunciation.optString("noun")
+                        }else {""}
+                        phonetics += if(pronunciation.toString().contains("\"verb\":\"")) {
+                            pronunciation.optString("verb")
+                        }else {""}
+                        word = Word(wordString, phonetics)
+                    }catch (e: Exception){
+                        word = Word(wordString)
+                    }
+                    var cards = arrayOf<WordCard>()
+                    try {
+                        val results = jsonObject.getJSONArray("results")
+                        for (i in 0 until results.length()) {
+                            val result = results.getJSONObject(i)
+                            val partOfSpeech = result.optString("partOfSpeech")
+                            val definition = result.optString("definition")
+                            val card = WordCard(word, partOfSpeech, definition)
+                            try {
+                                val synonyms = result.getJSONArray("synonyms")
+                                for (j in 0 until synonyms.length()) {
+                                    card.synonyms += synonyms.getString(j)
+                                }
+                            } catch (e: Exception) {}
+                            try {
+                                val antonyms = result.getJSONArray("antonyms")
+                                for (j in 0 until antonyms.length()) {
+                                    card.antonyms += antonyms.getString(j)
+                                }
+                            } catch (e: Exception) {}
+                            try {
+                                val examples = result.getJSONArray("examples")
+                                for (j in 0 until examples.length()) {
+                                    card.examples += examples.getString(j)
+                                }
+                            } catch (e: Exception) {}
+                            cards += card
+                        }
+                    }catch (e: Exception){}
                     return cards
                 }
                 DictionaryAPI.FreeDictionaryAPI -> {
@@ -72,38 +89,44 @@ class APIHandler{
                         .build()
                     val response = client.newCall(request).execute()
                     var responseString = response.body!!.string()
-                    responseString = responseString.subSequence(1, responseString.length - 1).toString()
+                    if(responseString.contains("No Definitions Found")){
+                        return arrayOf()
+                    }
+                    responseString = "{\"array\":$responseString}"
                     val jsonObject = JSONObject(responseString)
-                    val wordString = jsonObject.optString("word")
-                    val phonetic = jsonObject.optString("phonetic")
+                    val jsonArray = jsonObject.getJSONArray("array")
 
-                    val word = Word(wordString, phonetic)
+                    val wordString = jsonArray.getJSONObject(0).optString("word")
+                    val phonetic = jsonArray.getJSONObject(0).optString("phonetic")
+                    val word = Word(wordString, Array(3){phonetic})
 
                     var cards = arrayOf<WordCard>()
-                    val meanings = jsonObject.getJSONArray("meanings")
-                    for(i in 0 until meanings.length()){
-                        val meaning = meanings.getJSONObject(i)
-                        val partOfSpeech = meaning.optString("partOfSpeech")
-                        val definitions = meaning.getJSONArray("definitions")
-                        for(j in 0 until definitions.length()){
-                            val definition = definitions.getJSONObject(j)
-                            val definitionString = definition.optString("definition")
-                            val example = definition.optString("example")
-                            val synonyms = definition.optJSONArray("synonyms")
-                            val antonyms = definition.optJSONArray("antonyms")
-                            val card = WordCard(word, partOfSpeech, definitionString)
-                            card.examples += example
-                            if(synonyms != null){
-                                for(k in 0 until synonyms.length()){
-                                    card.synonyms += (synonyms.getString(k))
+                    for(k in 0 until jsonArray.length()){
+                        val meanings = jsonArray.getJSONObject(k).getJSONArray("meanings")
+                        for(i in 0 until meanings.length()) {
+                            val meaning = meanings.getJSONObject(i)
+                            val partOfSpeech = meaning.optString("partOfSpeech")
+                            val definitions = meaning.getJSONArray("definitions")
+                            for (j in 0 until definitions.length()) {
+                                val definition = definitions.getJSONObject(j)
+                                val definitionString = definition.optString("definition")
+                                val example = definition.optString("example")
+                                val synonyms = definition.optJSONArray("synonyms")
+                                val antonyms = definition.optJSONArray("antonyms")
+                                val card = WordCard(word, partOfSpeech, definitionString)
+                                card.examples += example
+                                if (synonyms != null) {
+                                    for (k in 0 until synonyms.length()) {
+                                        card.synonyms += (synonyms.getString(k))
+                                    }
                                 }
-                            }
-                            if(antonyms != null){
-                                for(k in 0 until antonyms.length()){
-                                    card.antonyms += (antonyms.getString(k))
+                                if (antonyms != null) {
+                                    for (k in 0 until antonyms.length()) {
+                                        card.antonyms += (antonyms.getString(k))
+                                    }
                                 }
+                                cards += card
                             }
-                            cards += card
                         }
                     }
                     return cards
