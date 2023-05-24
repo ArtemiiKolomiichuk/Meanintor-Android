@@ -1,6 +1,9 @@
 package com.example.practiceeng
+
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject;
 import java.lang.Exception
 
@@ -131,7 +134,106 @@ class APIHandler{
                     }
                     return cards
                 }
+                DictionaryAPI.XFEnglishDictionary ->{
+                    val client = OkHttpClient()
+                    val mediaType = "application/json".toMediaTypeOrNull()
+                    val body = "{\r\n    \"selection\": \"$word\"\r\n}".toRequestBody(mediaType)
+                    val selection = word.split(" ")[0]
+                    val request = Request.Builder()
+                        .url("https://xf-english-dictionary1.p.rapidapi.com/v1/dictionary?selection=$selection&synonyms=true&audioFileLinks=true&pronunciations=true&relatedWords=false&antonyms=true")
+                        .post(body)
+                        .addHeader("content-type", "application/json")
+                        .addHeader("X-RapidAPI-Key", "364859fdf5msh35332022afd4d68p15abf5jsn8e6c3ef6b1d0")
+                        .addHeader("X-RapidAPI-Host", "xf-english-dictionary1.p.rapidapi.com")
+                        .build()
+                    val response = client.newCall(request).execute()
+                    val responseString = response.body!!.string()
+                    println(responseString)
+                    if(responseString == "{}"){
+                        return arrayOf<WordCard>()
+                    }
+                    val jsonObject = JSONObject(responseString)
+                    val items = jsonObject.getJSONArray("items")
+                    var cards = arrayOf<WordCard>()
+                    try {
+                        for (i in 0 until items.length()){
+                            val phrases = items.getJSONObject(i).optJSONArray("phrases")
+                            for(p in 0 until phrases.length()){
+                                val phrase = phrases.getJSONObject(p)
+                                val phraseString = phrase.optString("phrase")
+                                val partOfSpeech = phrase.optString("partOfSpeech")
+                                val word = Word(phraseString)
+                                val definitions = phrase.getJSONArray("definitions")
+                                for(d in 0 until definitions.length()){
+                                    val definition = definitions.getJSONObject(d)
+                                    val definitionString = definition.optString("definition")
+                                    val card = WordCard(word, partOfSpeech, definitionString)
+                                    val examples = definition.optJSONArray("examples")
+                                    //TODO:val synonyms = definition.optJSONArray("synonyms")
+                                    //TODO:val antonyms = definition.optJSONArray("antonyms")
+                                    for(e in 0 until examples.length()){
+                                        card.examples += examples.getString(e)
+                                    }
+                                    cards += card
+                                }
+                            }
+                        }
+                    }catch (e: Exception){ println("phrase: $e")}
+
+                    try {
+                        for (i in 0 until items.length()){
+                            val wordString = items.getJSONObject(i).optString("word")
+                            val partOfSpeech = items.getJSONObject(i).optString("partOfSpeech")
+                            val word = Word(wordString)
+                            var itemSynonymsString = arrayOf<String>()
+                            try {
+                                val itemSynonyms = items.getJSONObject(i).optJSONArray("synonyms")
+                                for (s in 0 until itemSynonyms.length()){
+                                    itemSynonymsString += itemSynonyms.getString(s)
+                                }
+                            }catch (e: Exception){}
+                            var itemAntonymsString = arrayOf<String>()
+                            try {
+                                val itemAntonyms = items.getJSONObject(i).optJSONArray("antonyms")
+                                for (a in 0 until itemAntonyms.length()){
+                                    itemAntonymsString += itemAntonyms.getString(a)
+                                }
+                            }catch (e: Exception){}
+                            val definitions = items.getJSONObject(i).getJSONArray("definitions")
+                            for (d in 0 until definitions.length()){
+                                val definition = definitions.getJSONObject(d)
+                                val definitionString = definition.optString("definition")
+                                val card = WordCard(word, partOfSpeech, definitionString)
+                                try {
+                                    val examples = definition.optJSONArray("examples")
+                                    for(e in 0 until examples.length()){
+                                        card.examples += examples.getString(e)
+                                    }
+                                }catch (e: Exception){}
+                                try {
+                                    val synonyms = definition.optJSONArray("synonyms")
+                                    for (s in 0 until synonyms.length()){
+                                        card.synonyms += synonyms.getString(s)
+                                    }
+                                }catch (e: Exception){}
+                                try {
+                                    val antonyms = definition.optJSONArray("antonyms")
+                                    for (a in 0 until antonyms.length()) {
+                                        card.antonyms += antonyms.getString(a)
+                                    }
+                                }catch (e: Exception){}
+                                if(!itemSynonymsString.isNullOrEmpty()) card.synonyms += itemSynonymsString
+                                if(!itemAntonymsString.isNullOrEmpty()) card.antonyms += itemAntonymsString
+                                cards += card
+                            }
+                        }
+                    }catch (e: Exception){
+                        println(e)
+                    }
+                    return cards
+                }
                 DictionaryAPI.ALL ->{
+                    //TODO: get one word, sort
                     return getCards(word, DictionaryAPI.WordsAPI) + getCards(word, DictionaryAPI.FreeDictionaryAPI)
                 }
             }
