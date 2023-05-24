@@ -1,5 +1,6 @@
 package com.example.practiceeng.fragments
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.example.practiceeng.APIHandler
 import com.example.practiceeng.DictionaryAPI
@@ -47,6 +49,14 @@ class WordSearchFragment : Fragment() {
                         for (card in result) {
                             Log.i("LOGGING DICTIONARY", card.toString())
                         }
+
+                    val audio = MediaPlayer.create(context, "https://download.xfd.plus/xfed/audio/33965_en-us-extraordinary.ogg".toUri())
+                    audio?.setOnPreparedListener{
+                        audio?.start()
+                    }
+                    audio?.setOnCompletionListener {
+                        audio?.start()
+                    }
                     return true
                 }
 
