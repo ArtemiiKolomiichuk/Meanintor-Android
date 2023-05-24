@@ -42,7 +42,7 @@ class WordSearchFragment : Fragment() {
                     binding.textView.text = "Text submit: " + query
                     //TODO: remove logging
                         val executor = Executors.newSingleThreadExecutor()
-                        val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.XFEnglishDictionary) })
+                        val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.ALL) })
                         val result = future.get()
                         for (card in result) {
                             Log.i("LOGGING DICTIONARY", card.toString())
