@@ -1,5 +1,6 @@
 package com.example.practiceeng.fragments
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,9 +8,10 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practiceeng.APIHandler
 import com.example.practiceeng.DictionaryAPI
 import com.example.practiceeng.R
@@ -43,29 +45,13 @@ class WordSearchFragment : Fragment() {
         binding.apply {
             wordSearch.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    binding.textView.text = "Text submit: " + query
                     //TODO: remove logging
-
-                    var result = mutableListOf<WordCard>()
-
-                    val executor = Executors.newSingleThreadExecutor()
-                    val future = executor.submit(Callable {
-                        APIHandler.getCards(
-                            query.toString(),
-                            DictionaryAPI.FreeDictionaryAPI
-                        )
-                    })
-                    result += future.get()
-                    val executor2 = Executors.newSingleThreadExecutor()
-                    val future2 = executor2.submit(Callable {
-                        APIHandler.getCards(
-                            query.toString(),
-                            DictionaryAPI.WordsAPI
-                        )
-                    })
-                    result += future2.get()
+                        val executor = Executors.newSingleThreadExecutor()
+                        val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.ALL) })
+                        val result = future.get()
                     for (card in result)
                         Log.d("WordSearchFragment", card.toString())
+
                     if (result.size == 0) {
                         cardsList.visibility = RecyclerView.GONE
                         textView.visibility = RecyclerView.VISIBLE
@@ -73,7 +59,15 @@ class WordSearchFragment : Fragment() {
                     } else {
                         textView.visibility = RecyclerView.GONE
                         cardsList.visibility = RecyclerView.VISIBLE
-                        cardsList.adapter = SearchListAdapter(result)
+                        cardsList.adapter = SearchListAdapter(result.toList())
+                    }
+
+                    val audio = MediaPlayer.create(context, "https://download.xfd.plus/xfed/audio/33965_en-us-extraordinary.ogg".toUri())
+                    audio?.setOnPreparedListener{
+                        audio?.start()
+                    }
+                    audio?.setOnCompletionListener {
+                        audio?.start()
                     }
                     return true
                 }
