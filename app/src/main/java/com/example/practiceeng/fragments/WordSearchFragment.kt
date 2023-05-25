@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.APIHandler
 import com.example.practiceeng.DictionaryAPI
 import com.example.practiceeng.R
+import com.example.practiceeng.WordCard
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -31,6 +34,7 @@ class WordSearchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentWordSearchBinding.inflate(layoutInflater, container, false)
+        binding.cardsList.layoutManager = LinearLayoutManager(context)
         return binding.root
     }
 
@@ -41,18 +45,36 @@ class WordSearchFragment : Fragment() {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     binding.textView.text = "Text submit: " + query
                     //TODO: remove logging
-                        val executor = Executors.newSingleThreadExecutor()
-                        val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.FreeDictionaryAPI) })
-                        val result = future.get()
-                        for (card in result) {
-                            Log.i("LOGGING DICTIONARY", card.toString())
-                        }
-                        val executor2 = Executors.newSingleThreadExecutor()
-                        val future2 = executor2.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.WordsAPI)})
-                        val result2 = future2.get()
-                        for (card in result2) {
-                            Log.i("LOGGING DICTIONARY", card.toString())
-                        }
+
+                    var result = mutableListOf<WordCard>()
+
+                    val executor = Executors.newSingleThreadExecutor()
+                    val future = executor.submit(Callable {
+                        APIHandler.getCards(
+                            query.toString(),
+                            DictionaryAPI.FreeDictionaryAPI
+                        )
+                    })
+                    result += future.get()
+                    val executor2 = Executors.newSingleThreadExecutor()
+                    val future2 = executor2.submit(Callable {
+                        APIHandler.getCards(
+                            query.toString(),
+                            DictionaryAPI.WordsAPI
+                        )
+                    })
+                    result += future2.get()
+                    for (card in result)
+                        Log.d("WordSearchFragment", card.toString())
+                    if (result.size == 0) {
+                        cardsList.visibility = RecyclerView.GONE
+                        textView.visibility = RecyclerView.VISIBLE
+                        textView.setText(R.string.search_error)
+                    } else {
+                        textView.visibility = RecyclerView.GONE
+                        cardsList.visibility = RecyclerView.VISIBLE
+                        cardsList.adapter = SearchListAdapter(result)
+                    }
                     return true
                 }
 
