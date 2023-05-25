@@ -28,10 +28,5 @@ enum class DictionaryAPI {
      * @see <a href="https://www.wordsapi.com/">WordsAPI</a>
      */
     WordsAPI,
-    /**
-     * API with **10.000** free requests per day
-     * @see <a href="https://www.xfd.plus/">XF English Dictionary</a>
-     */
-    XFEnglishDictionary,
     ALL
 }

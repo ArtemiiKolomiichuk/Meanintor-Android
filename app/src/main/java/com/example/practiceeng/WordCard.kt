@@ -4,7 +4,7 @@ package com.example.practiceeng
  */
 data class WordCard
 constructor(
-    var word: Word,
+    private var word: Word,
     var partOfSpeech: String,
     var definition: String,
     var examples: Array<String> = arrayOf<String>(),
@@ -23,7 +23,6 @@ constructor(
     var mastery: Double = 0.0,
     var folder : String = "")
 {
-
     fun word() : String {
         return word.word
     }

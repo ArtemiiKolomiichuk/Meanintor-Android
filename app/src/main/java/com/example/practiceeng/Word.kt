@@ -9,11 +9,7 @@ constructor(
     /**
      * Phonetic transcription of the word for All, Noun and Verb
      */
-    var phonetics: Array<String> = arrayOf(),
-    /**
-     * Audio links for US, UK, AU pronunciations
-     */
-    var audioLinks: Array<String> = arrayOf(),
+    var phonetics: Array<String> = Array<String>(3) {""; ""; ""},
     var bookmarked: Boolean = false)
 {
 
