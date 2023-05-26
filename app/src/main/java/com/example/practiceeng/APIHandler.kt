@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import android.util.Log
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -257,7 +258,13 @@ class APIHandler{
                     return cards
                 }
                 DictionaryAPI.ALL ->{
-                    val cards = (getCards(word, DictionaryAPI.XFEnglishDictionary) + getCards(word, DictionaryAPI.WordsAPI)).toList().toMutableList()
+                    val cards : MutableList<WordCard>
+                    try {
+                        cards = (getCards(word, DictionaryAPI.XFEnglishDictionary) + getCards(word, DictionaryAPI.WordsAPI)).toMutableList()
+                    }catch (e: Exception) {
+                        Log.e("APIHandler(ALL)", "Error: $e")
+                        return arrayOf()
+                    }
                     var i = 0
                     var wordWord : Word = if(cards.isNotEmpty()) cards[cards.size - 1].word else Word(word)
                     if(cards.isNotEmpty() && cards[0].word.phonetics.isNotEmpty()){

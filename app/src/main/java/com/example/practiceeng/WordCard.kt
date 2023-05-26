@@ -1,4 +1,8 @@
 package com.example.practiceeng
+
+import java.text.DateFormat
+import java.util.Date
+
 /**
  * Card for learning a variant of [Word]
  */
@@ -30,6 +34,11 @@ constructor(
     fun hasPhonetics(): Boolean {
         return word.phonetics.isNotEmpty() && (!word.phonetics[0].isNullOrBlank() || !word.phonetics[1].isNullOrBlank() || !word.phonetics[2].isNullOrBlank())
     }
+
+    fun audioLink() : String?{
+        return TODO()
+    }
+
     fun phonetics(): Array<String> {
         return word.phonetics
     }
@@ -42,11 +51,37 @@ constructor(
     fun hasSynonyms(): Boolean {
         return synonyms.isNotEmpty()
     }
+    fun getHintExamples() : Array<String> {
+        var hintExamples = arrayOf<String>()
+        if(hasExamples()){
+            for (example in examples){
+                if (example.contains("<b>")) {
+                    hintExamples += example.replace(Regex("<b>.*</b>"), "______")
+                }else if (example.contains(word())) {
+                    hintExamples += example.replace(word(), "______")
+                }
+            }
+        }
+        return hintExamples
+    }
+
+    fun getNotSynonymicDefinitions(amount : Int) : Array<String> {
+        return TODO()
+    }
+
+    fun getNotSynonymicWords(amount : Int) : Array<String> {
+        return TODO()
+    }
+
+    fun getNotAntonymousWords(amount : Int) : Array<String> {
+        return TODO()
+    }
+
     fun hasAntonyms(): Boolean {
         return antonyms.isNotEmpty()
     }
     fun isNew() : Boolean {
-        return trainingHistory.lastDate == ""
+        return trainingHistory.lastDate == null
     }
     fun isMastered() : Boolean {
         return mastery >= UserSettings.settings().masteredMargin
@@ -56,15 +91,27 @@ constructor(
      * Returns a relative value of how well the word is known
      *
      * Used to determine in which order [WordCard]s should be trained
+     *
+     * **TODO: Test, written by ChatGPT**
      */
-    fun comprehension() : Double {
-        TODO()
-        //add dates difference
-        when(mastery){
-            1.0 -> return 1.0
-            2.0 -> return 5.0
+    fun retention() : Double {
+        var seconds = trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000) ?: 0
+
+        val margins = listOf(0, 26, 65, 9 * 24, 17 * 24, 34 * 24, 100 * 24, 220 * 24)
+        val retentionSteps = listOf(0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0)
+
+        val masteryLevel = mastery.toInt()
+        val currentRetention = retentionSteps[masteryLevel]
+        val currentMargin = margins[masteryLevel] * 3600 // Convert margin to seconds
+
+        if (seconds > currentMargin) {
+            val newMasteryLevel = (masteryLevel - 1).coerceAtLeast(0)
+            return retentionSteps[newMasteryLevel]
         }
-        return mastery/10
+
+        val remainingSeconds = currentMargin - seconds
+        val retentionDifference = (currentRetention - 1) * (remainingSeconds.toDouble() / currentMargin.toDouble())
+        return currentRetention - retentionDifference
     }
 
     /**
@@ -79,7 +126,7 @@ constructor(
                 return type
             }
         }
-        return TestType.FlashCard
+        return TestType.NONE
     }
 
     /**
@@ -106,6 +153,19 @@ constructor(
         var result = arrayOf<TestType>()
         for (i in sorted){
             result += i.first
+        }
+        return result
+    }
+
+    /**
+     * Returns [TestType]s that the word can be trained in
+     */
+    fun aptForTrainings(testTypes: Array<TestType>) : Array<TestType>{
+        var result = arrayOf<TestType>()
+        for (type in testTypes){
+            if (isAptForTraining(type)){
+                result += type
+            }
         }
         return result
     }
