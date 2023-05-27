@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practiceeng.APIHandler
@@ -23,11 +24,6 @@ class WordSearchFragment : Fragment() {
     private var _binding: FragmentWordSearchBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,6 +37,12 @@ class WordSearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+
+            addWordsButton.setOnClickListener {
+               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null)
+                findNavController().navigate(action)
+            }
+
             wordSearch.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     //TODO: remove logging
@@ -71,7 +73,7 @@ class WordSearchFragment : Fragment() {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    //Log.d("SEARCH", "Query: " + newText)
+
                     return true
                 }
 

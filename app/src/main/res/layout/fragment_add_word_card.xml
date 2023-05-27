@@ -19,15 +19,21 @@
         android:id="@+id/is_phrase"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Phrase" />
+        android:text="Custom part of speech" />
 
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
+        android:entries="@array/parts_of_speech"
         />
-
+    <EditText
+        android:id="@+id/part_of_speech"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:hint="Part Of speech" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
