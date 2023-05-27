@@ -1,13 +1,11 @@
-package com.example.practiceeng.fragments
+package com.example.practiceeng.ui.fragments
 
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practiceeng.APIHandler
 import com.example.practiceeng.DictionaryAPI
 import com.example.practiceeng.R
-import com.example.practiceeng.WordCard
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
+import com.example.practiceeng.ui.SearchListAdapter
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 

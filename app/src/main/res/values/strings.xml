@@ -14,5 +14,16 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Enter the word</string>
-    <string name="search_error">No words were found.\nCheck your spelling or try searching for something else.</string>
+    <string name="search_error">No words were found\nCheck your spelling or</string>
+    <string-array name="parts_of_speech">
+        <item>noun</item>
+        <item>verb</item>
+        <item>adjective</item>
+        <item>adverb</item>
+        <item>pronoun</item>
+        <item>preposition</item>
+        <item>conjunction</item>
+        <item>interjection</item>
+        <item>article</item>
+    </string-array>
 </resources>
