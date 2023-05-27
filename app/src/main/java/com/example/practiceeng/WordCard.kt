@@ -1,6 +1,5 @@
 package com.example.practiceeng
 
-import java.text.DateFormat
 import java.util.Date
 
 /**
@@ -127,6 +126,23 @@ constructor(
             }
         }
         return TestType.NONE
+    }
+
+    /**
+     * Returns the most appropriate [TestType]s for the next training
+     * from the specified [testTypes]
+     *
+     * *Does **not** check if the word is [paused]*
+     */
+    fun aptTrainings(testTypes : Array<TestType>) : Array<TestType>{
+        val order = trainingOrder()
+        var result = arrayOf<TestType>()
+        for (type in order){
+            if (isAptForTraining(type) && testTypes.contains(type)){
+                result += type
+            }
+        }
+        return result
     }
 
     /**

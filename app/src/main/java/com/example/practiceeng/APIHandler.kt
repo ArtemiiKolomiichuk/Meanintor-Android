@@ -5,7 +5,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject;
+import org.json.JSONObject
 import java.lang.Exception
 
 class APIHandler{
@@ -31,12 +31,12 @@ class APIHandler{
                         .addHeader("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
                         .build()
                     val response = client.newCall(request).execute()
-                    var responseString = response.body!!.string()
+                    val responseString = response.body!!.string()
                     if(responseString.contains("\"message\":\"word not found\"")){
                         return arrayOf()
                     }
                     val jsonObject = JSONObject(responseString)
-                    var word : Word;
+                    var word : Word
                     val wordString = jsonObject.optString("word")
                     try {
                         var phonetics = arrayOf<String>()
@@ -67,22 +67,22 @@ class APIHandler{
                                 for (j in 0 until synonyms.length()) {
                                     card.synonyms += synonyms.getString(j)
                                 }
-                            } catch (e: Exception) {}
+                            } catch (_: Exception) {}
                             try {
                                 val antonyms = result.getJSONArray("antonyms")
                                 for (j in 0 until antonyms.length()) {
                                     card.antonyms += antonyms.getString(j)
                                 }
-                            } catch (e: Exception) {}
+                            } catch (_: Exception) {}
                             try {
                                 val examples = result.getJSONArray("examples")
                                 for (j in 0 until examples.length()) {
                                     card.examples += examples.getString(j)
                                 }
-                            } catch (e: Exception) {}
+                            } catch (_: Exception) {}
                             cards += card
                         }
-                    }catch (e: Exception){}
+                    }catch (_: Exception){}
                     return cards
                 }
                 DictionaryAPI.FreeDictionaryAPI -> {
@@ -151,7 +151,7 @@ class APIHandler{
                     val responseString = response.body!!.string()
                     println(responseString)
                     if(responseString == "{}"){
-                        return arrayOf<WordCard>()
+                        return arrayOf()
                     }
                     val jsonObject = JSONObject(responseString)
                     val items = jsonObject.getJSONArray("items")
@@ -192,14 +192,14 @@ class APIHandler{
                                 for (s in 0 until itemSynonyms.length()){
                                     itemSynonymsString += itemSynonyms.getString(s)
                                 }
-                            }catch (e: Exception){}
+                            }catch (_: Exception){}
                             var itemAntonymsString = arrayOf<String>()
                             try {
                                 val itemAntonyms = items.getJSONObject(i).optJSONArray("antonyms")
                                 for (a in 0 until itemAntonyms.length()){
                                     itemAntonymsString += itemAntonyms.getString(a)
                                 }
-                            }catch (e: Exception){}
+                            }catch (_: Exception){}
                             val definitions = items.getJSONObject(i).getJSONArray("definitions")
                             for (d in 0 until definitions.length()){
                                 val definition = definitions.getJSONObject(d)
@@ -210,21 +210,21 @@ class APIHandler{
                                     for(e in 0 until examples.length()){
                                         card.examples += examples.getString(e)
                                     }
-                                }catch (e: Exception){}
+                                }catch (_: Exception){}
                                 try {
                                     val synonyms = definition.optJSONArray("synonyms")
                                     for (s in 0 until synonyms.length()){
                                         card.synonyms += synonyms.getString(s)
                                     }
-                                }catch (e: Exception){}
+                                }catch (_: Exception){}
                                 try {
                                     val antonyms = definition.optJSONArray("antonyms")
                                     for (a in 0 until antonyms.length()) {
                                         card.antonyms += antonyms.getString(a)
                                     }
-                                }catch (e: Exception){}
-                                if(!itemSynonymsString.isNullOrEmpty()) card.synonyms += itemSynonymsString
-                                if(!itemAntonymsString.isNullOrEmpty()) card.antonyms += itemAntonymsString
+                                }catch (_: Exception){}
+                                if(itemSynonymsString.isNotEmpty()) card.synonyms += itemSynonymsString
+                                if(itemAntonymsString.isNotEmpty()) card.antonyms += itemAntonymsString
                                 cards += card
                             }
                         }catch (e: Exception){
@@ -254,7 +254,7 @@ class APIHandler{
                         }
                         cards[0].word.phonetics = phonetics
                         cards[0].word.audioLinks = audioLinks
-                    }catch (e: Exception){}
+                    }catch (_: Exception){}
                     return cards
                 }
                 DictionaryAPI.ALL ->{
