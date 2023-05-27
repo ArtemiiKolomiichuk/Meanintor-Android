@@ -5,23 +5,21 @@ package com.example.practiceeng
  * a question of any [TestType]
  */
 data class Question
-public constructor(
-    val wordCard: WordCard,
+constructor(
+    var wordCards: Array<WordCard>,
     /**
      * Main Question text, or link to audio for [TestType.WritingListening]
      */
-    var displayTexts : Array<String> = arrayOf<String>(),
+    var displayTexts : Array<String> = arrayOf(),
     /**
      * Optional hint text that can be displayed
      */
-    var displayTextHint : Array<String> = arrayOf<String>(),
+    var displayTextHint : Array<String> = arrayOf(),
     /**
      * Text that is displayed after the user answers incorrectly
      */
-    var displayTextOnAnsweredWrong : Array<String> = arrayOf<String>(),
-    var correctAnswers : Array<String> = arrayOf<String>(),
-    var options : Array<String> = arrayOf<String>(),
+    var displayTextOnAnsweredWrong : Array<String> = arrayOf(),
+    var correctAnswers : Array<String> = arrayOf(),
+    var options : Array<String> = arrayOf(),
     val testType: TestType)
-{
-}
 

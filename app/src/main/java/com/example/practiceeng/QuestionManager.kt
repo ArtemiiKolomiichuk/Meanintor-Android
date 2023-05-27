@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import java.lang.Exception
 import java.util.Date
 
 /**
@@ -11,9 +12,9 @@ import java.util.Date
 class QuestionManager
 {
     companion object {
-        private var folders: Array<String> = arrayOf<String>()
-        private var testTypes: Array<TestType> = arrayOf<TestType>()
-        private var cards: Array<WordCard> = arrayOf<WordCard>()
+        private var folders: Array<String> = arrayOf()
+        private var testTypes: Array<TestType> = arrayOf()
+        private var cards: Array<WordCard> = arrayOf()
         var counter: Int = 0
 
         /**
@@ -23,8 +24,8 @@ class QuestionManager
          * *paused* or not should be checked before calling this function**
          */
         fun reset(
-            testTypes: Array<TestType> = Array<TestType>(1) { TestType.ALL },
-            folders: Array<String> = arrayOf<String>()
+            testTypes: Array<TestType> = Array(1) { TestType.ALL },
+            folders: Array<String> = arrayOf()
         ) {
             counter = 0
             this.testTypes = testTypes
@@ -56,43 +57,95 @@ class QuestionManager
         /**
          * Checks whether the answer is correct
          *
-         * Updates [WordCard], including [TrainingHistory] and [WordCard.mastery]
+         * @return **null** for [TestType.Match], [TestType.Synonyms] and [TestType.Antonyms] if the answer is not completely correct/incorrect
          */
-        fun submitAnswer(answers: Array<String>, question: Question) : Boolean {
-            val card = question.wordCard
+        fun checkAnswer(answers: Array<String>, question: Question): Boolean? {
             val correctAnswers = question.correctAnswers
-            var correct = true
+            var completelyCorrect = true
             for (answer in answers) {
                 if (answer !in correctAnswers) {
-                    correct = false
+                    completelyCorrect = false
                     break
                 }
             }
-            for (answer in correctAnswers) {
-                if (answer !in answers) {
-                    correct = false
+            if (completelyCorrect) {
+                return true
+            }
+            var completelyIncorrect = true
+            for (answer in answers) {
+                if (answer in correctAnswers) {
+                    completelyIncorrect = false
                     break
                 }
             }
-            if(correct) {
-                for (i in 0 until card.trainingHistory.types.size) {
-                    if (card.trainingHistory.types[i].first == question.testType) {
-                        card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second + 1)
-                        break
+            return if (completelyIncorrect) {
+                false
+            } else {
+                null
+            }
+        }
+
+        /**
+         * Updates [WordCard], including [TrainingHistory] and [WordCard.mastery]
+         *
+         * @param overruled whether the answer was overruled by the user as correct
+         * @see checkAnswer
+         */
+        fun submitAnswer(answers: Array<String>, question: Question, overruled: Boolean = false) {
+            if(question.testType == TestType.Match){
+                if (overruled){
+                    return
+                }
+                for (k in 0 until question.wordCards.size){
+                    val card = question.wordCards[k]
+                    val correct = question.correctAnswers[k] == answers[k]
+                    if(correct){
+                        for (i in 0 until card.trainingHistory.types.size) {
+                            if (card.trainingHistory.types[i].first == question.testType) {
+                                card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second + 3)
+                                break
+                            }
+                        }
+                        card.mastery += UserSettings.settings().correctAnswerStep
+                        if(card.mastery.toInt() - (card.mastery - UserSettings.settings().correctAnswerStep).toInt() > 0){
+                            card.trainingHistory.lastDate = Date()
+                        }
+                    }
+                    else {
+                        for (i in 0 until card.trainingHistory.types.size) {
+                            if (card.trainingHistory.types[i].first == question.testType) {
+                                card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second - 1)
+                                break
+                            }
+                        }
+                    }
+
+                }
+            }
+            else{
+                val card = question.wordCards[0]
+                val correct = checkAnswer(answers, question) ?: false
+                if(overruled || correct) {
+                    for (i in 0 until card.trainingHistory.types.size) {
+                        if (card.trainingHistory.types[i].first == question.testType) {
+                            card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second + 3)
+                            break
+                        }
+                    }
+                    card.mastery += UserSettings.settings().correctAnswerStep
+                    if(card.mastery.toInt() - (card.mastery - UserSettings.settings().correctAnswerStep).toInt() > 0){
+                        card.trainingHistory.lastDate = Date()
                     }
                 }
-                card.trainingHistory.lastDate = Date()
-            }
-            else {
-                //TODO: may be overruled manually by user
-                for (i in 0 until card.trainingHistory.types.size) {
-                    if (card.trainingHistory.types[i].first == question.testType) {
-                        card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second - 1)
-                        break
+                else {
+                    for (i in 0 until card.trainingHistory.types.size) {
+                        if (card.trainingHistory.types[i].first == question.testType) {
+                            card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second - 1)
+                            break
+                        }
                     }
                 }
             }
-            return correct
         }
 
         private fun getNextCard(): WordCard {
@@ -102,13 +155,25 @@ class QuestionManager
             return cards[counter]
         }
 
+        /**
+         * TODO: check for infinite loop possibilities
+         */
         private fun getNextQuestion(): Question? {
             val card = getNextCard()
             counter++
-            when (card.aptTraining(testTypes)) {
+            return try {
+                getNextQuestion(card, card.aptTraining(testTypes))
+            } catch (e: Exception) {
+                println("Error(getNextQuestion): $e")
+                getNextQuestion()
+            }
+        }
+
+        private fun getNextQuestion(card: WordCard, testType: TestType): Question? {
+            when (testType) {
                 TestType.FlashCard -> TODO()
                 TestType.TrueFalse -> {
-                    var question = Question(card, testType = TestType.TrueFalse)
+                    var question = Question(arrayOf(card), testType = TestType.TrueFalse)
                     //question.correctAnswers =
                     //question.displayTexts =
                     question.options = arrayOf("True", "False")
@@ -116,8 +181,9 @@ class QuestionManager
                     //question.displayTextOnAnsweredWrong
                     return TODO()
                 }
+
                 TestType.MultipleChoiceWord -> {
-                    var question = Question(card, testType = TestType.MultipleChoiceWord)
+                    var question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
                     question.correctAnswers = arrayOf(card.word())
                     question.displayTexts = arrayOf(card.definition)
                     question.options = card.getNotSynonymicWords(TODO())
@@ -125,8 +191,9 @@ class QuestionManager
                     //TODO: question.displayTextOnAnsweredWrong
                     return question
                 }
+
                 TestType.MultipleChoiceDefinition -> {
-                    var question = Question(card, testType = TestType.MultipleChoiceDefinition)
+                    var question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
                     question.correctAnswers = arrayOf(card.definition)
                     question.displayTexts = arrayOf(card.word())
                     question.options = card.getNotSynonymicDefinitions(TODO())
@@ -134,52 +201,85 @@ class QuestionManager
                     //TODO: question.displayTextOnAnsweredWrong = card.definitions
                     return question
                 }
+
                 TestType.Match -> {
-                    var question = Question(card, testType = TestType.Match)
-                    return TODO()
-                    //multiple cards at once
+                    val questions = getMatchQuestions(cards, UserSettings.settings().matchOptions)
+                    if (questions.isNullOrEmpty()) {
+                        val types = testTypes.toMutableList()
+                        types.remove(TestType.Match)
+                        val testTypes = card.aptTrainings(types.toTypedArray())
+                        return if(testTypes.isNullOrEmpty()) {
+                            getNextQuestion()
+                        }else {
+                            getNextQuestion(card, testTypes[0])
+                        }
+                    }
+                    val question = Question(arrayOf(), testType = TestType.Match)
+                    for (q in questions){
+                        question.wordCards += q.wordCards
+                        question.correctAnswers += q.correctAnswers
+                        question.displayTexts += q.displayTexts
+                        question.options += q.options
+                        question.displayTextHint += q.displayTextHint
+                        //question.displayTextOnAnsweredWrong TODO:???
+                    }
+                    return question
                 }
+
                 TestType.Synonyms -> {
-                    var question = Question(card, testType = TestType.Synonyms)
-                    question.correctAnswers = arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
+                    var question = Question(arrayOf(card), testType = TestType.Synonyms)
+                    question.correctAnswers =
+                        arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
                     question.displayTexts = arrayOf(card.word())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotSynonymicWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.synonyms ?
                     return question
                 }
+
                 TestType.Antonyms -> {
-                    var question = Question(card, testType = TestType.Antonyms)
-                    question.correctAnswers = arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
+                    var question = Question(arrayOf(card), testType = TestType.Antonyms)
+                    question.correctAnswers =
+                        arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
                     question.displayTexts = arrayOf(card.word())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotAntonymousWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.antonyms ?
                     return question
                 }
+
                 TestType.Writing -> {
-                    var question = Question(card, testType = TestType.Writing)
+                    var question = Question(arrayOf(card), testType = TestType.Writing)
                     question.correctAnswers = arrayOf(card.word())
                     question.displayTexts = arrayOf(card.definition)
-                    question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
+                    question.displayTextHint =
+                        arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong
                     return question
                 }
+
                 TestType.WritingListening -> {
-                    var question = Question(card, testType = TestType.WritingListening)
+                    var question = Question(arrayOf(card), testType = TestType.WritingListening)
                     question.correctAnswers = arrayOf(card.word())
                     question.displayTexts = arrayOf(card.audioLink() ?: "")
-                    question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
+                    question.displayTextHint =
+                        arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong
                     return question
                 }
+
                 TestType.ALL -> {
                     return getNextQuestion()
                 }
+
                 TestType.NONE -> {
                     return null
                 }
             }
+        }
+
+        private fun getMatchQuestions(cards: Array<WordCard>, amount: Int): Array<Question>? {
+            return TODO()
         }
     }
 }
