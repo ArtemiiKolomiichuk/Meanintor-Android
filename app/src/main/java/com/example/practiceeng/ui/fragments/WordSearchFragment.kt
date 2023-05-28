@@ -49,8 +49,7 @@ class WordSearchFragment : Fragment() {
                         val executor = Executors.newSingleThreadExecutor()
                         val future = executor.submit(Callable { APIHandler.getCards(query.toString(), DictionaryAPI.ALL) })
                         val result = future.get()
-                    for (card in result)
-                        Log.d("WordSearchFragment", card.toString())
+                        Log.d("WordSearchFragment", result[0].toString())
 
                     if (result.size == 0) {
                         cardsList.visibility = RecyclerView.GONE

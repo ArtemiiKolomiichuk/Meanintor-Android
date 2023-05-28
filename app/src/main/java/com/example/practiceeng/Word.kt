@@ -1,5 +1,7 @@
 package com.example.practiceeng
 
+import java.util.UUID
+
 /**
  * A word that can have multiple [WordCard] attached to it
  */
@@ -14,9 +16,14 @@ constructor(
      * Audio links for US, UK, AU pronunciations
      */
     var audioLinks: Array<String> = arrayOf(),
-    var bookmarked: Boolean = false)
+    var bookmarked: Boolean = false,
+    var wordID : UUID = UUID.randomUUID())
 {
 
-
+override fun toString(): String {
+    return "<$word>\n" +
+            "Phonetics: ${phonetics.joinToString("# ")}\n" +
+            "Audio Links: ${audioLinks.joinToString("# ")}\n"
+}
 }
 
