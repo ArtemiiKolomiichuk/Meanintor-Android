@@ -1,5 +1,6 @@
 package com.example.practiceeng.ui.fragments
 
+import android.opengl.Visibility
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,7 +46,10 @@ class AddWordCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-
+            customPartOfSpeechChecked(isPhrase.isChecked)
+            isPhrase.setOnCheckedChangeListener { _, isChecked ->
+                customPartOfSpeechChecked(isChecked)
+            }
             addWordCardViewModel.name?.let { word.setText(addWordCardViewModel.name) }
             addWordCardViewModel.pos?.let {
                 //TODO: if pos if among dropdown then choose dropdown, otherwise send to custom
@@ -54,6 +59,18 @@ class AddWordCardFragment : Fragment() {
             addWordCardViewModel.example?.let { example.setText(addWordCardViewModel.example) }
             addWordCardViewModel.synonyms?.let { synonyms.setText(addWordCardViewModel.synonyms) }
             addWordCardViewModel.antonyms?.let { antonyms.setText(addWordCardViewModel.antonyms) }
+        }
+    }
+
+    fun customPartOfSpeechChecked(isChecked:Boolean){
+        binding.apply {
+            if (isChecked) {
+                spinner.visibility = View.GONE
+                partOfSpeech.visibility = View.VISIBLE
+            } else {
+                spinner.visibility = View.VISIBLE
+                partOfSpeech.visibility = View.GONE
+            }
         }
     }
 

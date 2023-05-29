@@ -100,9 +100,14 @@
         android:hint="Antomyns" />
 
     <Button
-        android:id="@+id/next_button"
+        android:id="@+id/choose_folder_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Next" />
+        android:text="Choose folder" />
+    <Button
+        android:id="@+id/save_word_card_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" />
 
 </LinearLayout>
