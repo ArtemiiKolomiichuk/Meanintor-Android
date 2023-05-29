@@ -24,7 +24,7 @@ class QuestionManager
          * *paused* or not should be checked before calling this function**
          */
         fun reset(
-            testTypes: Array<TestType> = Array(1) { TestType.ALL },
+            testTypes: Array<TestType> = TestType.values().copyOfRange(0, TestType.values().size - 1),
             folders: Array<String> = arrayOf()
         ) {
             counter = 0
@@ -115,6 +115,8 @@ class QuestionManager
                         for (i in 0 until card.trainingHistory.types.size) {
                             if (card.trainingHistory.types[i].first == question.testType) {
                                 card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second - 1)
+                                card.mastery -= UserSettings.settings().incorrectAnswerStep
+                                //TODO: adjust lastDate to avoid constant mastery level decrease
                                 break
                             }
                         }
@@ -141,6 +143,8 @@ class QuestionManager
                     for (i in 0 until card.trainingHistory.types.size) {
                         if (card.trainingHistory.types[i].first == question.testType) {
                             card.trainingHistory.types[i] = Pair(question.testType, card.trainingHistory.types[i].second - 1)
+                            card.mastery -= UserSettings.settings().incorrectAnswerStep
+                            //TODO: adjust lastDate to avoid constant mastery level decrease
                             break
                         }
                     }
@@ -173,7 +177,7 @@ class QuestionManager
             when (testType) {
                 TestType.FlashCard -> TODO()
                 TestType.TrueFalse -> {
-                    var question = Question(arrayOf(card), testType = TestType.TrueFalse)
+                    val question = Question(arrayOf(card), testType = TestType.TrueFalse)
                     //question.correctAnswers =
                     //question.displayTexts =
                     question.options = arrayOf("True", "False")
@@ -183,8 +187,8 @@ class QuestionManager
                 }
 
                 TestType.MultipleChoiceWord -> {
-                    var question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
-                    question.correctAnswers = arrayOf(card.word())
+                    val question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
+                    question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
                     question.options = card.getNotSynonymicWords(TODO())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
@@ -193,9 +197,9 @@ class QuestionManager
                 }
 
                 TestType.MultipleChoiceDefinition -> {
-                    var question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
+                    val question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
                     question.correctAnswers = arrayOf(card.definition)
-                    question.displayTexts = arrayOf(card.word())
+                    question.displayTexts = arrayOf(card.wordString())
                     question.options = card.getNotSynonymicDefinitions(TODO())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong = card.definitions
@@ -208,7 +212,7 @@ class QuestionManager
                         val types = testTypes.toMutableList()
                         types.remove(TestType.Match)
                         val testTypes = card.aptTrainings(types.toTypedArray())
-                        return if(testTypes.isNullOrEmpty()) {
+                        return if(testTypes.isEmpty()) {
                             getNextQuestion()
                         }else {
                             getNextQuestion(card, testTypes[0])
@@ -227,10 +231,10 @@ class QuestionManager
                 }
 
                 TestType.Synonyms -> {
-                    var question = Question(arrayOf(card), testType = TestType.Synonyms)
+                    val question = Question(arrayOf(card), testType = TestType.Synonyms)
                     question.correctAnswers =
                         arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
-                    question.displayTexts = arrayOf(card.word())
+                    question.displayTexts = arrayOf(card.wordString(), card.definition)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotSynonymicWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.synonyms ?
@@ -238,10 +242,10 @@ class QuestionManager
                 }
 
                 TestType.Antonyms -> {
-                    var question = Question(arrayOf(card), testType = TestType.Antonyms)
+                    val question = Question(arrayOf(card), testType = TestType.Antonyms)
                     question.correctAnswers =
                         arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
-                    question.displayTexts = arrayOf(card.word())
+                    question.displayTexts = arrayOf(card.wordString(), card.definition)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotAntonymousWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.antonyms ?
@@ -249,8 +253,8 @@ class QuestionManager
                 }
 
                 TestType.Writing -> {
-                    var question = Question(arrayOf(card), testType = TestType.Writing)
-                    question.correctAnswers = arrayOf(card.word())
+                    val question = Question(arrayOf(card), testType = TestType.Writing)
+                    question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
                     question.displayTextHint =
                         arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
@@ -259,21 +263,17 @@ class QuestionManager
                 }
 
                 TestType.WritingListening -> {
-                    var question = Question(arrayOf(card), testType = TestType.WritingListening)
-                    question.correctAnswers = arrayOf(card.word())
-                    question.displayTexts = arrayOf(card.audioLink() ?: "")
+                    val question = Question(arrayOf(card), testType = TestType.WritingListening)
+                    question.correctAnswers = arrayOf(card.wordString())
+                    //question.displayTexts = card.audioLinks
                     question.displayTextHint =
                         arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong
                     return question
                 }
 
-                TestType.ALL -> {
-                    return getNextQuestion()
-                }
-
                 TestType.NONE -> {
-                    return null
+                    return getNextQuestion()
                 }
             }
         }

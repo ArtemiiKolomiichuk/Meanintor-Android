@@ -10,7 +10,4 @@ data class TrainingHistory
 constructor(
     var types : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>(),
     var lastDate : Date? = null)
-{
-
-}
 

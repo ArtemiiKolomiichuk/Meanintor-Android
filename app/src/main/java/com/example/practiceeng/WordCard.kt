@@ -1,45 +1,47 @@
 package com.example.practiceeng
 
 import java.util.Date
+import java.util.UUID
 
 /**
  * Card for learning a variant of [Word]
  */
 data class WordCard
 constructor(
-    var word: Word,
+    private var word: UUID,
     var partOfSpeech: String,
     var definition: String,
     var examples: Array<String> = arrayOf<String>(),
     var synonyms: Array<String> = arrayOf<String>(),
     var antonyms: Array<String> = arrayOf<String>(),
-    /*
-        var typesArray : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>()
-        var splitTypes = types.split("-")
-        for (i in splitTypes.indices){
-            typesArray += Pair(TestType.values()[i], splitTypes[i].toInt())
-        }
-    */
     var trainingHistory: TrainingHistory = TrainingHistory(),
     var bookmarked: Boolean = false,
     var paused : Boolean = false,
     var mastery: Double = 0.0,
-    var folder : String = "")
+    var folder : UUID = UUID.randomUUID(),
+    var cardID : UUID = UUID.randomUUID())
 {
-
-    fun word() : String {
-        return word.word
-    }
-    fun hasPhonetics(): Boolean {
-        return word.phonetics.isNotEmpty() && (!word.phonetics[0].isNullOrBlank() || !word.phonetics[1].isNullOrBlank() || !word.phonetics[2].isNullOrBlank())
-    }
-
-    fun audioLink() : String?{
+    fun word() : Word {
         return TODO()
     }
 
+    fun setWord(wordWord: Word) {
+        TODO()
+    }
+
+    fun wordString() : String {
+        return word().word
+    }
+    fun hasPhonetics(): Boolean {
+        return word().phonetics.isNotEmpty() && (!word().phonetics[0].isNullOrBlank() || !word().phonetics[1].isNullOrBlank() || !word().phonetics[2].isNullOrBlank())
+    }
+
+    fun audioLinks() : Array<String>{
+        return word().audioLinks
+    }
+
     fun phonetics(): Array<String> {
-        return word.phonetics
+        return word().phonetics
     }
     fun hasExamples(): Boolean {
         return examples.isNotEmpty()
@@ -56,8 +58,8 @@ constructor(
             for (example in examples){
                 if (example.contains("<b>")) {
                     hintExamples += example.replace(Regex("<b>.*</b>"), "______")
-                }else if (example.contains(word())) {
-                    hintExamples += example.replace(word(), "______")
+                }else if (example.contains(wordString())) {
+                    hintExamples += example.replace(wordString(), "______")
                 }
             }
         }
@@ -105,27 +107,13 @@ constructor(
 
         if (seconds > currentMargin) {
             val newMasteryLevel = (masteryLevel - 1).coerceAtLeast(0)
+            //TODO: adjust lastDate to avoid constant mastery level decrease
             return retentionSteps[newMasteryLevel]
         }
 
         val remainingSeconds = currentMargin - seconds
         val retentionDifference = (currentRetention - 1) * (remainingSeconds.toDouble() / currentMargin.toDouble())
         return currentRetention - retentionDifference
-    }
-
-    /**
-     * Returns the most appropriate [TestType] for the next training
-     *
-     * *Does **not** check if the word is [paused]*
-     */
-    fun aptTraining() : TestType{
-        var ordered = trainingOrder()
-        for (type in ordered){
-            if (isAptForTraining(type)){
-                return type
-            }
-        }
-        return TestType.NONE
     }
 
     /**
@@ -158,7 +146,7 @@ constructor(
                 return type
             }
         }
-        return TestType.ALL
+        return TestType.NONE
     }
 
     /**
@@ -202,8 +190,7 @@ constructor(
             TestType.Synonyms -> hasSynonyms()
             TestType.Antonyms -> hasAntonyms()
             TestType.Writing -> true
-            TestType.WritingListening -> hasPhonetics()
-            TestType.ALL -> throw IllegalArgumentException("\"ALL\" is not a valid test type")
+            TestType.WritingListening -> audioLinks().isNotEmpty()
             TestType.NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
         }
     }

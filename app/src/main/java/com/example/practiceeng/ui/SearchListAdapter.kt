@@ -10,7 +10,7 @@ import com.example.practiceeng.databinding.CardItemBinding
 class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolder(binding.root) {
     open fun bind(card: WordCard) {
         binding.apply {
-            word.setText(card.word())
+            word.setText(card.wordString())
             partOfSpeech.setText(card.partOfSpeech)
             definitionString.setText(card.definition)
             example.setText(card.examples.toString())

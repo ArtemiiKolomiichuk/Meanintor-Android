@@ -13,7 +13,6 @@ enum class TestType {
     Antonyms,
     Writing,
     WritingListening,
-    ALL,
     NONE
 }
 
