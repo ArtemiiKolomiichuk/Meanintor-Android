@@ -1,14 +1,15 @@
 package com.example.practiceeng
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.Date
 import java.util.UUID
 
 /**
  * Card for learning a variant of [Word]
  */
-data class WordCard
-constructor(
-    private var word: UUID,
+@Entity
+data class WordCard(
     var partOfSpeech: String,
     var definition: String,
     var examples: Array<String> = arrayOf<String>(),
@@ -18,8 +19,9 @@ constructor(
     var bookmarked: Boolean = false,
     var paused : Boolean = false,
     var mastery: Double = 0.0,
-    var folder : UUID = UUID.randomUUID(),
-    var cardID : UUID = UUID.randomUUID())
+    val wordID: UUID,
+    var folderID : UUID,
+    @PrimaryKey val cardID : UUID = UUID.randomUUID())
 {
     fun word() : Word {
         return TODO()

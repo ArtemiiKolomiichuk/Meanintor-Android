@@ -1,10 +1,13 @@
 package com.example.practiceeng
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.UUID
 
 /**
  * A word that can have multiple [WordCard] attached to it
  */
+@Entity
 data class Word
 constructor(
     var word: String,
@@ -17,7 +20,7 @@ constructor(
      */
     var audioLinks: Array<String> = arrayOf(),
     var bookmarked: Boolean = false,
-    var wordID : UUID = UUID.randomUUID())
+    @PrimaryKey var wordID : UUID = UUID.randomUUID())
 {
 
 override fun toString(): String {
