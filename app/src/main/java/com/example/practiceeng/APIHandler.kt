@@ -61,7 +61,7 @@ class APIHandler{
                             val result = results.getJSONObject(i)
                             val partOfSpeech = result.optString("partOfSpeech")
                             val definition = result.optString("definition")
-                            val card = WordCard(word, partOfSpeech, definition)
+                            val card = WordCard(word.wordID, partOfSpeech, definition)
                             try {
                                 val synonyms = result.getJSONArray("synonyms")
                                 for (j in 0 until synonyms.length()) {
@@ -117,7 +117,7 @@ class APIHandler{
                                 val example = definition.optString("example")
                                 val synonyms = definition.optJSONArray("synonyms")
                                 val antonyms = definition.optJSONArray("antonyms")
-                                val card = WordCard(word, partOfSpeech, definitionString)
+                                val card = WordCard(word.wordID, partOfSpeech, definitionString)
                                 card.examples += example
                                 if (synonyms != null) {
                                     for (k in 0 until synonyms.length()) {
@@ -168,7 +168,7 @@ class APIHandler{
                                 for(d in 0 until definitions.length()){
                                     val definition = definitions.getJSONObject(d)
                                     val definitionString = definition.optString("definition")
-                                    val card = WordCard(word, partOfSpeech, definitionString)
+                                    val card = WordCard(word.wordID, partOfSpeech, definitionString)
                                     val examples = definition.optJSONArray("examples")
                                     //TODO:val synonyms = definition.optJSONArray("synonyms")
                                     //TODO:val antonyms = definition.optJSONArray("antonyms")
@@ -204,7 +204,7 @@ class APIHandler{
                             for (d in 0 until definitions.length()){
                                 val definition = definitions.getJSONObject(d)
                                 val definitionString = definition.optString("definition")
-                                val card = WordCard(word, partOfSpeech, definitionString)
+                                val card = WordCard(word.wordID, partOfSpeech, definitionString)
                                 try {
                                     val examples = definition.optJSONArray("examples")
                                     for(e in 0 until examples.length()){
@@ -252,8 +252,8 @@ class APIHandler{
                                 }
                             }
                         }
-                        cards[0].word.phonetics = phonetics
-                        cards[0].word.audioLinks = audioLinks
+                        cards[0].word().phonetics = phonetics
+                        cards[0].word().audioLinks = audioLinks
                     }catch (_: Exception){}
                     return cards
                 }
@@ -266,19 +266,19 @@ class APIHandler{
                         return arrayOf()
                     }
                     var i = 0
-                    var wordWord : Word = if(cards.isNotEmpty()) cards[cards.size - 1].word else Word(word)
-                    if(cards.isNotEmpty() && cards[0].word.phonetics.isNotEmpty()){
-                        wordWord = cards[0].word
+                    var wordWord : Word = if(cards.isNotEmpty()) cards[cards.size - 1].word() else Word(word)
+                    if(cards.isNotEmpty() && cards[0].word().phonetics.isNotEmpty()){
+                        wordWord = cards[0].word()
                     }
                     while (i < cards.size){
-                        if(cards[i].word() != word){
+                        if(cards[i].wordString() != word){
                             cards.removeAt(i)
                         }else{
                             i++
                         }
                     }
                     for(c in cards){
-                        c.word = wordWord
+                        c.setWord(wordWord)
                     }
                     return cards.toTypedArray()
                 }

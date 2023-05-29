@@ -8,19 +8,12 @@ import java.util.UUID
  */
 data class WordCard
 constructor(
-    var word: Word,
+    private var word: UUID,
     var partOfSpeech: String,
     var definition: String,
     var examples: Array<String> = arrayOf<String>(),
     var synonyms: Array<String> = arrayOf<String>(),
     var antonyms: Array<String> = arrayOf<String>(),
-    /*
-        var typesArray : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>()
-        var splitTypes = types.split("-")
-        for (i in splitTypes.indices){
-            typesArray += Pair(TestType.values()[i], splitTypes[i].toInt())
-        }
-    */
     var trainingHistory: TrainingHistory = TrainingHistory(),
     var bookmarked: Boolean = false,
     var paused : Boolean = false,
@@ -28,20 +21,27 @@ constructor(
     var folder : UUID = UUID.randomUUID(),
     var cardID : UUID = UUID.randomUUID())
 {
+    fun word() : Word {
+        return TODO()
+    }
 
-    fun word() : String {
-        return word.word
+    fun setWord(wordWord: Word) {
+        TODO()
+    }
+
+    fun wordString() : String {
+        return word().word
     }
     fun hasPhonetics(): Boolean {
-        return word.phonetics.isNotEmpty() && (!word.phonetics[0].isNullOrBlank() || !word.phonetics[1].isNullOrBlank() || !word.phonetics[2].isNullOrBlank())
+        return word().phonetics.isNotEmpty() && (!word().phonetics[0].isNullOrBlank() || !word().phonetics[1].isNullOrBlank() || !word().phonetics[2].isNullOrBlank())
     }
 
     fun audioLinks() : Array<String>{
-        return word.audioLinks
+        return word().audioLinks
     }
 
     fun phonetics(): Array<String> {
-        return word.phonetics
+        return word().phonetics
     }
     fun hasExamples(): Boolean {
         return examples.isNotEmpty()
@@ -58,8 +58,8 @@ constructor(
             for (example in examples){
                 if (example.contains("<b>")) {
                     hintExamples += example.replace(Regex("<b>.*</b>"), "______")
-                }else if (example.contains(word())) {
-                    hintExamples += example.replace(word(), "______")
+                }else if (example.contains(wordString())) {
+                    hintExamples += example.replace(wordString(), "______")
                 }
             }
         }

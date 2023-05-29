@@ -188,7 +188,7 @@ class QuestionManager
 
                 TestType.MultipleChoiceWord -> {
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
-                    question.correctAnswers = arrayOf(card.word())
+                    question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
                     question.options = card.getNotSynonymicWords(TODO())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
@@ -199,7 +199,7 @@ class QuestionManager
                 TestType.MultipleChoiceDefinition -> {
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
                     question.correctAnswers = arrayOf(card.definition)
-                    question.displayTexts = arrayOf(card.word())
+                    question.displayTexts = arrayOf(card.wordString())
                     question.options = card.getNotSynonymicDefinitions(TODO())
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong = card.definitions
@@ -234,7 +234,7 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.Synonyms)
                     question.correctAnswers =
                         arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
-                    question.displayTexts = arrayOf(card.word(), card.definition)
+                    question.displayTexts = arrayOf(card.wordString(), card.definition)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotSynonymicWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.synonyms ?
@@ -245,7 +245,7 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.Antonyms)
                     question.correctAnswers =
                         arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
-                    question.displayTexts = arrayOf(card.word(), card.definition)
+                    question.displayTexts = arrayOf(card.wordString(), card.definition)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     question.options = card.getNotAntonymousWords(TODO())
                     //TODO: question.displayTextOnAnsweredWrong = card.antonyms ?
@@ -254,7 +254,7 @@ class QuestionManager
 
                 TestType.Writing -> {
                     val question = Question(arrayOf(card), testType = TestType.Writing)
-                    question.correctAnswers = arrayOf(card.word())
+                    question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
                     question.displayTextHint =
                         arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
@@ -264,7 +264,7 @@ class QuestionManager
 
                 TestType.WritingListening -> {
                     val question = Question(arrayOf(card), testType = TestType.WritingListening)
-                    question.correctAnswers = arrayOf(card.word())
+                    question.correctAnswers = arrayOf(card.wordString())
                     //question.displayTexts = card.audioLinks
                     question.displayTextHint =
                         arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
