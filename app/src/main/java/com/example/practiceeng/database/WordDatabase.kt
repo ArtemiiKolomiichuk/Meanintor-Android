@@ -1,19 +1,17 @@
 package com.example.practiceeng.database
 
 import androidx.room.*
-import com.example.practiceeng.Folder
-import com.example.practiceeng.TrainingHistory
-import com.example.practiceeng.Word
-import com.example.practiceeng.WordCard
+import com.example.practiceeng.*
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 @Database(entities = [ Word::class, WordCard::class, Folder::class ], version=1)
-@TypeConverters(CrimeTypeConverters::class)
+@TypeConverters(WordTypeConverters::class)
 abstract class WordDatabase : RoomDatabase() {
     abstract fun wordDao(): WordDao
 }
 
-class CrimeTypeConverters {
+class WordTypeConverters {
     @TypeConverter
     fun fromDate(date: Date): Long {
         return date.time
@@ -24,32 +22,83 @@ class CrimeTypeConverters {
     }
 
     @TypeConverter
-    fun toArray(array: String): Array<String> {
-        return emptyArray()
+    fun fromTrainingHistory(value: TrainingHistory): String {
+        var string = ""
+        for (i in value.types.indices) {
+            string += value.types[i].first.ordinal.toString() + "-" + value.types[i].second.toString()
+            if (i != value.types.size - 1) {
+                string += "#"
+            }
+        }
+        string += "|${value.lastDate?.time}"
+        return string
     }
 
     @TypeConverter
-    fun fromArray(array: Array<String>): String{
-        return String()
+    fun toTrainingHistory(value: String): TrainingHistory {
+        val split = value.split("|")
+        val types = split[0].split("#")
+        var typesArray = arrayOf<Pair<TestType, Int>>()
+        for (type in types) {
+            val splitType = type.split("-")
+            typesArray += (Pair(TestType.values()[splitType[0].toInt()], splitType[1].toInt()))
+        }
+        val lastDate = Date(split[1].toLong())
+        return TrainingHistory(typesArray, lastDate)
     }
+
     @TypeConverter
-    fun toTrainingHistory(history: String): TrainingHistory {
-        return TrainingHistory()
+    fun fromStringArray(value: Array<String>): String {
+        return value.joinToString("#")
     }
-    fun fromTrainingHistory(history: TrainingHistory): String {
-        return history.toString()
+
+    @TypeConverter
+    fun toStringArray(value: String): Array<String> {
+        return value.split("#").toTypedArray()
     }
 }
 
+
 @Dao
 interface WordDao {
-
-   /* @Query("SELECT * FROM crime")
-    fun getCrimes(): Flow<List<Crime>>
-    @Query("SELECT * FROM crime WHERE id=(:id)")
-    suspend fun getCrime(id: UUID): Crime
     @Update
-    suspend fun updateCrime(crime: Crime)
+    suspend fun updateWord(word: Word)
     @Insert
-    suspend fun addCrime(crime: Crime)*/
+    suspend fun addWord(word: Word)
+    @Update
+    suspend fun updateFolder(folder: Folder)
+    @Insert
+    suspend fun addFolder(folder: Folder)
+    @Update
+    suspend fun updateWordCard(wordCard: WordCard)
+    @Insert
+    suspend fun addWordCard(wordCard: WordCard)
+    @Query("SELECT * FROM word")
+    fun getWords(): Flow<List<Word>>
+
+    @Query("SELECT * FROM word WHERE wordID=(:wordID)")
+   suspend fun getWord(wordID: UUID): Word
+
+    @Query("SELECT * FROM word WHERE word=(:name)")
+   suspend fun getWord(name: String): Word
+
+    @Query("SELECT * FROM folder")
+    fun getFolders(): Flow<List<Folder>>
+
+    @Query("SELECT * FROM folder WHERE folderID=(:folderID)")
+    suspend fun getFolder(folderID: UUID): Folder
+
+    @Query("SELECT * FROM wordCard WHERE folderID=(:folderID)")
+    fun getWordCardsFromFolder(folderID: UUID): Flow<List<WordCard>>
+
+    @Query("SELECT * FROM wordCard")
+    fun getWordCards(): Flow<List<WordCard>>
+
+    @Query("SELECT * FROM wordCard WHERE cardID=(:cardID)")
+    suspend fun getWordCard(cardID: UUID): WordCard
+
+    @Query("SELECT * FROM word WHERE bookmarked=true")
+    fun getBookmarkedWords(): Flow<List<Word>>
+
+
 }

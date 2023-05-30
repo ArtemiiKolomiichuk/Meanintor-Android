@@ -1,8 +1,13 @@
 package com.example.practiceeng.database
 
 import android.content.Context
+import androidx.room.Insert
+import androidx.room.Query
 import androidx.room.Room
-import com.example.practiceeng.WordDatabase
+import androidx.room.Update
+import com.example.practiceeng.Folder
+import com.example.practiceeng.Word
+import com.example.practiceeng.WordCard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -22,16 +27,46 @@ class WordRepository private constructor(context: Context,
        // .createFromAsset(DATABASE_NAME)
         .build()
 
-  /*  fun getCrimes(): Flow<List<Crime>> = database.crimeDao().getCrimes()
-    suspend fun getCrime(id: UUID): Crime = database.crimeDao().getCrime(id)
-    fun updateCrime(crime:Crime) {
+    fun updateWord(word: Word) {
         coroutineScope.launch {
-            database.crimeDao().updateCrime(crime)
+            database.wordDao().updateWord(word)
         }
     }
-    suspend fun addCrime(crime: Crime){
-        database.crimeDao().addCrime(crime)
-    }*/
+    fun addWord(word: Word)  {
+        coroutineScope.launch {
+            database.wordDao().addWord(word)
+        }
+    }
+    fun updateFolder(folder: Folder) {
+        coroutineScope.launch {
+            database.wordDao().updateFolder(folder)
+        }
+    }
+    fun addFolder(folder: Folder){
+        coroutineScope.launch {
+            database.wordDao().addFolder(folder)
+        }
+    }
+    fun updateWordCard(wordCard: WordCard) {
+        coroutineScope.launch {
+            database.wordDao().updateWordCard(wordCard)
+        }
+    }
+    fun addWordCard(wordCard: WordCard) {
+        coroutineScope.launch {
+            database.wordDao().addWordCard(wordCard)
+        }
+    }
+    fun getWords(): Flow<List<Word>> =  database.wordDao().getWords()
+    suspend fun getWord(wordID: UUID): Word =   database.wordDao().getWord(wordID)
+    suspend fun getWord(name: String): Word =   database.wordDao().getWord(name)
+    fun getFolders(): Flow<List<Folder>> =   database.wordDao().getFolders()
+    suspend fun getFolder(folderID: UUID): Folder =   database.wordDao().getFolder(folderID)
+    fun getWordCardsFromFolder(folderID: UUID): Flow<List<WordCard>> =   database.wordDao().getWordCardsFromFolder(folderID)
+    fun getWordCards(): Flow<List<WordCard>> =   database.wordDao().getWordCards()
+    suspend fun getWordCard(cardID: UUID): WordCard =   database.wordDao().getWordCard(cardID)
+    fun getBookmarkedWords(): Flow<List<Word>> = database.wordDao().getBookmarkedWords()
+
 
     companion object {
         private var INSTANCE: WordRepository? = null
