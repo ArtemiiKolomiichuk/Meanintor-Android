@@ -2,6 +2,8 @@ package com.example.practiceeng
 
 import java.lang.Exception
 import java.util.Date
+import java.util.Random
+import java.util.UUID
 
 /**
  * Manages the questions
@@ -14,7 +16,7 @@ class QuestionManager
     companion object {
         private var folders: Array<String> = arrayOf()
         private var testTypes: Array<TestType> = arrayOf()
-        private var cards: Array<WordCard> = arrayOf()
+        private var cards: MutableList<WordCard> = mutableListOf()
         var counter: Int = 0
 
         /**
@@ -24,7 +26,7 @@ class QuestionManager
          * *paused* or not should be checked before calling this function**
          */
         fun reset(
-            testTypes: Array<TestType> = TestType.values().copyOfRange(0, TestType.values().size - 1),
+            testTypes: Array<TestType> = TestType.all(),
             folders: Array<String> = arrayOf()
         ) {
             counter = 0
@@ -47,11 +49,25 @@ class QuestionManager
         }
 
         /**
-         * Returns folders that include at least 1 card that is not paused
+         * Returns not paused folders that include at least 1 card that is not paused
          * and can be studied in at least 1 of the selected [TestType]s
          */
-        fun aptFolders(testTypes : Array<TestType>) : Array<String>{
+        fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
               return TODO()
+        }
+
+        /**
+         * Returns a maximum amount of unique questions that
+         * can be created considering provided settings
+         */
+        fun maxQuestions(testTypes: Array<TestType> = TestType.all(),
+                         folders: Array<String> = arrayOf()) : Int {
+            var counter = 0
+            val cards = cards//TODO: DataBase
+            for (card in cards){
+                counter += card.aptTrainings(testTypes).size
+            }
+            return counter
         }
 
         /**
@@ -152,7 +168,10 @@ class QuestionManager
             }
         }
 
-        private fun getNextCard(): WordCard {
+        private fun getNextCard(): WordCard? {
+            if(cards.isEmpty()){
+                return null
+            }
             if (counter >= cards.size) {
                 counter = 0
             }
@@ -163,26 +182,31 @@ class QuestionManager
          * TODO: check for infinite loop possibilities
          */
         private fun getNextQuestion(): Question? {
-            val card = getNextCard()
+            val card = getNextCard() ?: return null
             counter++
             return try {
                 getNextQuestion(card, card.aptTraining(testTypes))
             } catch (e: Exception) {
                 println("Error(getNextQuestion): $e")
+                cards.remove(card)
                 getNextQuestion()
             }
         }
 
         private fun getNextQuestion(card: WordCard, testType: TestType): Question? {
             when (testType) {
-                TestType.FlashCard -> TODO()
+                TestType.FlashCard -> {
+                    return TODO()
+                }
+
                 TestType.TrueFalse -> {
                     val question = Question(arrayOf(card), testType = TestType.TrueFalse)
-                    //question.correctAnswers =
-                    //question.displayTexts =
+                    val answer = Random().nextBoolean()
+                    question.correctAnswers = arrayOf(if(answer) "True" else "False")
+                    val realWord = Random().nextBoolean()
+                    question.displayTexts = arrayOf((if(realWord) card.wordString() else card.definition))//,TODO: (if(realWord) random.definition else random.wordString())
                     question.options = arrayOf("True", "False")
-                    //question.displayTextHint =
-                    //question.displayTextOnAnsweredWrong
+                    question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition)
                     return TODO()
                 }
 
@@ -190,7 +214,7 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
                     question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
-                    question.options = card.getNotSynonymicWords(TODO())
+                    question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions, cards)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong
                     return question
@@ -200,7 +224,7 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
                     question.correctAnswers = arrayOf(card.definition)
                     question.displayTexts = arrayOf(card.wordString())
-                    question.options = card.getNotSynonymicDefinitions(TODO())
+                    question.options = card.getNotSynonymicDefinitions(UserSettings.settings().questionOptions, cards)
                     //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     //TODO: question.displayTextOnAnsweredWrong = card.definitions
                     return question
@@ -235,8 +259,8 @@ class QuestionManager
                     question.correctAnswers =
                         arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
-                    //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
-                    question.options = card.getNotSynonymicWords(TODO())
+                    question.displayTextHint = card.antonyms
+                    question.options = card.getNotSynonymicWords(TODO(), cards)
                     //TODO: question.displayTextOnAnsweredWrong = card.synonyms ?
                     return question
                 }
@@ -246,8 +270,8 @@ class QuestionManager
                     question.correctAnswers =
                         arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
-                    //question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
-                    question.options = card.getNotAntonymousWords(TODO())
+                    question.displayTextHint = card.synonyms
+                    question.options = card.getNotAntonymousWords(TODO(), cards)
                     //TODO: question.displayTextOnAnsweredWrong = card.antonyms ?
                     return question
                 }
@@ -273,12 +297,13 @@ class QuestionManager
                 }
 
                 TestType.NONE -> {
+                    cards.remove(card)
                     return getNextQuestion()
                 }
             }
         }
 
-        private fun getMatchQuestions(cards: Array<WordCard>, amount: Int): Array<Question>? {
+        private fun getMatchQuestions(cards: MutableList<WordCard>, amount: Int): Array<Question>? {
             return TODO()
         }
     }

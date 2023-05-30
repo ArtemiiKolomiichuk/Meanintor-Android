@@ -16,10 +16,9 @@ data class WordCard(
     var synonyms: Array<String> = arrayOf<String>(),
     var antonyms: Array<String> = arrayOf<String>(),
     var trainingHistory: TrainingHistory = TrainingHistory(),
-    var bookmarked: Boolean = false,
     var paused : Boolean = false,
     var mastery: Double = 0.0,
-    val wordID: UUID,
+    var wordID: UUID,
     var folderID : UUID,
     @PrimaryKey val cardID : UUID = UUID.randomUUID())
 {
@@ -28,7 +27,7 @@ data class WordCard(
     }
 
     fun setWord(wordWord: Word) {
-        TODO()
+        wordID = wordWord.wordID
     }
 
     fun wordString() : String {
@@ -45,6 +44,7 @@ data class WordCard(
     fun phonetics(): Array<String> {
         return word().phonetics
     }
+
     fun hasExamples(): Boolean {
         return examples.isNotEmpty()
     }
@@ -68,16 +68,46 @@ data class WordCard(
         return hintExamples
     }
 
-    fun getNotSynonymicDefinitions(amount : Int) : Array<String> {
-        return TODO()
+    fun getNotSynonymicDefinitions(amount : Int, cards: MutableList<WordCard>) : Array<String> {
+        var notSynonymicDefinitions = arrayOf<String>()
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) }
+        return if (notSynonymicCards.size > amount*2) {
+            notSynonymicCards = notSynonymicCards.shuffled().take(amount)
+            for (card in notSynonymicCards) {
+                notSynonymicDefinitions += card.definition
+            }
+            notSynonymicDefinitions
+        }else{
+            Utils.getGeneralDefinitionOptions(amount, synonyms, partOfSpeech)
+        }
     }
 
-    fun getNotSynonymicWords(amount : Int) : Array<String> {
-        return TODO()
+    fun getNotSynonymicWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
+        var notSynonymicWords = arrayOf<String>()
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) }
+        return if (notSynonymicCards.size > amount*2) {
+            notSynonymicCards = notSynonymicCards.shuffled().take(amount)
+            for (card in notSynonymicCards) {
+                notSynonymicWords += card.wordString()
+            }
+            notSynonymicWords
+        }else{
+            Utils.getGeneralWordOptions(amount, synonyms, partOfSpeech)
+        }
     }
 
-    fun getNotAntonymousWords(amount : Int) : Array<String> {
-        return TODO()
+    fun getNotAntonymousWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
+        var notAntonymousWords = arrayOf<String>()
+        var notAntonymousCards = cards.filter { it.partOfSpeech == partOfSpeech && !antonyms.contains(it.wordString()) }
+        return if (notAntonymousCards.size > amount*2) {
+            notAntonymousCards = notAntonymousCards.shuffled().take(amount)
+            for (card in notAntonymousCards) {
+                notAntonymousWords += card.wordString()
+            }
+            notAntonymousWords
+        }else{
+            Utils.getGeneralWordOptions(amount, antonyms, partOfSpeech)
+        }
     }
 
     fun hasAntonyms(): Boolean {
@@ -159,19 +189,6 @@ data class WordCard(
         var result = arrayOf<TestType>()
         for (i in sorted){
             result += i.first
-        }
-        return result
-    }
-
-    /**
-     * Returns [TestType]s that the word can be trained in
-     */
-    fun aptForTrainings(testTypes: Array<TestType>) : Array<TestType>{
-        var result = arrayOf<TestType>()
-        for (type in testTypes){
-            if (isAptForTraining(type)){
-                result += type
-            }
         }
         return result
     }

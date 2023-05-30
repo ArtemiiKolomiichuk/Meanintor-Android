@@ -11,5 +11,6 @@ import java.util.UUID
 data class Folder(
     var title : String,
     var description : String,
+    var paused: Boolean = false,
     @PrimaryKey var folderID : UUID = UUID.randomUUID())
 
