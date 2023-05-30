@@ -26,8 +26,7 @@
             app:enterAnim="@android:anim/slide_in_left" />
         <argument
             android:name="name"
-            app:argType="string"
-            app:nullable="true" />
+            app:argType="string" />
         <argument
             android:name="partOfSpeech"
             app:argType="string"
@@ -38,19 +37,23 @@
             app:nullable="true" />
         <argument
             android:name="example"
-            app:argType="string"
+            app:argType="string[]"
             app:nullable="true" />
         <argument
             android:name="synonyms"
-            app:argType="string"
+            app:argType="string[]"
             app:nullable="true" />
         <argument
             android:name="antonyms"
-            app:argType="string"
+            app:argType="string[]"
             app:nullable="true" />
         <argument
             android:name="folder"
-            app:argType="string"
+            app:argType="java.util.UUID"
+            app:nullable="true" />
+        <argument
+            android:name="cardID"
+            app:argType="java.util.UUID"
             app:nullable="true" />
     </fragment>
     <fragment

@@ -5,10 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.WordCard
 import com.example.practiceeng.databinding.CardItemBinding
+import java.util.*
 
 
 class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolder(binding.root) {
-    open fun bind(card: WordCard) {
+    open fun bind(card: WordCard, onCardClicked: (card: WordCard) -> Unit) {
         binding.apply {
             word.setText(card.wordString())
             partOfSpeech.setText(card.partOfSpeech)
@@ -28,12 +29,16 @@ class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolde
                 antonymsTitle.visibility = RecyclerView.GONE
                 antonyms.visibility = RecyclerView.GONE
             }
+
+            binding.root.setOnClickListener {
+               onCardClicked
+            }
         }
     }
 }
 
 class SearchListAdapter(
-    private val cards: List<WordCard>,
+    private val cards: List<WordCard>, private val onCardClicked: (card: WordCard) -> Unit
 ) : RecyclerView.Adapter<WordCardHolder>() {
 
     override fun getItemCount(): Int = cards.size
@@ -49,6 +54,6 @@ class SearchListAdapter(
 
     override fun onBindViewHolder(holder: WordCardHolder, position: Int) {
         val card = cards[position]
-        holder.bind(card)
+        holder.bind(card, onCardClicked)
     }
 }

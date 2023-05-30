@@ -30,7 +30,8 @@ class AddWordCardFragment : Fragment() {
             args.example,
         args.synonyms,
         args.antonyms,
-        args.folder)
+        args.folder,
+        args.cardID)
     }
 
     override fun onCreateView(
@@ -46,19 +47,26 @@ class AddWordCardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            customPartOfSpeechChecked(isPhrase.isChecked)
+
             isPhrase.setOnCheckedChangeListener { _, isChecked ->
                 customPartOfSpeechChecked(isChecked)
             }
             addWordCardViewModel.name?.let { word.setText(addWordCardViewModel.name) }
             addWordCardViewModel.pos?.let {
+                val partsOfSpeech = resources.getStringArray(R.array.parts_of_speech)
+
+                partsOfSpeech.indices.firstOrNull{i: Int -> partsOfSpeech[i].equals(addWordCardViewModel.pos)}?.let { i ->
+                    customPartOfSpeechChecked(false)
+                    spinner.setSelection(i)
+                }
+
                 //TODO: if pos if among dropdown then choose dropdown, otherwise send to custom
 
             }
             addWordCardViewModel.def?.let { definition.setText(addWordCardViewModel.def) }
-            addWordCardViewModel.example?.let { example.setText(addWordCardViewModel.example) }
-            addWordCardViewModel.synonyms?.let { synonyms.setText(addWordCardViewModel.synonyms) }
-            addWordCardViewModel.antonyms?.let { antonyms.setText(addWordCardViewModel.antonyms) }
+            addWordCardViewModel.example?.let { example.setText(addWordCardViewModel.example.toString()) }
+            addWordCardViewModel.synonyms?.let { synonyms.setText(addWordCardViewModel.synonyms.toString()) }
+            addWordCardViewModel.antonyms?.let { antonyms.setText(addWordCardViewModel.antonyms.toString()) }
         }
     }
 
@@ -66,6 +74,7 @@ class AddWordCardFragment : Fragment() {
         binding.apply {
             if (isChecked) {
                 spinner.visibility = View.GONE
+                partOfSpeech.setText(addWordCardViewModel.pos)
                 partOfSpeech.visibility = View.VISIBLE
             } else {
                 spinner.visibility = View.VISIBLE

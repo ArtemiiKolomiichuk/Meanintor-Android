@@ -39,7 +39,7 @@ class WordSearchFragment : Fragment() {
         binding.apply {
 
             addWordsButton.setOnClickListener {
-               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null)
+               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
                 findNavController().navigate(action)
             }
 
@@ -58,7 +58,20 @@ class WordSearchFragment : Fragment() {
                     } else {
                         textView.visibility = RecyclerView.GONE
                         cardsList.visibility = RecyclerView.VISIBLE
-                        cardsList.adapter = SearchListAdapter(result.toList())
+                        cardsList.adapter = SearchListAdapter(result.toList(), { card ->
+                            findNavController().navigate(
+                                WordSearchFragmentDirections.addWordCard(
+                                    card.wordString(),
+                                    card.partOfSpeech,
+                                    card.definition,
+                                    card.examples,
+                                    card.synonyms,
+                                    card.antonyms,
+                                    card.folderID,
+                                    card.cardID
+                                )
+                            )
+                        })
                     }
 
                     val audio = MediaPlayer.create(context, "https://download.xfd.plus/xfed/audio/33965_en-us-extraordinary.ogg".toUri())
@@ -66,13 +79,12 @@ class WordSearchFragment : Fragment() {
                         audio?.start()
                     }
                     audio?.setOnCompletionListener {
-                        audio?.start()
+                        audio?.stop()
                     }
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-
                     return true
                 }
 

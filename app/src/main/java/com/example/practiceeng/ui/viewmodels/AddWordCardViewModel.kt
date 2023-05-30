@@ -8,17 +8,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class AddWordCardViewModelFactory(
-    private val name: String?,
-    private val pos: String?,
-    private val def: String?,
-    private val example: String?,
-    private val synonyms: String?,
-    private val antonyms: String?,
-    private val folder: String?
-)               : ViewModelProvider.Factory {
+    private var name: String,
+    private var pos: String?,
+    private var def: String?,
+     var example: Array<String>? ,
+     var synonyms: Array<String>?,
+     var antonyms: Array<String>?   ,
+     var folder: UUID?,
+    val id:UUID?)
+    : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddWordCardViewModel(
         name,
@@ -27,26 +29,29 @@ class AddWordCardViewModelFactory(
         example,
         synonyms,
         antonyms,
-        folder) as T
+        folder,
+        id) as T
     }
 }
 
 class AddWordCardViewModel(
-      name: String?,
+      name: String,
       pos: String?,
       def: String?,
-      example: String?,
-      synonyms: String?,
-      antonyms: String?,
-      folder: String?
+      example: Array<String>?,
+      synonyms: Array<String>?,
+      antonyms: Array<String>?,
+      folder: UUID?,
+      id:UUID?
 ) : ViewModel() {
-    var name: String?      = null
-    var pos: String?       = null
-    var def: String?       = null
-    var example: String?   = null
-    var synonyms: String?  = null
-    var antonyms: String?  = null
-    var folder: String?    = null
+    lateinit var name: String
+    var pos: String? = null
+    var def: String? = null
+    var example: Array<String>? = null
+    var synonyms: Array<String>? = null
+    var antonyms: Array<String>? = null
+    var folder: UUID? = null
+    var id:UUID? = null
 
     init {
         name?.let { this.name = name }
@@ -56,6 +61,7 @@ class AddWordCardViewModel(
         synonyms?.let { this.synonyms = synonyms }
         antonyms?.let { this.antonyms = antonyms }
         folder?.let { this.folder = folder }
+        id?.let { this.id = id }
     }
 
     // TODO: Implement the ViewModel
