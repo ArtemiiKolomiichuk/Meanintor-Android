@@ -8,6 +8,9 @@ import java.util.Date
  */
 data class TrainingHistory
 constructor(
+    /**
+     * [TestType]s and the amount of times they have been completed
+     */
     var types : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>(),
     var lastDate : Date? = null)
 
