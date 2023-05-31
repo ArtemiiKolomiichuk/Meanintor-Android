@@ -23,11 +23,11 @@ data class WordCard(
     @PrimaryKey val cardID : UUID = UUID.randomUUID())
 {
     fun word() : Word {
-        return TODO()
+        return TODO()//#DataBase
     }
 
-    fun setWord(wordWord: Word) {
-        wordID = wordWord.wordID
+    fun setWord(word: Word) {
+        wordID = word.wordID
     }
 
     fun wordString() : String {
@@ -54,6 +54,10 @@ data class WordCard(
     fun hasSynonyms(): Boolean {
         return synonyms.isNotEmpty()
     }
+
+    /**
+     * Returns examples of usage of the word with the word replaced with "______"
+     */
     fun getHintExamples() : Array<String> {
         var hintExamples = arrayOf<String>()
         if(hasExamples()){
@@ -68,9 +72,12 @@ data class WordCard(
         return hintExamples
     }
 
+    /**
+     * Returns definitions that *shouldn't* be synonymic to the word's definition
+     */
     fun getNotSynonymicDefinitions(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicDefinitions = arrayOf<String>()
-        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) }
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString()) }
         return if (notSynonymicCards.size > amount*2) {
             notSynonymicCards = notSynonymicCards.shuffled().take(amount)
             for (card in notSynonymicCards) {
@@ -78,13 +85,16 @@ data class WordCard(
             }
             notSynonymicDefinitions
         }else{
-            Utils.getGeneralDefinitionOptions(amount, synonyms, partOfSpeech)
+            Utils.getGeneralDefinitionOptions(amount, synonyms)
         }
     }
 
+    /**
+     * Returns words that *shouldn't* be synonymic to the word
+     */
     fun getNotSynonymicWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicWords = arrayOf<String>()
-        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) }
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString())}
         return if (notSynonymicCards.size > amount*2) {
             notSynonymicCards = notSynonymicCards.shuffled().take(amount)
             for (card in notSynonymicCards) {
@@ -96,9 +106,12 @@ data class WordCard(
         }
     }
 
+    /**
+     * Returns words that *shouldn't* be antonymous to the word
+     */
     fun getNotAntonymousWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notAntonymousWords = arrayOf<String>()
-        var notAntonymousCards = cards.filter { it.partOfSpeech == partOfSpeech && !antonyms.contains(it.wordString()) }
+        var notAntonymousCards = cards.filter { it.partOfSpeech == partOfSpeech && !antonyms.contains(it.wordString()) && !it.antonyms.contains(wordString()) }
         return if (notAntonymousCards.size > amount*2) {
             notAntonymousCards = notAntonymousCards.shuffled().take(amount)
             for (card in notAntonymousCards) {
@@ -113,12 +126,6 @@ data class WordCard(
     fun hasAntonyms(): Boolean {
         return antonyms.isNotEmpty()
     }
-    fun isNew() : Boolean {
-        return trainingHistory.lastDate == null
-    }
-    fun isMastered() : Boolean {
-        return mastery >= UserSettings.settings().masteredMargin
-    }
 
     /**
      * Returns a relative value of how well the word is known
@@ -130,22 +137,30 @@ data class WordCard(
     fun retention() : Double {
         var seconds = trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000) ?: 0
 
-        val margins = listOf(0, 26, 65, 9 * 24, 17 * 24, 34 * 24, 100 * 24, 220 * 24)
         val retentionSteps = listOf(0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0)
 
         val masteryLevel = mastery.toInt()
         val currentRetention = retentionSteps[masteryLevel]
-        val currentMargin = margins[masteryLevel] * 3600 // Convert margin to seconds
+        val currentMargin = UserSettings.settings().downgradeMargins[masteryLevel] * 3600
 
         if (seconds > currentMargin) {
-            val newMasteryLevel = (masteryLevel - 1).coerceAtLeast(0)
-            //TODO: adjust lastDate to avoid constant mastery level decrease
-            return retentionSteps[newMasteryLevel]
+            mastery = (masteryLevel - 1).coerceAtLeast(0).toDouble()
+            adjustLastDate()
+            return retentionSteps[mastery.toInt()]
         }
 
         val remainingSeconds = currentMargin - seconds
         val retentionDifference = (currentRetention - 1) * (remainingSeconds.toDouble() / currentMargin.toDouble())
         return currentRetention - retentionDifference
+    }
+
+    /**
+     * Adjust last date in case of mastery downgrade to prevent constant downgrades
+     *
+     * Sets last date to 3/4 of the margin of new mastery level
+     */
+    fun adjustLastDate(){
+        trainingHistory.lastDate = Date(Date().time - (UserSettings.settings().downgradeMargins[mastery.toInt()] * 3600 * 3 * 250))
     }
 
     /**
