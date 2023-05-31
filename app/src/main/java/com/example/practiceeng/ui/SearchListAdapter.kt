@@ -31,7 +31,7 @@ class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolde
             }
 
             binding.root.setOnClickListener {
-               onCardClicked
+               onCardClicked(card)
             }
         }
     }

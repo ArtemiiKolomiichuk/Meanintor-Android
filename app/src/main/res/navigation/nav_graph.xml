@@ -13,7 +13,8 @@
         <action
             android:id="@+id/add_word_card"
             app:destination="@id/addWordCardFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popUpTo="@id/wordSearchFragment" />
     </fragment>
     <fragment
         android:id="@+id/addWordCardFragment"
@@ -23,7 +24,8 @@
         <action
             android:id="@+id/choose_folder"
             app:destination="@id/chooseFolderFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popUpTo="@id/addWordCardFragment" />
         <argument
             android:name="name"
             app:argType="string" />

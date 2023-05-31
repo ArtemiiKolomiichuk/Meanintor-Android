@@ -1,6 +1,7 @@
 package com.example.practiceeng
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.Date
 import java.util.UUID
@@ -18,16 +19,13 @@ data class WordCard(
     var trainingHistory: TrainingHistory = TrainingHistory(),
     var paused : Boolean = false,
     var mastery: Double = 0.0,
-    var wordID: UUID,
-    var folderID : UUID,
+    var word: Word,
+    var folderID : UUID?,
     @PrimaryKey val cardID : UUID = UUID.randomUUID())
 {
+    @Ignore
     fun word() : Word {
-        return TODO()
-    }
-
-    fun setWord(wordWord: Word) {
-        wordID = wordWord.wordID
+        return word
     }
 
     fun wordString() : String {

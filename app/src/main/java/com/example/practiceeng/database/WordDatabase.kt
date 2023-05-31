@@ -2,7 +2,9 @@ package com.example.practiceeng.database
 
 import androidx.room.*
 import com.example.practiceeng.*
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Database(entities = [ Word::class, WordCard::class, Folder::class ], version=1)
@@ -45,6 +47,18 @@ class WordTypeConverters {
         }
         val lastDate = Date(split[1].toLong())
         return TrainingHistory(typesArray, lastDate)
+    }
+
+    @TypeConverter
+    fun toString(value: Word): String {
+       return value.wordID.toString()
+    }
+
+    @TypeConverter
+    fun toWord(value: String): Word {
+        lateinit var word:Word
+        GlobalScope.launch { word = WordRepository.get().getWord(UUID.fromString(value)) }
+        return word
     }
 
     @TypeConverter
