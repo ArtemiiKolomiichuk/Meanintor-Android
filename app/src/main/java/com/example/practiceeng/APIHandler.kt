@@ -7,7 +7,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.lang.Exception
-import java.util.UUID
 
 class APIHandler{
     companion object {
@@ -62,7 +61,12 @@ class APIHandler{
                             val result = results.getJSONObject(i)
                             val partOfSpeech = result.optString("partOfSpeech")
                             val definition = result.optString("definition")
-                            val card = WordCard(partOfSpeech, definition, word = word, folderID = null)
+                            val card = WordCard(
+                                partOfSpeech,
+                                definition,
+                                word = word,
+                                folderID = null
+                            )
                             try {
                                 val synonyms = result.getJSONArray("synonyms")
                                 for (j in 0 until synonyms.length()) {
@@ -118,7 +122,12 @@ class APIHandler{
                                 val example = definition.optString("example")
                                 val synonyms = definition.optJSONArray("synonyms")
                                 val antonyms = definition.optJSONArray("antonyms")
-                                val card = WordCard(partOfSpeech, definitionString, word = word, folderID = null)
+                                val card = WordCard(
+                                    partOfSpeech,
+                                    definitionString,
+                                    word = word,
+                                    folderID = null
+                                )
                                 card.examples += example
                                 if (synonyms != null) {
                                     for (k in 0 until synonyms.length()) {
@@ -169,7 +178,12 @@ class APIHandler{
                                 for(d in 0 until definitions.length()){
                                     val definition = definitions.getJSONObject(d)
                                     val definitionString = definition.optString("definition")
-                                    val card = WordCard(partOfSpeech, definitionString, word = word, folderID = null)
+                                    val card = WordCard(
+                                        partOfSpeech,
+                                        definitionString,
+                                        word = word,
+                                        folderID = null
+                                    )
                                     val examples = definition.optJSONArray("examples")
                                     //TODO:val synonyms = definition.optJSONArray("synonyms")
                                     //TODO:val antonyms = definition.optJSONArray("antonyms")
@@ -205,7 +219,12 @@ class APIHandler{
                             for (d in 0 until definitions.length()){
                                 val definition = definitions.getJSONObject(d)
                                 val definitionString = definition.optString("definition")
-                                val card = WordCard(partOfSpeech, definitionString, word = word, folderID = null)
+                                val card = WordCard(
+                                    partOfSpeech,
+                                    definitionString,
+                                    word = word,
+                                    folderID = null
+                                )
                                 try {
                                     val examples = definition.optJSONArray("examples")
                                     for(e in 0 until examples.length()){
@@ -279,7 +298,7 @@ class APIHandler{
                         }
                     }
                     for(c in cards){
-                        c.word=wordWord
+                        c.word =wordWord
                     }
                     return cards.toTypedArray()
                 }

@@ -10,7 +10,7 @@ import java.util.UUID
 @Entity
 data class Word
 constructor(
-    var word: String,
+    @PrimaryKey val word: String,
     /**
      * Phonetic transcription of the word for All, Noun and Verb
      */
@@ -19,8 +19,8 @@ constructor(
      * Audio links for US, UK, AU pronunciations
      */
     var audioLinks: Array<String> = arrayOf(),
-    var bookmarked: Boolean = false,
-    @PrimaryKey var wordID : UUID = UUID.randomUUID())
+    var bookmarked: Boolean = false
+)
 {
 
 override fun toString(): String {

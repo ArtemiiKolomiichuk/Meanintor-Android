@@ -102,7 +102,7 @@ class QuestionManager
         }
 
         /**
-         * Updates [WordCard], including [TrainingHistory] and [WordCard.mastery]
+         * Updates [WordCard], including [TrainingHistory] and [mastery]
          *
          * @param overruled whether the answer was overruled by the user as correct
          * @see checkAnswer

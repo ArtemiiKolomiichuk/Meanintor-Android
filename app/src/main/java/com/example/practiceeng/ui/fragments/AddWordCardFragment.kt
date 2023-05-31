@@ -1,20 +1,14 @@
 package com.example.practiceeng.ui.fragments
 
-import android.opengl.Visibility
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practiceeng.R
 import com.example.practiceeng.databinding.FragmentAddWordCardBinding
-import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModelFactory
 
@@ -22,7 +16,7 @@ class AddWordCardFragment : Fragment() {
 
     private var _binding: FragmentAddWordCardBinding? = null
     private val binding get() = _binding!!
-    private val args: AddWordCardFragmentArgs by navArgs()
+    private val args: com.example.practiceeng.ui.fragments.AddWordCardFragmentArgs by navArgs()
     private val addWordCardViewModel: AddWordCardViewModel by viewModels {
         AddWordCardViewModelFactory(args.name,
             args.partOfSpeech,
@@ -50,6 +44,9 @@ class AddWordCardFragment : Fragment() {
 
             isPhrase.setOnCheckedChangeListener { _, isChecked ->
                 customPartOfSpeechChecked(isChecked)
+            }
+            saveWordCardButton.setOnClickListener {
+                addWordCardViewModel.addWordCard()
             }
             addWordCardViewModel.name?.let { word.setText(addWordCardViewModel.name) }
             addWordCardViewModel.pos?.let {

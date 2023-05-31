@@ -51,13 +51,13 @@ class WordTypeConverters {
 
     @TypeConverter
     fun toString(value: Word): String {
-       return value.wordID.toString()
+       return value.word.toString()
     }
 
     @TypeConverter
     fun toWord(value: String): Word {
         lateinit var word:Word
-        GlobalScope.launch { word = WordRepository.get().getWord(UUID.fromString(value)) }
+        GlobalScope.launch { word = WordRepository.get().getWord(value) }
         return word
     }
 
@@ -90,11 +90,12 @@ interface WordDao {
     @Query("SELECT * FROM word")
     fun getWords(): Flow<List<Word>>
 
-    @Query("SELECT * FROM word WHERE wordID=(:wordID)")
-   suspend fun getWord(wordID: UUID): Word
 
     @Query("SELECT * FROM word WHERE word=(:name)")
    suspend fun getWord(name: String): Word
+
+    @Query("SELECT EXISTS(SELECT * FROM word WHERE word=(:name))")
+    suspend fun wordExist(name : String) : Boolean
 
     @Query("SELECT * FROM folder")
     fun getFolders(): Flow<List<Folder>>

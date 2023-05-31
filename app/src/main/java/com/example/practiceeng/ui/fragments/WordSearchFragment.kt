@@ -1,18 +1,15 @@
 package com.example.practiceeng.ui.fragments
 
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,13 +17,13 @@ import com.example.practiceeng.APIHandler
 import com.example.practiceeng.DictionaryAPI
 import com.example.practiceeng.R
 import com.example.practiceeng.WordCard
+import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import com.example.practiceeng.ui.SearchListAdapter
-import com.example.practiceeng.ui.viewmodels.AddWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.SearchViewModel
+import kotlinx.coroutines.launch
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
-import kotlin.math.log
 
 
 class WordSearchFragment : Fragment() {
@@ -47,13 +44,17 @@ class WordSearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             addWordsButton.setOnClickListener {
-               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
+               val action = com.example.practiceeng.ui.fragments.WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
                 findNavController().navigate(action)
             }
+            addWordsButton.visibility = View.GONE
 
             wordSearch.setOnQueryTextListener(object : android.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     //TODO: remove logging
+                    if(query.isNullOrBlank())
+                        return false
+
                     val executor = Executors.newSingleThreadExecutor()
                     val future = executor.submit(Callable {
                         APIHandler.getCards(
@@ -99,10 +100,13 @@ class WordSearchFragment : Fragment() {
             textView.visibility = RecyclerView.GONE
             cardsList.visibility = RecyclerView.VISIBLE
             searchViewModel.getList()?.let {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    WordRepository.get().addOrUpdateWord(it.get(0).word)
+                }
                 val adapter : SearchListAdapter =
                     SearchListAdapter(it.toList(), { card: WordCard ->
                         findNavController().navigate(
-                            WordSearchFragmentDirections.addWordCard(
+                            com.example.practiceeng.ui.fragments.WordSearchFragmentDirections.addWordCard(
                                 card.wordString(),
                                 card.partOfSpeech,
                                 card.definition,

@@ -7,13 +7,11 @@
     android:layout_margin="16dp"
     tools:context=".ui.fragments.AddWordCardFragment">
 
-    <EditText
+    <TextView
         android:id="@+id/word"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline4"
-        android:hint="Word"
-        android:inputType="text" />
+        android:textAppearance="?attr/textAppearanceHeadline4" />
 
     <CheckBox
         android:id="@+id/is_phrase"

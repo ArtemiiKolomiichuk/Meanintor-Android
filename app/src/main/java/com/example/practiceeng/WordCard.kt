@@ -1,6 +1,7 @@
 package com.example.practiceeng
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.Date
@@ -9,19 +10,21 @@ import java.util.UUID
 /**
  * Card for learning a variant of [Word]
  */
-@Entity
+@Entity(foreignKeys = arrayOf(ForeignKey(entity = Word::class, parentColumns = arrayOf("word"), childColumns = arrayOf("word"), onDelete = ForeignKey.RESTRICT),
+    ForeignKey(entity = Folder::class, parentColumns = arrayOf("folderID"), childColumns = arrayOf("folderID"), onDelete = ForeignKey.CASCADE)))
 data class WordCard(
     var partOfSpeech: String,
     var definition: String,
     var examples: Array<String> = arrayOf<String>(),
     var synonyms: Array<String> = arrayOf<String>(),
     var antonyms: Array<String> = arrayOf<String>(),
-    var trainingHistory: TrainingHistory = TrainingHistory(),
-    var paused : Boolean = false,
-    var mastery: Double = 0.0,
     var word: Word,
-    var folderID : UUID?,
-    @PrimaryKey val cardID : UUID = UUID.randomUUID())
+    var folderID: UUID?,
+    @PrimaryKey val cardID: UUID = UUID.randomUUID(),
+    var trainingHistory: TrainingHistory = TrainingHistory(),
+    var paused: Boolean = false,
+    var mastery: Double = 0.0
+)
 {
     @Ignore
     fun word() : Word {

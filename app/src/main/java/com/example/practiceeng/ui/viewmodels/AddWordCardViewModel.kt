@@ -3,10 +3,9 @@ package com.example.practiceeng.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.practiceeng.Word
 import com.example.practiceeng.WordCard
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.practiceeng.database.WordRepository
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -52,6 +51,7 @@ class AddWordCardViewModel(
     var antonyms: Array<String>? = null
     var folder: UUID? = null
     var id:UUID? = null
+    var word:Word? = null
 
     init {
         name?.let { this.name = name }
@@ -62,7 +62,16 @@ class AddWordCardViewModel(
         antonyms?.let { this.antonyms = antonyms }
         folder?.let { this.folder = folder }
         id?.let { this.id = id }
+        viewModelScope.launch {
+            word = WordRepository.get().getWord(name)
+        }
     }
+
+fun addWordCard(){
+    WordRepository.get().addWordCard(WordCard(pos!!,def!!,example!!,synonyms!!,antonyms!!,
+        word!!
+        ,folder!!))
+}
 
     // TODO: Implement the ViewModel
 }

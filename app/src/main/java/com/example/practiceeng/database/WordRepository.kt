@@ -1,6 +1,7 @@
 package com.example.practiceeng.database
 
 import android.content.Context
+import androidx.lifecycle.viewModelScope
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Room
@@ -58,7 +59,6 @@ class WordRepository private constructor(context: Context,
         }
     }
     fun getWords(): Flow<List<Word>> =  database.wordDao().getWords()
-    suspend fun getWord(wordID: UUID): Word =   database.wordDao().getWord(wordID)
     suspend fun getWord(name: String): Word =   database.wordDao().getWord(name)
     fun getFolders(): Flow<List<Folder>> =   database.wordDao().getFolders()
     suspend fun getFolder(folderID: UUID): Folder =   database.wordDao().getFolder(folderID)
@@ -66,7 +66,20 @@ class WordRepository private constructor(context: Context,
     fun getWordCards(): Flow<List<WordCard>> =   database.wordDao().getWordCards()
     suspend fun getWordCard(cardID: UUID): WordCard =   database.wordDao().getWordCard(cardID)
     fun getBookmarkedWords(): Flow<List<Word>> = database.wordDao().getBookmarkedWords()
+    suspend fun wordExist(name : String) : Boolean = database.wordDao().wordExist(name)
+    fun addWordCard(pos: String, def: String, example: Array<String>, synonyms: Array<String>, antonyms: Array<String>, word: String, folder: UUID) {
+        coroutineScope.launch {
+           val wordWord:Word = getWord(word)
+            addWordCard(WordCard(pos, def, example, synonyms, antonyms, wordWord, folder))
+        }
+    }
 
+   suspend fun addOrUpdateWord(word:Word) {
+       if (wordExist(word.word))
+           updateWord(word)
+       else
+           addWord(word)
+   }
 
     companion object {
         private var INSTANCE: WordRepository? = null
