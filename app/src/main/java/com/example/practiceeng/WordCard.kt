@@ -129,30 +129,32 @@ data class WordCard(
     }
 
     /**
-     * Returns a relative value of how well the word is known
+     * Returns whether the last training session was not long enough ago
+     */
+    fun trained() : Boolean {
+        return -(trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000)
+            ?: 0) < UserSettings.settings().downgradeMargins[mastery.toInt()] * 0.75 * 3600
+    }
+
+    /**
+     * Returns how many hours left to downgrade margin
      *
      * Used to determine in which order [WordCard]s should be trained
-     *
-     * **TODO: Test, written by ChatGPT**
      */
     fun retention() : Double {
-        var seconds = trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000) ?: 0
-
-        val retentionSteps = listOf(0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0)
-
-        val masteryLevel = mastery.toInt()
-        val currentRetention = retentionSteps[masteryLevel]
-        val currentMargin = UserSettings.settings().downgradeMargins[masteryLevel] * 3600
-
-        if (seconds > currentMargin) {
-            mastery = (masteryLevel - 1).coerceAtLeast(0).toDouble()
+        val seconds = trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000) ?: 0
+        val currentMargin = UserSettings.settings().downgradeMargins[mastery.toInt()] * 3600
+        if (-seconds > currentMargin) {
+            mastery = (mastery.toInt() - 1).coerceAtLeast(0).toDouble()
             adjustLastDate()
-            return retentionSteps[mastery.toInt()]
+            return retention()
         }
 
-        val remainingSeconds = currentMargin - seconds
-        val retentionDifference = (currentRetention - 1) * (remainingSeconds.toDouble() / currentMargin.toDouble())
-        return currentRetention - retentionDifference
+        val remainingSeconds = currentMargin + seconds
+        return if (remainingSeconds <= 0)
+            5.0
+        else
+            remainingSeconds/3600.0
     }
 
     /**

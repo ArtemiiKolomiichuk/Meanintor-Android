@@ -32,7 +32,7 @@ class QuestionManager
             counter = 0
             this.testTypes = testTypes
             this.folders = folders
-            //cards = TODO: DataBase: load cards, not paused from folders, limit amount
+            //cards = TODO: DataBase: load cards, not paused, not trained from folders, limit amount
         }
 
         /**
@@ -49,7 +49,7 @@ class QuestionManager
         }
 
         /**
-         * Returns not paused folders that include at least 1 card that is not paused
+         * Returns not paused folders that include at least 1 card that is not paused, not [WordCard.trained]
          * and can be studied in at least 1 of the selected [TestType]s
          */
         fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
@@ -73,7 +73,7 @@ class QuestionManager
         /**
          * Checks whether the answer is correct
          *
-         * Doesn't work for [TestType.Match]
+         * Will always return true for [TestType.Match]
          */
         fun checkAnswer(answers: Array<String>, question: Question): Boolean? {
             val correctAnswers = question.correctAnswers
@@ -102,7 +102,7 @@ class QuestionManager
         }
 
         /**
-         * Updates [WordCard], including [TrainingHistory] and [mastery]
+         * Updates [WordCard], including [TrainingHistory] and [WordCard.mastery]
          *
          * @param overruled whether the answer was overruled by the user as correct
          * @see checkAnswer
@@ -242,7 +242,7 @@ class QuestionManager
 
                 TestType.Match -> {
                     val questions = getMatchQuestions(card, cards, UserSettings.settings().matchOptions)
-                    if (questions.isNullOrEmpty()) {
+                    if (questions.isEmpty()) {
                         val types = testTypes.toMutableList()
                         types.remove(TestType.Match)
                         val testTypes = card.aptTrainings(types.toTypedArray())
@@ -315,19 +315,15 @@ class QuestionManager
         }
 
         private fun getMatchQuestions(mainCard: WordCard, cards: MutableList<WordCard>, amount: Int): Array<Question> {
+            if(cards.size < amount){
+                return arrayOf()
+            }
             cards.minus(mainCard)
             cards.sortBy { it.trainingHistory.types[TestType.Match.ordinal].second }
+            cards.add(0, mainCard)
 
             val questions = mutableListOf<Question>()
-
-            val question = Question(arrayOf(mainCard), testType = TestType.Match)
-            question.displayTexts = arrayOf(mainCard.definition)
-            question.correctAnswers = arrayOf(mainCard.wordString())
-            question.options = arrayOf(mainCard.wordString())
-            question.displayTextHint = arrayOf(mainCard.getHintExamples()[mainCard.mastery.toInt() % mainCard.getHintExamples().size])
-            questions.add(question)
-
-            for (i in 0 until amount-1){
+            for (i in 0 until amount){
                 val card = cards[i]
                 val question = Question(arrayOf(card), testType = TestType.Match)
 

@@ -83,7 +83,7 @@ class Utils{
         fun getGeneralWordOptions(amount: Int,
                                   excludedWords: Array<String>,
                                   typeOfSpeech: String) : Array<String> {
-            val words = when(typeOfSpeech){
+            return when(typeOfSpeech){
                 "verb" -> {
                     verbs.toMutableList().minus(excludedWords.toSet()).toMutableList()
                 }
@@ -99,15 +99,13 @@ class Utils{
                 else -> {
                     other.toMutableList().minus(excludedWords.toSet()).toMutableList()
                 }
-            }
-            return words.shuffled().take(amount).toTypedArray()
+            }.shuffled().take(amount).toTypedArray()
         }
 
         /**
          * Returns an [amount] of semi-random definition options
          */
-        fun getGeneralDefinitionOptions(amount: Int,
-                                        excludedWords: Array<String>): Array<String> {
+        fun getGeneralDefinitionOptions(amount: Int, excludedWords: Array<String>): Array<String> {
             return definitions.toMutableList().minus(excludedWords.toSet()).shuffled().take(amount).toTypedArray()
         }
     }
