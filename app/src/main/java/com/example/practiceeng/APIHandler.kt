@@ -41,15 +41,15 @@ class APIHandler{
                     try {
                         var phonetics = arrayOf<String>()
                         val pronunciation = jsonObject.getJSONObject("pronunciation")
-                        phonetics += if(pronunciation.toString().contains("\"all\":\"")){
-                            pronunciation.optString("all")
-                        }else {""}
-                        phonetics += if(pronunciation.toString().contains("\"noun\":\"")) {
-                            pronunciation.optString("noun")
-                        }else {""}
-                        phonetics += if(pronunciation.toString().contains("\"verb\":\"")) {
-                            pronunciation.optString("verb")
-                        }else {""}
+                        if(pronunciation.toString().contains("\"all\":\"")) {
+                            phonetics += "(General) ${pronunciation.optString("all")}"
+                        }
+                        if(pronunciation.toString().contains("\"noun\":\"")){
+                            phonetics += "(Noun) ${pronunciation.optString("noun")}"
+                        }
+                        if(pronunciation.toString().contains("\"verb\":\"")) {
+                            phonetics += "(Verb) ${pronunciation.optString("verb")}"
+                        }
                         word = Word(wordString, phonetics)
                     }catch (e: Exception){
                         word = Word(wordString)
@@ -267,7 +267,7 @@ class APIHandler{
                                 }
                                 val audioFiles = entry.optJSONArray("audioFiles")
                                 for(a in 0 until audioFiles.length()){
-                                    val audioFile = audioFiles.getJSONObject(a).optString("label") + " " + audioFiles.getJSONObject(a).optString("link")
+                                    val audioFile = audioFiles.getJSONObject(a).optString("link")
                                     audioLinks += audioFile
                                 }
                             }
@@ -285,11 +285,49 @@ class APIHandler{
                         Log.e("APIHandler(ALL)", "Error: $e")
                         return arrayOf()
                     }
-                    var i = 0
-                    var wordWord : Word = if(cards.isNotEmpty()) cards[cards.size - 1].word() else Word(word)
-                    if(cards.isNotEmpty() && cards[0].word().phonetics.isNotEmpty()){
-                        wordWord = cards[0].word()
+                    //get pronunciation from WordAPI
+                    val theWord : Word = if(cards.isNotEmpty()) cards[cards.size - 1].word() else return arrayOf()
+                    //try to get pronunciation from XFEnglishDictionary
+                    if(cards.isNotEmpty() && cards[0].word().phonetics.isNotEmpty() && cards[0].word().phonetics[0].contains("/")){
+                        val wordWord = cards[0].word()
+                        val temp = Word(wordWord.word)
+                        temp.audioLinks = arrayOf()
+                        for (i in 0 until wordWord.audioLinks.size){
+                            if(wordWord.audioLinks[i].lowercase().contains("us")){
+                                temp.audioLinks += arrayOf("US", wordWord.audioLinks[i])
+                            }else if (wordWord.audioLinks[i].lowercase().contains("uk")){
+                                temp.audioLinks += arrayOf("UK", wordWord.audioLinks[i])
+                            }else if (wordWord.audioLinks[i].lowercase().contains("au")) {
+                                temp.audioLinks += arrayOf("AU", wordWord.audioLinks[i])
+                            }
+                        }
+                        theWord.audioLinks = temp.audioLinks
+                        temp.phonetics = arrayOf()
+                        for(i in 0 until wordWord.phonetics.size){
+                            if(wordWord.phonetics[i].contains("US") || wordWord.phonetics[i].contains("General American")){
+                                val phonetics = wordWord.phonetics[i].replaceFirst("/", "&*").substringAfter("&*").substringBefore("/")
+                                temp.phonetics += arrayOf("(US) $phonetics")
+                            }else if (wordWord.phonetics[i].contains("UK")){
+                                val phonetics = wordWord.phonetics[i].replaceFirst("/", "&*").substringAfter("&*").substringBefore("/")
+                                temp.phonetics += arrayOf("(UK) $phonetics")
+                            }else if (wordWord.phonetics[i].contains("AU") || wordWord.phonetics[i].lowercase().contains("australia")) {
+                                val phonetics = wordWord.phonetics[i].replaceFirst("/", "&*")
+                                    .substringAfter("&*").substringBefore("/")
+                                temp.phonetics += arrayOf("(AU) $phonetics")
+                            }else if (wordWord.phonetics[i].contains("New Zealand")){
+                                val phonetics = wordWord.phonetics[i].replaceFirst("/", "&*").substringAfter("&*").substringBefore("/")
+                                temp.phonetics += arrayOf("(NZ) $phonetics")
+                            }else if (wordWord.phonetics[i].contains("Received Pronunciation")) {
+                                val phonetics = wordWord.phonetics[i].replaceFirst("/", "&*").substringAfter("&*").substringBefore("/")
+                                temp.phonetics += arrayOf("(General) $phonetics")
+                            }
+                        }
+                        if(temp.phonetics.isNotEmpty()){
+                            theWord.phonetics = temp.phonetics
+                        }
                     }
+
+                    var i = 0
                     while (i < cards.size){
                         if(cards[i].wordString() != word){
                             cards.removeAt(i)
@@ -298,7 +336,7 @@ class APIHandler{
                         }
                     }
                     for(c in cards){
-                        c.word =wordWord
+                        c.word = theWord
                     }
                     return cards.toTypedArray()
                 }
