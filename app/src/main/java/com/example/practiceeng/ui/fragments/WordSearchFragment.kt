@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.*
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
-import com.example.practiceeng.ui.SearchListAdapter
+import com.example.practiceeng.ui.adapters.SearchListAdapter
 import com.example.practiceeng.ui.viewmodels.SearchViewModel
 import kotlinx.coroutines.launch
 import java.util.concurrent.Callable

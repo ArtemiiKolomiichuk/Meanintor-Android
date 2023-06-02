@@ -63,4 +63,14 @@
         android:name="com.example.practiceeng.ui.fragments.ChooseFolderFragment"
         android:label="fragment_choose_folder"
         tools:layout="@layout/fragment_choose_folder" />
+    <fragment
+        android:id="@+id/savedFoldersFragment"
+        android:name="com.example.practiceeng.ui.fragments.SavedFoldersFragment"
+        android:label="fragment_saved_folders"
+        tools:layout="@layout/fragment_saved_folders" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.practiceeng.ui.fragments.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

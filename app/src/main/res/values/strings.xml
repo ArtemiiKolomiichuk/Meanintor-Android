@@ -15,6 +15,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_hint">Enter the word</string>
     <string name="search_error">No words were found\nCheck your spelling or</string>
+    <string name="deselect">Deselect</string>
     <string-array name="parts_of_speech">
         <item>noun</item>
         <item>verb</item>

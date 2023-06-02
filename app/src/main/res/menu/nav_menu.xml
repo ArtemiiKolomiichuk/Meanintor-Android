@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <!--  <item android:id="@+id/today"
+        android:title="Today"
+        android:icon="@drawable/baseline_calendar_today_24"
+        />
+    <item android:id="@+id/bookmarks"
+        android:title="Bookmarks"
+        android:icon="@drawable/baseline_bookmarks_24"
+        />-->
+    <item android:id="@+id/wordSearchFragment"
+        android:title="Add"
+        android:icon="@drawable/baseline_add_circle_24"
+        />
+    <item android:id="@+id/savedFoldersFragment"
+        android:title="My cards"
+        android:icon="@drawable/baseline_sticky_note_2_24"
+        />
+    <item android:id="@+id/settingsFragment"
+        android:title="Settings"
+        android:icon="@drawable/baseline_settings_24"
+        />
+</menu>
