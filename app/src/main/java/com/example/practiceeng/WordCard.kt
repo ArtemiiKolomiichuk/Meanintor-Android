@@ -15,9 +15,9 @@ import java.util.UUID
 data class WordCard(
     var partOfSpeech: String,
     var definition: String,
-    var examples: Array<String> = arrayOf<String>(),
-    var synonyms: Array<String> = arrayOf<String>(),
-    var antonyms: Array<String> = arrayOf<String>(),
+    var examples: Array<String> = arrayOf(),
+    var synonyms: Array<String> = arrayOf(),
+    var antonyms: Array<String> = arrayOf(),
     var word: Word,
     var folderID: UUID?,
     @PrimaryKey val cardID: UUID = UUID.randomUUID(),
@@ -34,30 +34,30 @@ data class WordCard(
     fun wordString() : String {
         return word().word
     }
+
     fun hasPhonetics(): Boolean {
-        return word().phonetics.isNotEmpty() && (!word().phonetics[0].isNullOrBlank() || !word().phonetics[1].isNullOrBlank() || !word().phonetics[2].isNullOrBlank())
+        for(i in 0 until word().phonetics.size){
+            if(word().phonetics[i].isNotBlank()){
+                return true
+            }
+        }
+        return false
     }
 
     fun audioLinks() : Array<String>{
         return word().audioLinks
     }
 
-    fun phonetics(): Array<String> {
-        return word().phonetics
-    }
-
     fun hasExamples(): Boolean {
         return examples.isNotEmpty()
     }
-    fun hasMultipleExamples(): Boolean {
-        return examples.size > 1
-    }
+
     fun hasSynonyms(): Boolean {
         return synonyms.isNotEmpty()
     }
 
     /**
-     * Returns examples of usage of the word with the word replaced with "______"
+     * Returns examples of usage of the word with the word replaced with "______" if any
      */
     fun getHintExamples() : Array<String> {
         var hintExamples = arrayOf<String>()
@@ -74,7 +74,9 @@ data class WordCard(
     }
 
     /**
-     * Returns definitions that *shouldn't* be synonymic to the word's definition
+     * Returns an [amount] of definitions that *shouldn't* be synonymic to the word's definition
+     *
+     * @param cards list of cards to try to get not synonymic definitions from
      */
     fun getNotSynonymicDefinitions(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicDefinitions = arrayOf<String>()
@@ -86,12 +88,14 @@ data class WordCard(
             }
             notSynonymicDefinitions
         }else{
-            Utils.getGeneralDefinitionOptions(amount, synonyms)
+            Utils.getGeneralDefinitionOptions(amount)
         }
     }
 
     /**
-     * Returns words that *shouldn't* be synonymic to the word
+     * Returns an [amount] of words that *shouldn't* be synonymic to the word
+     *
+     * @param cards list of cards to try to get not synonymic words from
      */
     fun getNotSynonymicWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicWords = arrayOf<String>()
@@ -108,7 +112,9 @@ data class WordCard(
     }
 
     /**
-     * Returns words that *shouldn't* be antonymous to the word
+     * Returns an [amount] of words that *shouldn't* be antonymous to this word
+     *
+     * @param cards list of cards to try to get not antonymous words from
      */
     fun getNotAntonymousWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notAntonymousWords = arrayOf<String>()
@@ -130,6 +136,8 @@ data class WordCard(
 
     /**
      * Returns whether the last training session was not long enough ago
+     *
+     * User can't train a word if returns true
      */
     fun trained() : Boolean {
         return -(trainingHistory.lastDate?.time?.minus(Date().time)?.div(1000)
@@ -137,7 +145,8 @@ data class WordCard(
     }
 
     /**
-     * Returns how many hours left to downgrade margin
+     * Returns how many hours left to downgrade margin, may lower
+     * [mastery] level of this card if it's too late
      *
      * Used to determine in which order [WordCard]s should be trained
      */
@@ -158,9 +167,9 @@ data class WordCard(
     }
 
     /**
-     * Adjust last date in case of mastery downgrade to prevent constant downgrades
+     * Adjust last date in case of [mastery] level downgrade to prevent constant downgrades
      *
-     * Sets last date to 3/4 of the margin of new mastery level
+     * Sets last date to 3/4 of the downgrade margin of new mastery level
      */
     fun adjustLastDate(){
         trainingHistory.lastDate = Date(Date().time - (UserSettings.settings().downgradeMargins[mastery.toInt()] * 3600 * 3 * 250))
@@ -190,7 +199,7 @@ data class WordCard(
      * *Does **not** check if the word is [paused]*
      */
     fun aptTraining(testTypes : Array<TestType>) : TestType{
-        var ordered = trainingOrder()
+        val ordered = trainingOrder()
         for (type in ordered){
             if (isAptForTraining(type) && testTypes.contains(type)){
                 return type
@@ -203,9 +212,9 @@ data class WordCard(
      * Returns a preferred order of [TestType]s for training
      */
     private fun trainingOrder() : Array<TestType>{
-        var sorted = trainingHistory.types.sortedBy { it.second }
+        val ordered = trainingHistory.types.sortedBy { it.second }
         var result = arrayOf<TestType>()
-        for (i in sorted){
+        for (i in ordered){
             result += i.first
         }
         return result
@@ -217,7 +226,7 @@ data class WordCard(
      * *Does **not** check if the word is [paused]*
      * @param testType type of the test
      */
-    fun isAptForTraining(testType: TestType) : Boolean {
+    private fun isAptForTraining(testType: TestType) : Boolean {
         return when(testType){
             TestType.FlashCard -> true
             TestType.TrueFalse -> true

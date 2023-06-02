@@ -105,8 +105,8 @@ class Utils{
         /**
          * Returns an [amount] of semi-random definition options
          */
-        fun getGeneralDefinitionOptions(amount: Int, excludedWords: Array<String>): Array<String> {
-            return definitions.toMutableList().minus(excludedWords.toSet()).shuffled().take(amount).toTypedArray()
+        fun getGeneralDefinitionOptions(amount: Int): Array<String> {
+            return definitions.toMutableList().shuffled().take(amount).toTypedArray()
         }
     }
 }

@@ -17,7 +17,7 @@ class QuestionManager
         private var folders: Array<String> = arrayOf()
         private var testTypes: Array<TestType> = arrayOf()
         private var cards: MutableList<WordCard> = mutableListOf()
-        var counter: Int = 0
+        private var counter: Int = 0
 
         /**
          * Resets the question manager
@@ -54,20 +54,6 @@ class QuestionManager
          */
         fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
               return TODO()//#DataBase
-        }
-
-        /**
-         * Returns a maximum amount of unique questions that
-         * can be created considering provided settings
-         */
-        fun maxQuestions(testTypes: Array<TestType> = TestType.all(),
-                         folders: Array<String> = arrayOf()) : Int {
-            var counter = 0
-            val cards = cards//TODO: #DataBase
-            for (card in cards){
-                counter += card.aptTrainings(testTypes).size
-            }
-            return counter
         }
 
         /**
@@ -172,7 +158,7 @@ class QuestionManager
             }
         }
 
-        private fun getNextCard(): WordCard? {
+        private fun getCard(): WordCard? {
             if(cards.isEmpty()){
                 return null
             }
@@ -183,10 +169,12 @@ class QuestionManager
         }
 
         /**
-         * TODO: check for infinite loop possibilities, test
+         * Returns a [Question] for the next [WordCard] if possible
+         *
+         * TODO: test
          */
         private fun getNextQuestion(): Question? {
-            val card = getNextCard() ?: return null
+            val card = getCard() ?: return null
             counter++
             return try {
                 getNextQuestion(card, card.aptTraining(testTypes))
@@ -314,6 +302,9 @@ class QuestionManager
             }
         }
 
+        /**
+         * Returns an [amount] of match questions for [mainCard] and [cards]
+         */
         private fun getMatchQuestions(mainCard: WordCard, cards: MutableList<WordCard>, amount: Int): Array<Question> {
             if(cards.size < amount){
                 return arrayOf()
