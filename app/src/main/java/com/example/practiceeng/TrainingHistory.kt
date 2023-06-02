@@ -11,6 +11,6 @@ constructor(
     /**
      * [TestType]s and the amount of times they have been completed
      */
-    var types : Array<Pair<TestType, Int>> = arrayOf<Pair<TestType, Int>>(),
+    var types : Array<Pair<TestType, Int>> = arrayOf(),
     var lastDate : Date? = null)
 

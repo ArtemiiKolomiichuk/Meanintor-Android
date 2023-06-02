@@ -12,21 +12,17 @@ data class Word
 constructor(
     @PrimaryKey val word: String,
     /**
-     * Phonetic transcription of the word for All, Noun and Verb
+     * Phonetic transcription of the word with the locale or type of speech
+     *
+     * e.g. {(UK) ˌɛnəˈdʒɛtɪk}
      */
     var phonetics: Array<String> = arrayOf(),
     /**
-     * Audio links for US, UK, AU pronunciations
+     * Locals and links to the audio
+     *
+     * e.g. [0] = {US}, [1] = {37513_en-us-awe.ogg}
      */
     var audioLinks: Array<String> = arrayOf(),
     var bookmarked: Boolean = false
 )
-{
-
-override fun toString(): String {
-    return "<$word>\n" +
-            "Phonetics: ${phonetics.joinToString("# ")}\n" +
-            "Audio Links: ${audioLinks.joinToString("# ")}\n"
-}
-}
 
