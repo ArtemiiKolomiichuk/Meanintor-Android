@@ -5,12 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.practiceeng.R
 import com.example.practiceeng.databinding.FragmentAddWordCardBinding
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModelFactory
+import java.util.UUID
 
 class AddWordCardFragment : Fragment() {
 
@@ -48,6 +51,10 @@ class AddWordCardFragment : Fragment() {
             saveWordCardButton.setOnClickListener {
                 addWordCardViewModel.addWordCard()
             }
+            chooseFolderButton.setOnClickListener {
+               findNavController().navigate(AddWordCardFragmentDirections.chooseFolder())
+            }
+
             addWordCardViewModel.name?.let { word.setText(addWordCardViewModel.name) }
             addWordCardViewModel.pos?.let {
                 val partsOfSpeech = resources.getStringArray(R.array.parts_of_speech)
@@ -64,6 +71,12 @@ class AddWordCardFragment : Fragment() {
             addWordCardViewModel.example?.let { example.setText(addWordCardViewModel.example.toString()) }
             addWordCardViewModel.synonyms?.let { synonyms.setText(addWordCardViewModel.synonyms.toString()) }
             addWordCardViewModel.antonyms?.let { antonyms.setText(addWordCardViewModel.antonyms.toString()) }
+        }
+
+        setFragmentResultListener(
+            ChooseFolderFragment.REQUEST_KEY_FOLDER
+        ) { requestKey, bundle ->
+        addWordCardViewModel.folder = bundle.getSerializable(ChooseFolderFragment.BUNDLE_KEY_FOLDER) as UUID?
         }
     }
 

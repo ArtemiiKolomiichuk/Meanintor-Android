@@ -2,7 +2,6 @@ package com.example.practiceeng.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.example.practiceeng.Word
 import com.example.practiceeng.WordCard
 import com.example.practiceeng.database.WordRepository
@@ -62,15 +61,13 @@ class AddWordCardViewModel(
         antonyms?.let { this.antonyms = antonyms }
         folder?.let { this.folder = folder }
         id?.let { this.id = id }
-        viewModelScope.launch {
-            word = WordRepository.get().getWord(name)
-        }
+
     }
 
 fun addWordCard(){
-    WordRepository.get().addWordCard(WordCard(pos!!,def!!,example!!,synonyms!!,antonyms!!,
-        word!!
-        ,folder!!))
+    WordRepository.get().addWordCard(pos!!,def!!,example!!,synonyms!!,antonyms!!,
+        name!!
+        ,folder!!)
 }
 
     // TODO: Implement the ViewModel

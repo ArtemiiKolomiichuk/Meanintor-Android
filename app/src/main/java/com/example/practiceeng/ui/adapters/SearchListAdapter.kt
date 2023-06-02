@@ -1,11 +1,10 @@
-package com.example.practiceeng.ui
+package com.example.practiceeng.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.WordCard
 import com.example.practiceeng.databinding.CardItemBinding
-import java.util.*
 
 
 class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolder(binding.root) {

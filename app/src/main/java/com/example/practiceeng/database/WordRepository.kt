@@ -1,11 +1,7 @@
 package com.example.practiceeng.database
 
 import android.content.Context
-import androidx.lifecycle.viewModelScope
-import androidx.room.Insert
-import androidx.room.Query
 import androidx.room.Room
-import androidx.room.Update
 import com.example.practiceeng.Folder
 import com.example.practiceeng.Word
 import com.example.practiceeng.WordCard

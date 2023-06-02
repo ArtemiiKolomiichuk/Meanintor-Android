@@ -13,10 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.practiceeng.APIHandler
-import com.example.practiceeng.DictionaryAPI
-import com.example.practiceeng.R
-import com.example.practiceeng.WordCard
+import com.example.practiceeng.*
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import com.example.practiceeng.ui.SearchListAdapter
@@ -54,7 +51,7 @@ class WordSearchFragment : Fragment() {
                     //TODO: remove logging
                     if(query.isNullOrBlank())
                         return false
-
+                    binding.addWordsButton.visibility=View.VISIBLE
                     val executor = Executors.newSingleThreadExecutor()
                     val future = executor.submit(Callable {
                         APIHandler.getCards(
@@ -63,13 +60,16 @@ class WordSearchFragment : Fragment() {
                         )
                     })
                     val result = future.get()
-                    Log.d("WordSearchFragment", result[0].toString())
                     searchViewModel.setList(result)
                     if (result.size == 0) {
                         cardsList.visibility = RecyclerView.GONE
                         textView.visibility = RecyclerView.VISIBLE
                         textView.setText(R.string.search_error)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            WordRepository.get().addOrUpdateWord(Word(query))
+                        }
                     } else {
+                    Log.d("WordSearchFragment", result[0].toString())
                         showResultsAtRecyclerView()
                     }
 
@@ -100,8 +100,10 @@ class WordSearchFragment : Fragment() {
             textView.visibility = RecyclerView.GONE
             cardsList.visibility = RecyclerView.VISIBLE
             searchViewModel.getList()?.let {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    WordRepository.get().addOrUpdateWord(it.get(0).word)
+                if(it.size>0) {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        WordRepository.get().addOrUpdateWord(it.get(0).word)
+                    }
                 }
                 val adapter : SearchListAdapter =
                     SearchListAdapter(it.toList(), { card: WordCard ->
