@@ -36,7 +36,7 @@ class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolde
     }
 }
 
-class SearchListAdapter(
+class CardsListAdapter(
     private val cards: List<WordCard>, private val onCardClicked: (card: WordCard) -> Unit
 ) : RecyclerView.Adapter<WordCardHolder>() {
 

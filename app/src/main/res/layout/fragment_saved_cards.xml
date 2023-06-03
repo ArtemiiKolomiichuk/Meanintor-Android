@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.SavedCardsFragment"
+    android:orientation="vertical">
+
+<!--
+    <SearchView
+        android:id="@+id/word_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="@string/search_hint"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:iconifiedByDefault="false">
+    </SearchView>
+-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cards_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/card_item"/>
+</LinearLayout>

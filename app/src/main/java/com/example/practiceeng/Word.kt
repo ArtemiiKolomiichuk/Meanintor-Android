@@ -25,4 +25,3 @@ constructor(
     var audioLinks: Array<String> = arrayOf(),
     var bookmarked: Boolean = false
 )
-

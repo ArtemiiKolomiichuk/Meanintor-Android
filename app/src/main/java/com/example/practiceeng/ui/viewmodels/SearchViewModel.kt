@@ -11,12 +11,4 @@ class SearchViewModel : ViewModel() {
                list = data
        }
         fun getList() = list
-
-    private var lastFirstVisiblePosition: Int = 0
-   fun setPosition(pos: Int) {
-        lastFirstVisiblePosition = pos
-    }
-
-    fun getPosition()=lastFirstVisiblePosition
-
 }

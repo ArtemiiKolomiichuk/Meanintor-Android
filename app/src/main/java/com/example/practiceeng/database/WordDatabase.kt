@@ -5,6 +5,7 @@ import com.example.practiceeng.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import okhttp3.internal.toLongOrDefault
 import java.util.*
 
 @Database(entities = [ Word::class, WordCard::class, Folder::class ], version=1)
@@ -38,15 +39,16 @@ class WordTypeConverters {
 
     @TypeConverter
     fun toTrainingHistory(value: String): TrainingHistory {
-        val split = value.split("|")
-        val types = split[0].split("#")
-        var typesArray = arrayOf<Pair<TestType, Int>>()
-        for (type in types) {
-            val splitType = type.split("-")
-            typesArray += (Pair(TestType.values()[splitType[0].toInt()], splitType[1].toInt()))
-        }
-        val lastDate = Date(split[1].toLong())
-        return TrainingHistory(typesArray, lastDate)
+            val split = value.split("|")
+            val types = split[0].split("#")
+            var typesArray = arrayOf<Pair<TestType, Int>>()
+            for (type in types) {
+                val splitType = type.split("-")
+                if(splitType[0].isNotEmpty()&&splitType[1].isNotEmpty())
+                typesArray += (Pair(TestType.values()[splitType[0].toInt()], splitType[1].toInt()))
+            }
+            val lastDate = Date(split[1].toLongOrDefault(Date().time))
+            return TrainingHistory(typesArray, lastDate)
     }
 
     @TypeConverter
@@ -56,9 +58,7 @@ class WordTypeConverters {
 
     @TypeConverter
     fun toWord(value: String): Word {
-        lateinit var word:Word
-        GlobalScope.launch { word = WordRepository.get().getWord(value) }
-        return word
+       return WordRepository.get().getWord(value)
     }
 
     @TypeConverter
@@ -92,7 +92,7 @@ interface WordDao {
 
 
     @Query("SELECT * FROM word WHERE word=(:name)")
-   suspend fun getWord(name: String): Word
+    fun getWord(name: String): Word
 
     @Query("SELECT EXISTS(SELECT * FROM word WHERE word=(:name))")
     suspend fun wordExist(name : String) : Boolean
@@ -102,6 +102,9 @@ interface WordDao {
 
     @Query("SELECT * FROM folder WHERE folderID=(:folderID)")
     suspend fun getFolder(folderID: UUID): Folder
+
+    @Query("SELECT folder.*, COUNT(wordCard.folderID) AS amount FROM folder LEFT JOIN wordCard ON folder.folderID = wordCard.folderID GROUP BY folder.folderID")
+    fun getCountedFolders(): Flow<List<CountedFolder>>
 
     @Query("SELECT * FROM wordCard WHERE folderID=(:folderID)")
     fun getWordCardsFromFolder(folderID: UUID): Flow<List<WordCard>>

@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.*
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
-import com.example.practiceeng.ui.adapters.SearchListAdapter
+import com.example.practiceeng.ui.adapters.CardsListAdapter
 import com.example.practiceeng.ui.viewmodels.SearchViewModel
 import kotlinx.coroutines.launch
 import java.util.concurrent.Callable
@@ -105,8 +105,8 @@ class WordSearchFragment : Fragment() {
                         WordRepository.get().addOrUpdateWord(it.get(0).word)
                     }
                 }
-                val adapter : SearchListAdapter =
-                    SearchListAdapter(it.toList(), { card: WordCard ->
+                val adapter : CardsListAdapter =
+                    CardsListAdapter(it.toList(), { card: WordCard ->
                         findNavController().navigate(
                             com.example.practiceeng.ui.fragments.WordSearchFragmentDirections.addWordCard(
                                 card.wordString(),

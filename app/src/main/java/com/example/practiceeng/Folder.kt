@@ -14,3 +14,10 @@ data class Folder(
     var paused: Boolean = false,
     @PrimaryKey var folderID : UUID = UUID.randomUUID())
 
+data class CountedFolder(
+    var title : String,
+    var description : String,
+    var paused: Boolean = false,
+    @PrimaryKey var folderID : UUID = UUID.randomUUID(),
+    var amount:Int)
+

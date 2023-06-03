@@ -67,10 +67,23 @@
         android:id="@+id/savedFoldersFragment"
         android:name="com.example.practiceeng.ui.fragments.SavedFoldersFragment"
         android:label="fragment_saved_folders"
-        tools:layout="@layout/fragment_saved_folders" />
+        tools:layout="@layout/fragment_saved_folders" >
+        <action
+            android:id="@+id/openSavedCards"
+            app:destination="@id/savedCardsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.practiceeng.ui.fragments.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/savedCardsFragment"
+        android:name="com.example.practiceeng.ui.fragments.SavedCardsFragment"
+        android:label="fragment_saved_cards"
+        tools:layout="@layout/fragment_saved_cards" >
+        <argument
+            android:name="folderId"
+            app:argType="java.util.UUID" />
+    </fragment>
 </navigation>
