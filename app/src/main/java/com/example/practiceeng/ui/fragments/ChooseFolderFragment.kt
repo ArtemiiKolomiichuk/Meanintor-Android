@@ -17,7 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practiceeng.Folder
 import com.example.practiceeng.R
-import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentChooseFolderBinding
 import com.example.practiceeng.ui.adapters.ChooseFolderAdapter
 import com.example.practiceeng.ui.viewmodels.ChooseFolderViewModel
@@ -72,7 +71,7 @@ class ChooseFolderFragment : Fragment() {
         builder.setTitle("New folder")
         val alertDialog: AlertDialog = builder.create()
         val dialog_layout: View =
-            layoutInflater.inflate(R.layout.fragment_new_folder_dialog, null)
+            layoutInflater.inflate(R.layout.dialog_new_folder, null)
         // Create the text field in the alert dialog...
         val text1 = dialog_layout.findViewById<EditText>(R.id.text1)
         // Create the text field in the alert dialog...

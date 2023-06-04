@@ -61,6 +61,13 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:hint="Part of speech" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp"
+        android:background="?android:attr/listDivider" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,51 +81,81 @@
         android:inputType="textMultiLine"
         android:hint="Definition" />
 
-    <TextView
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp"
+        android:background="?android:attr/listDivider" />
+
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        android:text="Example" />
+        android:id="@+id/examples_list"
+        />
 
-    <EditText
+   <!-- <EditText
         android:id="@+id/example"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
-        android:hint="Example" />
+        android:hint="Example" />-->
 
     <View
-        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        android:layout_marginVertical="8dp"/>
+        android:layout_marginVertical="8dp"
+        android:background="?android:attr/listDivider" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        android:text="Synonyms" />
 
-    <EditText
-        android:id="@+id/synonyms"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:hint="Synonyms" />
+    <ListView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+     android:id="@+id/synonyms_list"
+      />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        android:text="Antomyns" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:background="?android:attr/listDivider" />
 
-    <EditText
-        android:id="@+id/antonyms"
+    <ListView
+        android:id="@+id/antonyms_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:hint="Antomyns" />
+        android:layout_height="wrap_content" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp"
+        android:background="?android:attr/listDivider" />
+
+    <!--<TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAppearance="?attr/textAppearanceHeadline5"
+      android:text="Synonyms" />
+
+  <EditText
+      android:id="@+id/synonyms"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="textMultiLine"
+      android:hint="Synonyms" />
+
+  <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAppearance="?attr/textAppearanceHeadline5"
+      android:text="Antomyns" />
+
+  <EditText
+      android:id="@+id/antonyms"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:inputType="textMultiLine"
+      android:hint="Antomyns" />-->
 
     <Button
         android:id="@+id/choose_folder_button"
