@@ -3,14 +3,17 @@
     <style name="Base.Theme.PracticeEng" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/teal</item>
+        <item name="colorAccent">@color/light_teal</item>
         <item name="colorPrimaryVariant">@color/light_teal</item>
+        <item name="colorControlNormal">@color/grey</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/blue</item>
         <item name="colorSecondaryVariant">@color/black</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="fontFamily">@font/rubik</item>
+        <item name="android:fontFamily">@font/rubik</item>
     </style>
-
 
     <style name="Theme.PracticeEng" parent="Base.Theme.PracticeEng" />
 </resources>

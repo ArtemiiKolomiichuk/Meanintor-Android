@@ -7,4 +7,8 @@
     <color name="blue">#393e46</color>
     <color name="black">#222831</color>
     <color name="dark_grey">#9ba4b5</color>
+    <color name="light_blue_400">#FF29B6F6</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
 </resources>
