@@ -13,16 +13,19 @@ class WordCardHolder(open val binding: CardItemBinding) : RecyclerView.ViewHolde
             word.setText(card.wordString())
             partOfSpeech.setText(card.partOfSpeech)
             definitionString.setText(card.definition)
-            example.setText(card.examples.toString())
-            if(card.hasSynonyms()){
-                synonyms.setText(card.synonyms.toString())
+            if(card.examples.isNotEmpty()) {
+                example.setText(card.examples.joinToString("\n"))
+            } else
+                example.visibility = RecyclerView.GONE
+            if(card.synonyms.isNotEmpty()){
+                synonyms.setText(card.synonyms.joinToString())
             } else {
                 synonymsDivider.visibility = RecyclerView.GONE
                 synonymsTitle.visibility = RecyclerView.GONE
                 synonyms.visibility = RecyclerView.GONE
             }
-            if(card.hasAntonyms()){
-                antonyms.setText(card.antonyms.toString())
+            if(card.antonyms.isNotEmpty()){
+                antonyms.setText(card.antonyms.joinToString())
             } else {
                 antonymsDivider.visibility = RecyclerView.GONE
                 antonymsTitle.visibility = RecyclerView.GONE

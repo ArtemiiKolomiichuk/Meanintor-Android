@@ -13,23 +13,26 @@ class VisualWordCardHolder(open val binding: CardItemBinding) : RecyclerView.Vie
             word.setText(card.word.word)
             partOfSpeech.setText(card.partOfSpeech)
             definitionString.setText(card.definition)
-            example.setText(card.examples.toString())
+            if(card.examples.isNotEmpty()) {
+                example.setText(card.examples.joinToString("\n"))
+            } else
+                example.visibility = RecyclerView.GONE
             if(card.synonyms.isNotEmpty()){
-                synonyms.setText(card.synonyms.toString())
+                synonyms.setText(card.synonyms.joinToString())
             } else {
                 synonymsDivider.visibility = RecyclerView.GONE
                 synonymsTitle.visibility = RecyclerView.GONE
                 synonyms.visibility = RecyclerView.GONE
             }
             if(card.antonyms.isNotEmpty()){
-                antonyms.setText(card.antonyms.toString())
+                antonyms.setText(card.antonyms.joinToString())
             } else {
                 antonymsDivider.visibility = RecyclerView.GONE
                 antonymsTitle.visibility = RecyclerView.GONE
                 antonyms.visibility = RecyclerView.GONE
             }
 
-            binding.root.setOnClickListener {
+            root.setOnClickListener {
                 onCardClicked(card)
             }
         }
