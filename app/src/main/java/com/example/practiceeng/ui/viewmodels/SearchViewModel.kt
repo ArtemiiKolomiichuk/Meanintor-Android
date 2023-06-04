@@ -1,9 +1,7 @@
 package com.example.practiceeng.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.example.practiceeng.WordCard
-import java.util.*
 
 class SearchViewModel : ViewModel() {
         private var list: Array<WordCard>? = null

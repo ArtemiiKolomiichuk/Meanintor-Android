@@ -2,9 +2,7 @@ package com.example.practiceeng.database
 
 import androidx.room.*
 import com.example.practiceeng.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import okhttp3.internal.toLongOrDefault
 import java.util.*
 
@@ -44,7 +42,7 @@ class WordTypeConverters {
             var typesArray = arrayOf<Pair<TestType, Int>>()
             for (type in types) {
                 val splitType = type.split("-")
-                if(splitType[0].isNotEmpty()&&splitType[1].isNotEmpty())
+                if(splitType[0].isNotEmpty() && splitType[1].isNotEmpty())
                 typesArray += (Pair(TestType.values()[splitType[0].toInt()], splitType[1].toInt()))
             }
             val lastDate = Date(split[1].toLongOrDefault(Date().time))
@@ -90,7 +88,6 @@ interface WordDao {
     @Query("SELECT * FROM word")
     fun getWords(): Flow<List<Word>>
 
-
     @Query("SELECT * FROM word WHERE word=(:name)")
     fun getWord(name: String): Word
 
@@ -106,8 +103,8 @@ interface WordDao {
     @Query("SELECT folder.*, COUNT(wordCard.folderID) AS amount FROM folder LEFT JOIN wordCard ON folder.folderID = wordCard.folderID GROUP BY folder.folderID")
     fun getCountedFolders(): Flow<List<CountedFolder>>
 
-    @Query("SELECT * FROM wordCard WHERE folderID=(:folderID)")
-    fun getWordCardsFromFolder(folderID: UUID): Flow<List<WordCard>>
+    @Query("SELECT partOfSpeech, definition, examples, synonyms, antonyms, word, folderID, cardID FROM wordCard WHERE folderID=(:folderID)")
+    fun getWordCardsFromFolder(folderID: UUID): Flow<List<VisualWordCard>>
 
     @Query("SELECT * FROM wordCard")
     fun getWordCards(): Flow<List<WordCard>>

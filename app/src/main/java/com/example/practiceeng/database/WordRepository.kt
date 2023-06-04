@@ -2,10 +2,7 @@ package com.example.practiceeng.database
 
 import android.content.Context
 import androidx.room.Room
-import com.example.practiceeng.CountedFolder
-import com.example.practiceeng.Folder
-import com.example.practiceeng.Word
-import com.example.practiceeng.WordCard
+import com.example.practiceeng.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -59,7 +56,7 @@ class WordRepository private constructor(context: Context,
     fun getWord(name: String): Word =   database.wordDao().getWord(name)
     fun getFolders(): Flow<List<Folder>> =   database.wordDao().getFolders()
     suspend fun getFolder(folderID: UUID): Folder =   database.wordDao().getFolder(folderID)
-    fun getWordCardsFromFolder(folderID: UUID): Flow<List<WordCard>> =   database.wordDao().getWordCardsFromFolder(folderID)
+    fun getWordCardsFromFolder(folderID: UUID): Flow<List<VisualWordCard>> =   database.wordDao().getWordCardsFromFolder(folderID)
     suspend fun getCountedFolders(): Flow<List<CountedFolder>> = database.wordDao().getCountedFolders()
     fun getWordCards(): Flow<List<WordCard>> =   database.wordDao().getWordCards()
     suspend fun getWordCard(cardID: UUID): WordCard =   database.wordDao().getWordCard(cardID)

@@ -3,6 +3,7 @@ package com.example.practiceeng.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.practiceeng.VisualWordCard
 import com.example.practiceeng.WordCard
 import com.example.practiceeng.database.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +20,8 @@ class SavedCardsViewModelFactory(val folder: UUID)
 }
 
 class SavedCardsViewModel(folder: UUID) : ViewModel() {
-    private val _cards: MutableStateFlow<List<WordCard>> = MutableStateFlow(emptyList())
-    val cards: StateFlow<List<WordCard>>
+    private val _cards: MutableStateFlow<List<VisualWordCard>> = MutableStateFlow(emptyList())
+    val cards: StateFlow<List<VisualWordCard>>
         get() = _cards.asStateFlow()
 
     init {

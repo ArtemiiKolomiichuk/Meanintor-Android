@@ -17,6 +17,7 @@ import com.example.practiceeng.*
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentSavedCardsBinding
 import com.example.practiceeng.ui.adapters.CardsListAdapter
+import com.example.practiceeng.ui.adapters.SavedCardsListAdapter
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModelFactory
 import com.example.practiceeng.ui.viewmodels.SavedCardsViewModel
@@ -48,8 +49,8 @@ class SavedCardsFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     cardsViewModel.cards.collect { list ->
-                        val adapter: CardsListAdapter =
-                            CardsListAdapter(list, { /*card: WordCard ->
+                        val adapter: SavedCardsListAdapter =
+                            SavedCardsListAdapter(list, { /*card: WordCard ->
                         findNavController().navigate(
                            WordSearchFragmentDirections.addWordCard(
                                 card.cardID

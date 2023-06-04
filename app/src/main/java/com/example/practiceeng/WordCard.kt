@@ -242,3 +242,15 @@ data class WordCard(
     }
 }
 
+
+
+data class VisualWordCard(
+    var partOfSpeech: String,
+    var definition: String,
+    var examples: Array<String> = arrayOf(),
+    var synonyms: Array<String> = arrayOf(),
+    var antonyms: Array<String> = arrayOf(),
+    var word: Word,
+    var folderID: UUID?,
+    val cardID: UUID = UUID.randomUUID()
+)
