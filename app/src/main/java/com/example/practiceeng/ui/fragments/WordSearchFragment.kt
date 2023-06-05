@@ -1,12 +1,10 @@
 package com.example.practiceeng.ui.fragments
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -52,16 +50,20 @@ class WordSearchFragment : Fragment() {
                     if(query.isNullOrBlank())
                         return false
                     binding.addWordsButton.visibility=View.VISIBLE
+
+                    var result: Array<WordCard> = arrayOf()
                     val executor = Executors.newSingleThreadExecutor()
                     val future = executor.submit(Callable {
                         APIHandler.getCards(
-                            query.toString(),
+                            query.toString().trim(),
                             DictionaryAPI.ALL
                         )
                     })
-                    val result = future.get()
+                    result = future.get()
+                    executor.shutdown()
+
                     searchViewModel.setList(result)
-                    if (result.size == 0) {
+                    if (result.isEmpty()) {
                         cardsList.visibility = RecyclerView.GONE
                         textView.visibility = RecyclerView.VISIBLE
                         textView.setText(R.string.search_error)
@@ -72,7 +74,7 @@ class WordSearchFragment : Fragment() {
                     Log.d("WordSearchFragment", result[0].toString())
                         showResultsAtRecyclerView()
                     }
-
+                    /*
                     val audio = MediaPlayer.create(
                         context,
                         "https://download.xfd.plus/xfed/audio/33965_en-us-extraordinary.ogg".toUri()
@@ -83,6 +85,7 @@ class WordSearchFragment : Fragment() {
                     audio?.setOnCompletionListener {
                         audio?.stop()
                     }
+                    */
                     return true
                 }
 

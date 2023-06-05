@@ -34,7 +34,8 @@ class AddWordCardFragment : Fragment() {
             args.synonyms,
             args.antonyms,
             args.folder,
-            args.cardID
+            args.cardID,
+            args.updateExisting
         )
     }
 

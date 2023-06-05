@@ -5,8 +5,11 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.json.JSONObject
 import java.lang.Exception
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 
 class APIHandler{
     companion object {
@@ -157,7 +160,15 @@ class APIHandler{
                         .addHeader("X-RapidAPI-Key", "364859fdf5msh35332022afd4d68p15abf5jsn8e6c3ef6b1d0")
                         .addHeader("X-RapidAPI-Host", "xf-english-dictionary1.p.rapidapi.com")
                         .build()
-                    val response = client.newCall(request).execute()
+
+                    val response: Response
+                    Log.d("DictionaryAPI", "Requesting XFEnglishDictionary")
+                    val executor = Executors.newSingleThreadExecutor()
+                    val future = executor.submit(Callable {
+                        client.newCall(request).execute()
+                    })
+                    response = future.get(4000, java.util.concurrent.TimeUnit.MILLISECONDS)
+
                     val responseString = response.body!!.string()
                     println(responseString)
                     if(responseString == "{}"){
@@ -185,8 +196,8 @@ class APIHandler{
                                         folderID = null
                                     )
                                     val examples = definition.optJSONArray("examples")
-                                    //TODO:val synonyms = definition.optJSONArray("synonyms")
-                                    //TODO:val antonyms = definition.optJSONArray("antonyms")
+                                    //val synonyms = definition.optJSONArray("synonyms")
+                                    //val antonyms = definition.optJSONArray("antonyms")
                                     for(e in 0 until examples.length()){
                                         card.examples += examples.getString(e)
                                     }
@@ -343,8 +354,6 @@ class APIHandler{
             }
         }
     }
-
-
 }
 
 
