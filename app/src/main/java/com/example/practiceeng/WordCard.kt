@@ -66,7 +66,8 @@ data class WordCard(
             for (example in examples){
                 if (example.contains("<b>")) {
                     hintExamples += example.replace(Regex("<b>.*</b>"), "______")
-                }else if (example.contains(wordString())) {
+                }
+                if (example.contains(wordString())) {
                     hintExamples += example.replace(wordString(), "______")
                 }
             }
@@ -219,6 +220,21 @@ data class WordCard(
             result += i.first
         }
         return result
+    }
+
+    /**
+     * Returns true if the word can be trained in any of the specified [TestType]s
+     *
+     * *Does **not** check if the word is [paused]*
+     * @param types types of the tests
+     */
+    fun isAptForTrainings(types: Array<TestType>) : Boolean{
+        for (type in types){
+            if (isAptForTraining(type)){
+                return true
+            }
+        }
+        return false
     }
 
     /**
