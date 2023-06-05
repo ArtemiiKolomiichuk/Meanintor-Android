@@ -17,6 +17,7 @@ class WordTypeConverters {
     fun fromDate(date: Date): Long {
         return date.time
     }
+
     @TypeConverter
     fun toDate(millisSinceEpoch: Long): Date {
         return Date(millisSinceEpoch)
@@ -37,16 +38,16 @@ class WordTypeConverters {
 
     @TypeConverter
     fun toTrainingHistory(value: String): TrainingHistory {
-            val split = value.split("|")
-            val types = split[0].split("#")
-            var typesArray = arrayOf<Pair<TestType, Int>>()
-            for (type in types) {
-                val splitType = type.split("-")
-                if(splitType[0].isNotEmpty() && splitType[1].isNotEmpty())
+        val split = value.split("|")
+        val types = split[0].split("#")
+        var typesArray = arrayOf<Pair<TestType, Int>>()
+        for (type in types) {
+            val splitType = type.split("-")
+            if (splitType[0].isNotEmpty() && splitType[1].isNotEmpty())
                 typesArray += (Pair(TestType.values()[splitType[0].toInt()], splitType[1].toInt()))
-            }
-            val lastDate = Date(split[1].toLongOrDefault(Date().time))
-            return TrainingHistory(typesArray, lastDate)
+        }
+        val lastDate = Date(split[1].toLongOrDefault(Date().time))
+        return TrainingHistory(typesArray, lastDate)
     }
 
     @TypeConverter
@@ -61,11 +62,15 @@ class WordTypeConverters {
 
     @TypeConverter
     fun fromStringArray(value: Array<String>): String {
+        if(value.isNullOrEmpty())
+            return ""
         return value.joinToString("#")
     }
 
     @TypeConverter
     fun toStringArray(value: String): Array<String> {
+        if (value.isEmpty())
+           return emptyArray<String>()
         return value.split("#").toTypedArray()
     }
 }

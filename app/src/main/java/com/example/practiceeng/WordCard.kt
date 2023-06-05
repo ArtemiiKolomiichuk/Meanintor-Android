@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import androidx.annotation.Nullable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Ignore
