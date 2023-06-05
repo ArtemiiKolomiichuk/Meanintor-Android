@@ -15,7 +15,8 @@ class AddWordCardViewModelFactory(
      var synonyms: Array<String>?,
      var antonyms: Array<String>?   ,
      var folder: UUID?,
-    val id:UUID?)
+    val id:UUID?,
+val update:Boolean)
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddWordCardViewModel(
@@ -26,7 +27,7 @@ class AddWordCardViewModelFactory(
         synonyms,
         antonyms,
         folder,
-        id) as T
+        id, update) as T
     }
 }
 
@@ -38,7 +39,8 @@ class AddWordCardViewModel(
       synonyms: Array<String>?,
       antonyms: Array<String>?,
       folder: UUID?,
-      id:UUID?
+      id:UUID?,
+      update:Boolean
 ) : ViewModel() {
     var name: String
     var pos: String? = null
@@ -49,6 +51,7 @@ class AddWordCardViewModel(
     var folder: UUID? = null
     var id:UUID? = null
     var word:Word? = null
+    val update:Boolean = update
 
     init {
         this.name = name
