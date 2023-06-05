@@ -243,8 +243,6 @@ data class WordCard(
     }
 }
 
-
-
 data class VisualWordCard(
     var partOfSpeech: String,
     var definition: String,

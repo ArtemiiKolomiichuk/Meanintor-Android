@@ -62,9 +62,17 @@ class WordRepository private constructor(context: Context,
     suspend fun getWordCard(cardID: UUID): WordCard =   database.wordDao().getWordCard(cardID)
     fun getBookmarkedWords(): Flow<List<Word>> = database.wordDao().getBookmarkedWords()
     suspend fun wordExist(name : String) : Boolean = database.wordDao().wordExist(name)
+    fun deleteWordCard(cardId:UUID) = database.wordDao().deleteWordCard(cardId)
     fun addWordCard(pos: String, def: String, example: Array<String>, synonyms: Array<String>, antonyms: Array<String>, word: String, folder: UUID) {
         coroutineScope.launch {
            val wordWord:Word = getWord(word)
+            addWordCard(WordCard(pos, def, example, synonyms, antonyms, wordWord, folder))
+        }
+    }
+
+    fun updateWordCard(pos: String, def: String, example: Array<String>, synonyms: Array<String>, antonyms: Array<String>, word: String, folder: UUID, ) {
+        coroutineScope.launch {
+            val wordWord:Word = getWord(word)
             addWordCard(WordCard(pos, def, example, synonyms, antonyms, wordWord, folder))
         }
     }

@@ -12,11 +12,11 @@ import java.util.*
 class StringHolder(open val binding: ItemArrayStringBinding) : RecyclerView.ViewHolder(binding.root) {
     open fun bind(
         string: String,
-        deleteFunction: (Int) -> Unit
+        deleteFunction: () -> Unit
     ) {
         binding.apply {
            name.text = string
-           delete.setOnClickListener { deleteFunction }
+           delete.setOnClickListener { deleteFunction() }
         }
     }
 }
@@ -38,7 +38,7 @@ class StringAdapter(
 
     override fun onBindViewHolder(holder: StringHolder, position: Int) {
         val string = strings[position]
-        holder.bind(string, {position ->
+        holder.bind(string, {
             strings.removeAt(position)
             notifyItemRemoved(position)
         })

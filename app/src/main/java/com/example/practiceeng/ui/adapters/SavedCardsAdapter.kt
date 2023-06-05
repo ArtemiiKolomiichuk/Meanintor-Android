@@ -31,7 +31,6 @@ class VisualWordCardHolder(open val binding: CardItemBinding) : RecyclerView.Vie
                 antonymsTitle.visibility = RecyclerView.GONE
                 antonyms.visibility = RecyclerView.GONE
             }
-
             root.setOnClickListener {
                 onCardClicked(card)
             }

@@ -21,8 +21,9 @@ class SavedFolderHolder(open val binding: ItemFolderBinding) : RecyclerView.View
             folderDescription.text = folder.description
             cardsCount.text = folder.amount.toString()
 
-            if(folder.amount==1)
-            cardsCountLabel.text = "card"
+            if (folder.amount==1) {
+                cardsCountLabel.text = "card"
+            }
 
             startTrainingButton.setOnClickListener {
                 trainingFunction(

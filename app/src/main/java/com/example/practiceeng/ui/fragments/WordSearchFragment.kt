@@ -39,7 +39,7 @@ class WordSearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             addWordsButton.setOnClickListener {
-               val action = com.example.practiceeng.ui.fragments.WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
+               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
                 findNavController().navigate(action)
             }
             addWordsButton.visibility = View.GONE

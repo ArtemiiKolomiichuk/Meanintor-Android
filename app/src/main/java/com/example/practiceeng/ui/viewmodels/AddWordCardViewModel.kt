@@ -3,6 +3,7 @@ package com.example.practiceeng.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.practiceeng.Word
+import com.example.practiceeng.WordCard
 import com.example.practiceeng.database.WordRepository
 import java.util.*
 
@@ -15,8 +16,7 @@ class AddWordCardViewModelFactory(
      var synonyms: Array<String>?,
      var antonyms: Array<String>?   ,
      var folder: UUID?,
-    val id:UUID?,
-val update:Boolean)
+    val id:UUID?)
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return AddWordCardViewModel(
@@ -27,10 +27,9 @@ val update:Boolean)
         synonyms,
         antonyms,
         folder,
-        id, update) as T
+        id) as T
     }
 }
-
 class AddWordCardViewModel(
       name: String,
       pos: String?,
@@ -39,8 +38,7 @@ class AddWordCardViewModel(
       synonyms: Array<String>?,
       antonyms: Array<String>?,
       folder: UUID?,
-      id:UUID?,
-      update:Boolean
+      id:UUID?
 ) : ViewModel() {
     var name: String
     var pos: String? = null
@@ -51,8 +49,8 @@ class AddWordCardViewModel(
     var folder: UUID? = null
     var id:UUID? = null
     var word:Word? = null
-    val update:Boolean = update
-
+    var scrollPosition:Int = 0
+val wordRepository =  WordRepository.get()
     init {
         this.name = name
         pos?.let { this.pos = pos }
@@ -65,8 +63,6 @@ class AddWordCardViewModel(
     }
 
 fun addWordCard(){
-    WordRepository.get().addWordCard(pos!!,def!!,example.toTypedArray(),synonyms.toTypedArray(),antonyms.toTypedArray(), name,folder!!)
+    wordRepository.addWordCard(pos!!,def!!,example.toTypedArray(),synonyms.toTypedArray(),antonyms.toTypedArray(), name,folder!!)
 }
-
-    // TODO: Implement the ViewModel
 }

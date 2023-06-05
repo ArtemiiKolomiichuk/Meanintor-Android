@@ -90,6 +90,8 @@ interface WordDao {
     suspend fun updateWordCard(wordCard: WordCard)
     @Insert
     suspend fun addWordCard(wordCard: WordCard)
+    @Query("DELETE FROM wordCard WHERE cardID = :id")
+    fun deleteWordCard(id: UUID)
     @Query("SELECT * FROM word")
     fun getWords(): Flow<List<Word>>
 

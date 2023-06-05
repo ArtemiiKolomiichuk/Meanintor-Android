@@ -67,9 +67,6 @@
             android:name="cardID"
             app:argType="java.util.UUID"
             app:nullable="true" />
-        <argument
-            android:name="updateExisting"
-            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/chooseFolderFragment"
@@ -104,11 +101,18 @@
             android:name="folderId"
             app:argType="java.util.UUID" />
         <action
-            android:id="@+id/action_savedCardsFragment_to_addWordCardFragment"
-            app:destination="@id/addWordCardFragment" >
-            <argument
-                android:name="updateExisting"
-                android:defaultValue="true" />
-        </action>
+            android:id="@+id/editWordCard"
+            app:destination="@id/editWordCardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editWordCardFragment"
+        android:name="com.example.practiceeng.ui.fragments.EditWordCardFragment"
+        android:label="EditWordCardFragment" >
+        <argument
+            android:name="wordCardId"
+            app:argType="java.util.UUID" />
+        <action
+            android:id="@+id/changeFolder"
+            app:destination="@id/chooseFolderFragment" />
     </fragment>
 </navigation>

@@ -50,12 +50,12 @@ class SavedCardsFragment : Fragment() {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     cardsViewModel.cards.collect { list ->
                         val adapter: SavedCardsListAdapter =
-                            SavedCardsListAdapter(list, { /*card: WordCard ->
+                            SavedCardsListAdapter(list, { card: VisualWordCard ->
                         findNavController().navigate(
-                           WordSearchFragmentDirections.addWordCard(
-                                card.cardID
+                          SavedCardsFragmentDirections.editWordCard(
+                            card.cardID
                             )
-                        )*/
+                        )
                             })
                         adapter.stateRestorationPolicy =
                             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
