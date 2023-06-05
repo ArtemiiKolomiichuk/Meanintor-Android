@@ -1,5 +1,7 @@
 package com.example.practiceeng
 
+import com.example.practiceeng.database.WordRepository
+import kotlinx.coroutines.flow.toList
 import java.lang.Exception
 import java.util.Date
 import java.util.Random
@@ -14,7 +16,7 @@ import java.util.UUID
 class QuestionManager
 {
     companion object {
-        private var folders: Array<String> = arrayOf()
+        private var folders: Array<UUID> = arrayOf()
         private var testTypes: Array<TestType> = arrayOf()
         private var cards: MutableList<WordCard> = mutableListOf()
         private var counter: Int = 0
@@ -25,14 +27,14 @@ class QuestionManager
          * @param folders folders from which cards can be selected; **whether they are
          * *paused* or not should be checked before calling this function**
          */
-        fun reset(
+        suspend fun reset(
             testTypes: Array<TestType> = TestType.all(),
-            folders: Array<String> = arrayOf()
+            folders: Array<UUID> = arrayOf()
         ) {
             counter = 0
             this.testTypes = testTypes
             this.folders = folders
-            //cards = TODO: DataBase: load cards, not paused, not trained from folders, limit amount
+            cards = WordRepository.get().getWordCards().toList()[0].filter { !it.paused && !it.trained() && (it.folderID in folders)}.toMutableList()
         }
 
         /**
@@ -52,8 +54,17 @@ class QuestionManager
          * Returns not paused folders that include at least 1 card that is not paused, not [WordCard.trained]
          * and can be studied in at least 1 of the selected [TestType]s
          */
-        fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
-              return TODO()//#DataBase
+        suspend fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
+            val folders = arrayOf<UUID>()
+            WordRepository.get().getFolders().toList()[0].forEach {
+                //TODO: switch to WordCard
+                /*
+                if(!it.paused && WordRepository.get().getWordCardsFromFolder(it.folderID).toList().any { !it.paused && !it.trained() && it.isAptForTrainings(testTypes) }){
+                    folders.plus(it.folderID)
+                }
+                */
+            }
+            return folders
         }
 
         /**

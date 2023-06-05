@@ -83,7 +83,7 @@ class Utils{
         fun getGeneralWordOptions(amount: Int,
                                   excludedWords: Array<String>,
                                   typeOfSpeech: String) : Array<String> {
-            return when(typeOfSpeech){
+            return when(typeOfSpeech.lowercase()){
                 "verb" -> {
                     verbs.toMutableList().minus(excludedWords.toSet()).toMutableList()
                 }

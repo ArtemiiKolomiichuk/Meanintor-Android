@@ -34,7 +34,7 @@ class IEManager {
          * @param separators Array of separators that separate the [parts] of the card,
          * the last separator is the one that separates cards
          */
-        fun extractCards(data: String, separators: Array<String>, parts: Array<WordCardPart>) : MutableList<WordCard>{
+        private fun extractCards(data: String, separators: Array<String>, parts: Array<WordCardPart>) : MutableList<WordCard>{
             val cards : MutableList<WordCard> = mutableListOf()
             val cardsData = data.split(separators[separators.size - 1])
             for(cardData in cardsData){
@@ -99,11 +99,20 @@ class IEManager {
         }
 
         fun importCards(data: String, folderID: UUID){
-            if(hasHeader(data)){
-                val cards = extractCards(data.substringAfter("[MeanintorWordCards]\n"), arrayOf("|||","|||","|||","@@@","|||","@@@","|||","@@@","\n#\n"
-                ), arrayOf(WordCardPart.Word, WordCardPart.PartOfSpeech, WordCardPart.Definition, WordCardPart.Examples, WordCardPart.Synonyms, WordCardPart.Antonyms))
-                //TODO: Move to folder
+            if(!hasHeader(data)){
+                return
             }
+            val cards = extractCards(data.substringAfter("[MeanintorWordCards]\n"), arrayOf("|||","|||","|||","@@@","|||","@@@","|||","@@@","\n#\n"
+            ), arrayOf(WordCardPart.Word, WordCardPart.PartOfSpeech, WordCardPart.Definition, WordCardPart.Examples, WordCardPart.Synonyms, WordCardPart.Antonyms))
+            importCards(cards.toTypedArray(), folderID)
+        }
+
+        fun importCards(data: String, separators: Array<String>, parts: Array<WordCardPart>, folderID: UUID) {
+            importCards(extractCards(data, separators, parts).toTypedArray(), folderID)
+        }
+
+        fun importCards(cards: Array<WordCard>, folderID: UUID){
+            //TODO: Move to folder
         }
 
         private fun hasHeader(data: String): Boolean{
