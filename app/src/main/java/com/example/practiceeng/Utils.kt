@@ -1,5 +1,13 @@
 package com.example.practiceeng
 
+import android.content.Context
+import android.media.MediaPlayer
+import android.util.Log
+import androidx.core.net.toUri
+import okhttp3.Response
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+
 /**
  * Types of tests that can be taken
  */
@@ -107,6 +115,30 @@ class Utils{
          */
         fun getGeneralDefinitionOptions(amount: Int): Array<String> {
             return definitions.toMutableList().shuffled().take(amount).toTypedArray()
+        }
+
+        /**
+         * Plays the audio based on provided [DictionaryAPI.XFEnglishDictionary] [link]
+         */
+        fun playAudio(link: String, context : Context){
+            var audio: MediaPlayer? = null
+            val executor = Executors.newSingleThreadExecutor()
+            val future = executor.submit(Callable {
+                audio = MediaPlayer.create(
+                    context,
+                    "https://download.xfd.plus/xfed/audio/$link".toUri()
+                )
+            })
+            try {
+                future.get(2, java.util.concurrent.TimeUnit.SECONDS)
+            }catch (_: Exception){}
+
+            audio?.setOnPreparedListener {
+                audio!!.start()
+            }
+            audio?.setOnCompletionListener {
+                audio!!.stop()
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import com.example.practiceeng.database.WordRepository
 import java.lang.StringBuilder
 import java.util.UUID
 
@@ -8,11 +9,21 @@ import java.util.UUID
  */
 class IEManager {
     companion object{
+
+        /**
+         * Import words from a string and put them into the bookmarked words folder
+         * @param separator Separator that separates words
+         */
         fun importWords(data: String, separator: String){
             val words = data.split(separator)
-            //TODO: Move to bookmarked words
+            for(word in words){
+                WordRepository.get().addWord(Word(word, bookmarked = true))
+            }
         }
 
+        /**
+         * Exports card as a string that can be imported later seamlessly
+         */
         fun exportCards(cards: Array<WordCard>): String{
             val separator = "|||"
             val separator2 = "@@@"
@@ -31,6 +42,7 @@ class IEManager {
         }
 
         /**
+         * Extracts cards from a string
          * @param separators Array of separators that separate the [parts] of the card,
          * the last separator is the one that separates cards
          */
@@ -98,6 +110,11 @@ class IEManager {
             return cards
         }
 
+        /**
+         * Imports cards from a string and puts them into the specified folder
+         *
+         * Does nothing if string doesn't [hasHeader]
+         */
         fun importCards(data: String, folderID: UUID){
             if(!hasHeader(data)){
                 return
@@ -107,12 +124,19 @@ class IEManager {
             importCards(cards.toTypedArray(), folderID)
         }
 
+        /**
+         * Imports cards from a string and puts them into the specified folder
+         * using the specified separators and parts
+         */
         fun importCards(data: String, separators: Array<String>, parts: Array<WordCardPart>, folderID: UUID) {
             importCards(extractCards(data, separators, parts).toTypedArray(), folderID)
         }
 
-        fun importCards(cards: Array<WordCard>, folderID: UUID){
-            //TODO: Move to folder
+        private fun importCards(cards: Array<WordCard>, folderID: UUID){
+            for (card in cards){
+                card.folderID = folderID
+                WordRepository.get().addWordCard(card)
+            }
         }
 
         private fun hasHeader(data: String): Boolean{

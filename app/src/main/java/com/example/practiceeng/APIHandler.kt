@@ -162,7 +162,6 @@ class APIHandler{
                         .build()
 
                     val response: Response
-                    Log.d("DictionaryAPI", "Requesting XFEnglishDictionary")
                     val executor = Executors.newSingleThreadExecutor()
                     val future = executor.submit(Callable {
                         client.newCall(request).execute()
@@ -348,6 +347,16 @@ class APIHandler{
                     }
                     for(c in cards){
                         c.word = theWord
+                        c.definition = c.definition.replace("<[^>]*>".toRegex(), "")
+                        for(e in 0 until c.examples.size){
+                            c.examples[e] = c.examples[e].replace("<[^>]*>".toRegex(), "")
+                        }
+                        for(s in 0 until c.synonyms.size){
+                            c.synonyms[s] = c.synonyms[s].replace("<[^>]*>".toRegex(), "")
+                        }
+                        for(a in 0 until c.antonyms.size){
+                            c.antonyms[a] = c.antonyms[a].replace("<[^>]*>".toRegex(), "")
+                        }
                     }
                     return cards.toTypedArray()
                 }

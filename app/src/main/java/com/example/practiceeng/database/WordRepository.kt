@@ -57,6 +57,7 @@ class WordRepository private constructor(context: Context,
     fun getFolders(): Flow<List<Folder>> =   database.wordDao().getFolders()
     suspend fun getFolder(folderID: UUID): Folder =   database.wordDao().getFolder(folderID)
     fun getWordCardsFromFolder(folderID: UUID): Flow<List<VisualWordCard>> =   database.wordDao().getWordCardsFromFolder(folderID)
+    fun getWordCardsFromFolder2(folderID: UUID): Flow<List<WordCard>> =   database.wordDao().getWordCardsFromFolder2(folderID)
     suspend fun getCountedFolders(): Flow<List<CountedFolder>> = database.wordDao().getCountedFolders()
     fun getWordCards(): Flow<List<WordCard>> =   database.wordDao().getWordCards()
     suspend fun getWordCard(cardID: UUID): WordCard =   database.wordDao().getWordCard(cardID)
