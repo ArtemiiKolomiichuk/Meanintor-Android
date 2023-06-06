@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import com.example.practiceeng.database.WordRepository
 import java.lang.StringBuilder
 import java.util.UUID
 
@@ -10,7 +11,9 @@ class IEManager {
     companion object{
         fun importWords(data: String, separator: String){
             val words = data.split(separator)
-            //TODO: Move to bookmarked words
+            for(word in words){
+                WordRepository.get().addWord(Word(word, bookmarked = true))
+            }
         }
 
         fun exportCards(cards: Array<WordCard>): String{
@@ -112,7 +115,10 @@ class IEManager {
         }
 
         fun importCards(cards: Array<WordCard>, folderID: UUID){
-            //TODO: Move to folder
+            for (card in cards){
+                card.folderID = folderID
+                WordRepository.get().addWordCard(card)
+            }
         }
 
         private fun hasHeader(data: String): Boolean{
