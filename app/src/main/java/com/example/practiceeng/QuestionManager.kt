@@ -16,32 +16,18 @@ import java.util.UUID
 class QuestionManager
 {
     companion object {
-        private var folders: Array<UUID> = arrayOf()
         private var testTypes: Array<TestType> = arrayOf()
         private var cards: MutableList<WordCard> = mutableListOf()
         private var counter: Int = 0
 
-        /**
-         * Resets the question manager
-         * @param testTypes the types of tests that can be selected
-         * @param folders folders from which cards can be selected; **whether they are
-         * *paused* or not should be checked before calling this function**
-         */
-        suspend fun reset(
-            testTypes: Array<TestType> = TestType.all(),
-            folders: Array<UUID> = arrayOf()
-        ) {
-            counter = 0
-            this.testTypes = testTypes
-            this.folders = folders
-            cards = WordRepository.get().getWordCards().toList()[0].filter { !it.paused && !it.trained() && (it.folderID in folders)}.toMutableList()
-        }
 
         /**
          * Returns [amount] *(or less)* of questions in
          * selected folders of selected types
          */
-        fun getQuestions(amount: Int): Array<Question> {
+        fun getQuestions(amount: Int, cards: MutableList<WordCard>, testTypes: Array<TestType>): Array<Question> {
+            this.testTypes = testTypes
+            this.cards = cards
             var questions = arrayOf<Question>()
             for (i in 0..amount) {
                 val question = getNextQuestion() ?: return questions
