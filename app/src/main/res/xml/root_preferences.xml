@@ -1,0 +1,63 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--<PreferenceCategory app:title="@string/app_name">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="reply"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="reply"
+            app:title="@string/reply_title"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+-->
+    <PreferenceCategory app:title="Import and export">
+
+        <EditTextPreference app:title="Import words"
+            app:key="@string/import_words_key"
+            app:summary="They'll be added to your bookmarks"
+            />
+
+        <EditTextPreference app:title="Import cards"
+            app:key="@string/import_cards_key"
+            app:summary="They'll be added to your bookmarks"
+            />
+
+        <Preference
+            app:title="Export cards"
+            app:key="@string/export_cards_key"
+            app:summary="Create a text file with your data"
+            />
+<!--
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/attachment_summary_off"
+            app:summaryOn="@string/attachment_summary_on"
+            app:title="@string/attachment_title" />-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Notifications">
+        <SwitchPreferenceCompat
+            app:key="@string/send_notifications_key"
+            app:title="Send daily reminders" />
+
+        <Preference
+            app:dependency="@string/send_notifications_key"
+            app:key="@string/notifications_time_key"
+            app:title="Notifications time"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

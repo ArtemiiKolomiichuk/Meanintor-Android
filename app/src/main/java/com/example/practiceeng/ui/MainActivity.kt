@@ -1,17 +1,15 @@
-package com.example.practiceeng
+package com.example.practiceeng.ui
 
-import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
+import android.view.MenuItem
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.practiceeng.R
 import com.example.practiceeng.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.practiceeng.ui.fragments.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -23,6 +21,5 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         navController = Navigation.findNavController(this, R.id.fragment_container)
         setupWithNavController(binding.bottomNavigationView, navController)
-
     }
 }
