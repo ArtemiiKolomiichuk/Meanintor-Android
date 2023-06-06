@@ -57,12 +57,9 @@ class QuestionManager
         suspend fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
             val folders = arrayOf<UUID>()
             WordRepository.get().getFolders().toList()[0].forEach {
-                //TODO: switch to WordCard
-                /*
-                if(!it.paused && WordRepository.get().getWordCardsFromFolder(it.folderID).toList().any { !it.paused && !it.trained() && it.isAptForTrainings(testTypes) }){
+                if(!it.paused && WordRepository.get().getWordCardsFromFolder2(it.folderID).toList()[0].any { !it.paused && !it.trained() && it.isAptForTrainings(testTypes) }){
                     folders.plus(it.folderID)
                 }
-                */
             }
             return folders
         }

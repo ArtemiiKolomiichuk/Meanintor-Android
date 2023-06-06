@@ -113,6 +113,9 @@ interface WordDao {
     @Query("SELECT partOfSpeech, definition, examples, synonyms, antonyms, word, folderID, cardID FROM wordCard WHERE folderID=(:folderID)")
     fun getWordCardsFromFolder(folderID: UUID): Flow<List<VisualWordCard>>
 
+    @Query("SELECT * FROM wordCard WHERE folderID=(:folderID)")
+    fun getWordCardsFromFolder2(folderID: UUID): Flow<List<WordCard>>
+
     @Query("SELECT * FROM wordCard")
     fun getWordCards(): Flow<List<WordCard>>
 
