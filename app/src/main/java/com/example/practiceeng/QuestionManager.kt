@@ -25,15 +25,15 @@ class QuestionManager
          * Returns [amount] *(or less)* of questions in
          * selected folders of selected types
          */
-        suspend fun getQuestions(amount: Int, cards: MutableList<WordCard>, testTypes: Array<TestType>): Array<Question> {
+        fun getQuestions(amount: Int, cards: MutableList<WordCard>, testTypes: Array<TestType>): Array<Question> {
             this.testTypes = testTypes
             this.cards = cards
-            var questions = arrayOf<Question>()
+            var questions = mutableListOf<Question>()
             for (i in 0..amount) {
-                val question = getNextQuestion() ?: return questions
+                val question = getNextQuestion() ?: return questions.toTypedArray()
                 questions += question
             }
-            return questions
+            return questions.toTypedArray()
         }
 
         /**

@@ -37,16 +37,25 @@
             android:text="4"
             android:textAppearance="?attr/textAppearanceHeadline5"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/total_question_number"
+            app:layout_constraintEnd_toStartOf="@id/quantity_divider"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/total_question_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="/10"
+            android:text="10"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/quantity_divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/total_question_number"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

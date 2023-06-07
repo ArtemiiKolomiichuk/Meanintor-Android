@@ -1,33 +1,21 @@
 package com.example.practiceeng.ui.fragments
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import com.example.practiceeng.IEManager
 import com.example.practiceeng.R
-import com.example.practiceeng.ui.viewmodels.SettingsViewModel
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : PreferenceFragmentCompat() {
 
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-    private lateinit var viewModel: SettingsViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_settings, container, false)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-        // TODO: Use the ViewModel
+        val importCards: Preference? = findPreference(getString(R.string.import_cards_key));
+        val importWords: Preference? = findPreference(getString(R.string.import_words_key));
+        val exportCards: Preference? = findPreference(getString(R.string.export_cards_key));
+        val enableNotification: Preference? = findPreference(getString(R.string.send_notifications_key));
+        val setNotificationTime: Preference? = findPreference(getString(R.string.notifications_time_key));
     }
 
 }
