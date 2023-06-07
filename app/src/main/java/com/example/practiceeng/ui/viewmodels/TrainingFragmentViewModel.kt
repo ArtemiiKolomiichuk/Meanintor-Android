@@ -26,57 +26,38 @@ class TrainingFragmentViewModelFactory(val amount:Int, val types: BooleanArray, 
 }
 class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val folder: UUID?) : ViewModel() {
     private var currentIndex: Int = -1
-    private var questionBank: MutableList<Question> = mutableListOf()
-    lateinit var job: Job
+    lateinit var questionBank: Array<Question>
     var lastMatching: String? = null
+    val folderID = folder
 
-    init {
-        if (folder == null) {
-            job = viewModelScope.launch {
-                WordRepository.get().getWordCards().collect {
-                    updateQuestionBank(it)
-                }
-            }
-        } else {
-            job = viewModelScope.launch {
-                WordRepository.get().getWordCardsFromFolder(folder).collect {
-                    updateQuestionBank(it)
-                }
-            }
-        }
+    fun updateQuestionBank(wordCards: List<WordCard>) {
+        questionBank = QuestionManager.getQuestions(
+            amount,
+            wordCards.filter { !(it.paused || it.trained()) } as MutableList<WordCard>,
+            types)
     }
 
-    suspend fun updateQuestionBank(wordCards: List<WordCard>) {
-        QuestionManager.getQuestions(amount,wordCards.filter { !(it.paused || it.trained()) } as MutableList<WordCard>,types)
-    }
-
-    fun hasNext(): Boolean {
+    private fun hasNext(): Boolean {
         return currentIndex + 1 < questionBank.size
     }
 
-    fun moveToNext() {
-        if (hasNext())
-            currentIndex = currentIndex + 1
-    }
+    fun size(): Int = questionBank.size
 
-    suspend fun size(): Int {
-        return questionBank.size
-    }
-
-    suspend fun nextQuestion(): Question? {
-        job?.join()
+    fun moveToNext(): Boolean {
         if (!hasNext())
-            return null
-        moveToNext()
-        return questionBank[currentIndex]
+            return false
+        currentIndex = currentIndex + 1
+        return true
     }
 
-    /* fun currentWordCards() : Array<WordCard> = questionBank[currentIndex].wordCards
-    fun currentDisplayTexts() : Array<String>  = questionBank[currentIndex].displayTexts
-    fun currentDisplayTextHint() : Array<String>  = questionBank[currentIndex].displayTextHint
+    fun currentWordCards(): Array<WordCard> = questionBank[currentIndex].wordCards
+    fun currentDisplayTexts(): Array<String> = questionBank[currentIndex].displayTexts
+    fun currentDisplayTextHint(): Array<String> = questionBank[currentIndex].displayTextHint
 
-    fun currentDisplayTextOnAnsweredWrong() : Array<String> = questionBank[currentIndex].displayTextOnAnsweredWrong
-    fun  currentCorrectAnswers() : Array<String> = questionBank[currentIndex].correctAnswers
-    fun currentOptions() : Array<String> = questionBank[currentIndex].options
-    fun currentTestType() : TestType = questionBank[currentIndex].testType*/
+    fun currentDisplayTextOnAnsweredWrong(): Array<String> =
+        questionBank[currentIndex].displayTextOnAnsweredWrong
+
+    fun currentCorrectAnswers(): Array<String> = questionBank[currentIndex].correctAnswers
+    fun currentOptions(): Array<String> = questionBank[currentIndex].options
+    fun currentTestType(): TestType = questionBank[currentIndex].testType
 }
