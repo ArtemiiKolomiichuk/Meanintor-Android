@@ -86,6 +86,9 @@
         <action
             android:id="@+id/openSavedCards"
             app:destination="@id/savedCardsFragment" />
+        <action
+            android:id="@+id/startTraining"
+            app:destination="@id/trainingActivity" />
     </fragment>
     <fragment
         android:id="@+id/savedCardsFragment"
@@ -111,11 +114,24 @@
             app:destination="@id/chooseFolderFragment" />
     </fragment>
     <fragment
-        android:id="@+id/trainingFragment"
-        android:name="com.example.practiceeng.ui.fragments.TrainingFragment"
-        android:label="TrainingFragment" />
-    <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.practiceeng.ui.fragments.SettingsFragment"
         android:label="SettingsFragment" />
+    <activity
+        android:id="@+id/trainingActivity"
+        android:name="com.example.practiceeng.ui.TrainingActivity"
+        android:label="activity_training"
+        tools:layout="@layout/activity_training" >
+
+        <argument
+            android:name="amount"
+            app:argType="integer" />
+        <argument
+            android:name="testTypes"
+            app:argType="boolean[]" />
+        <argument
+            android:name="folders"
+            app:argType="java.util.UUID"
+            app:nullable="true" />
+    </activity>
 </navigation>

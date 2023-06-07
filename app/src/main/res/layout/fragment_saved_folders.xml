@@ -4,4 +4,6 @@
     android:id="@+id/saved_folders_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.SavedFoldersFragment"/>
+    tools:context=".ui.fragments.SavedFoldersFragment"
+    tools:listitem="@layout/item_folder"
+    tools:itemCount="5"/>

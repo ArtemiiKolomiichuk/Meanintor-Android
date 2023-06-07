@@ -25,7 +25,7 @@ class QuestionManager
          * Returns [amount] *(or less)* of questions in
          * selected folders of selected types
          */
-        fun getQuestions(amount: Int, cards: MutableList<WordCard>, testTypes: Array<TestType>): Array<Question> {
+        suspend fun getQuestions(amount: Int, cards: MutableList<WordCard>, testTypes: Array<TestType>): Array<Question> {
             this.testTypes = testTypes
             this.cards = cards
             var questions = arrayOf<Question>()
@@ -43,7 +43,7 @@ class QuestionManager
         suspend fun aptFolders(testTypes : Array<TestType>) : Array<UUID>{
             val folders = arrayOf<UUID>()
             WordRepository.get().getFolders().toList()[0].forEach {
-                if(!it.paused && WordRepository.get().getWordCardsFromFolder2(it.folderID).toList()[0].any { !it.paused && !it.trained() && it.isAptForTrainings(testTypes) }){
+                if(!it.paused && WordRepository.get().getWordCardsFromFolder(it.folderID).toList()[0].any { !it.paused && !it.trained() && it.isAptForTrainings(testTypes) }){
                     folders.plus(it.folderID)
                 }
             }

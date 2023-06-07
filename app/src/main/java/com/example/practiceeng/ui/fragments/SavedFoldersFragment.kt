@@ -51,9 +51,27 @@ class SavedFoldersFragment : Fragment() {
                             },
                             { it, amount ->
                                 if (amount > 0)
-                                    Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+                                    findNavController().navigate(
+                                        SavedFoldersFragmentDirections.startTraining(
+                                            amount,
+                                            booleanArrayOf(
+                                                true,
+                                                true,
+                                                true,
+                                                true,
+                                                false,
+                                                false,
+                                                false,
+                                                false,
+                                                false,
+                                                false
+                                            ),
+                                           it
+                                        )
+                                    )
                                 else
-                                    Toast.makeText(context, "Folder is empty", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Folder is empty", Toast.LENGTH_SHORT)
+                                        .show()
                             })
                 }
             }

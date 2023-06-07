@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.practiceeng.VisualWordCard
-import com.example.practiceeng.WordCard
 import com.example.practiceeng.database.WordRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +25,7 @@ class SavedCardsViewModel(folder: UUID) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            WordRepository.get().getWordCardsFromFolder(folder).collect {
+            WordRepository.get().getVisualWordCardsFromFolder(folder).collect {
                 _cards.value = it
             }
         }

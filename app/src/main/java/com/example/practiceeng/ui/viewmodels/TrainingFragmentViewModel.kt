@@ -1,43 +1,82 @@
 package com.example.practiceeng.ui.viewmodels
 
-import androidx.lifecycle.SavedStateHandle
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.practiceeng.*
 import com.example.practiceeng.database.WordRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
+import java.util.*
 
-
-class QuizViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-
-    private var currentIndex: Int = 0
-    private val questionBank : MutableList<Question> = mutableListOf()
-
-    private val _cards: MutableStateFlow<List<WordCard>> = MutableStateFlow(emptyList())
-    val cards: StateFlow<List<WordCard>>
-        get() = _cards.asStateFlow()
+class TrainingFragmentViewModelFactory(val amount:Int, val types: BooleanArray, val folders: UUID?)
+    : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val testTypes = mutableListOf<TestType>()
+        TestType.values().forEachIndexed { index, testType ->
+            if (types[index])
+                testTypes += testType
+        }
+        return TrainingFragmentViewModel(amount, testTypes.toTypedArray(), folders) as T
+    }
+}
+class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val folder: UUID?) : ViewModel() {
+    private var currentIndex: Int = -1
+    private var questionBank: MutableList<Question> = mutableListOf()
+    lateinit var job: Job
+    var lastMatching: String? = null
 
     init {
-        viewModelScope.launch {
-            WordRepository.get().getWordCards().collect {
-                _cards.value = it
-                it.forEach { /*questionBank.add(Question(arrayOf(it), arrayOf(it.wordString()), arrayOf(), TestType.MultipleChoiceDefinition))*/ }
+        if (folder == null) {
+            job = viewModelScope.launch {
+                WordRepository.get().getWordCards().collect {
+                    updateQuestionBank(it)
+                }
+            }
+        } else {
+            job = viewModelScope.launch {
+                WordRepository.get().getWordCardsFromFolder(folder).collect {
+                    updateQuestionBank(it)
+                }
             }
         }
     }
-    /*
 
+    suspend fun updateQuestionBank(wordCards: List<WordCard>) {
+        QuestionManager.getQuestions(amount,wordCards.filter { !(it.paused || it.trained()) } as MutableList<WordCard>,types)
+    }
 
-    val currentQuestionAnswer: Boolean
-        get() = questionBank[currentIndex].answer
-
-    val currentQuestionText: Int
-        get() = questionBank[currentIndex].textResId
+    fun hasNext(): Boolean {
+        return currentIndex + 1 < questionBank.size
+    }
 
     fun moveToNext() {
-        currentIndex = (currentIndex + 1) % questionBank.size
-    }*/
+        if (hasNext())
+            currentIndex = currentIndex + 1
+    }
+
+    suspend fun size(): Int {
+        return questionBank.size
+    }
+
+    suspend fun nextQuestion(): Question? {
+        job?.join()
+        if (!hasNext())
+            return null
+        moveToNext()
+        return questionBank[currentIndex]
+    }
+
+    /* fun currentWordCards() : Array<WordCard> = questionBank[currentIndex].wordCards
+    fun currentDisplayTexts() : Array<String>  = questionBank[currentIndex].displayTexts
+    fun currentDisplayTextHint() : Array<String>  = questionBank[currentIndex].displayTextHint
+
+    fun currentDisplayTextOnAnsweredWrong() : Array<String> = questionBank[currentIndex].displayTextOnAnsweredWrong
+    fun  currentCorrectAnswers() : Array<String> = questionBank[currentIndex].correctAnswers
+    fun currentOptions() : Array<String> = questionBank[currentIndex].options
+    fun currentTestType() : TestType = questionBank[currentIndex].testType*/
 }
