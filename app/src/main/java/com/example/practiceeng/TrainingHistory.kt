@@ -22,5 +22,5 @@ constructor(
         Pair(TestType.Writing, 0),
         Pair(TestType.WritingListening, 0)
     ),
-    var lastDate : Date? = null)
-
+    var lastDate : Date? = null
+)

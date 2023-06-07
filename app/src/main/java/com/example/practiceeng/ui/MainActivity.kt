@@ -8,8 +8,14 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.practiceeng.R
+import com.example.practiceeng.TestType
+import com.example.practiceeng.TrainingHistory
+import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.ActivityMainBinding
 import com.example.practiceeng.ui.fragments.SettingsFragment
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null

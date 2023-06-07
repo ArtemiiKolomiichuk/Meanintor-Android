@@ -25,7 +25,7 @@ class TrainingFragmentViewModelFactory(val amount:Int, val types: BooleanArray, 
     }
 }
 class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val folder: UUID?) : ViewModel() {
-    private var currentIndex: Int = -1
+    var currentIndex: Int = 0
     lateinit var questionBank: Array<Question>
     var lastMatching: String? = null
     val folderID = folder
@@ -37,7 +37,7 @@ class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val 
             types)
     }
 
-    private fun hasNext(): Boolean {
+    fun hasNext(): Boolean {
         return currentIndex + 1 < questionBank.size
     }
 
@@ -49,15 +49,16 @@ class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val 
         currentIndex = currentIndex + 1
         return true
     }
+    fun pushCurrentToEnd() {
+    }
 
+    fun index():Int {return currentIndex}
     fun currentWordCards(): Array<WordCard> = questionBank[currentIndex].wordCards
     fun currentDisplayTexts(): Array<String> = questionBank[currentIndex].displayTexts
     fun currentDisplayTextHint(): Array<String> = questionBank[currentIndex].displayTextHint
-
-    fun currentDisplayTextOnAnsweredWrong(): Array<String> =
-        questionBank[currentIndex].displayTextOnAnsweredWrong
-
+    fun currentDisplayTextOnAnsweredWrong(): Array<String> = questionBank[currentIndex].displayTextOnAnsweredWrong
     fun currentCorrectAnswers(): Array<String> = questionBank[currentIndex].correctAnswers
     fun currentOptions(): Array<String> = questionBank[currentIndex].options
     fun currentTestType(): TestType = questionBank[currentIndex].testType
+    fun isNotEmpty(): Boolean = size()>0
 }

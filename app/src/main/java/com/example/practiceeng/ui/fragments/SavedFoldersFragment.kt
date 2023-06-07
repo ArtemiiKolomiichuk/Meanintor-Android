@@ -53,17 +53,17 @@ class SavedFoldersFragment : Fragment() {
                                 if (amount > 0)
                                     findNavController().navigate(
                                         SavedFoldersFragmentDirections.startTraining(
-                                            amount,
+                                            amount*10,
                                             booleanArrayOf(
                                                 true,
                                                 true,
                                                 true,
                                                 true,
-                                                false,
-                                                false,
-                                                false,
-                                                false,
-                                                false,
+                                                true,
+                                                true,
+                                                true,
+                                                true,
+                                                true,
                                                 false
                                             ),
                                            it
@@ -77,6 +77,7 @@ class SavedFoldersFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
