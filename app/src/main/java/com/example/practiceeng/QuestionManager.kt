@@ -209,7 +209,8 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
                     question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
-                    question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions, cards)
+                    question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions - 1, cards)
+                    question.options += question.correctAnswers[0];
                     if(card.getHintExamples().isNotEmpty()){
                         question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     }
@@ -221,7 +222,8 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceDefinition)
                     question.correctAnswers = arrayOf(card.definition)
                     question.displayTexts = arrayOf(card.wordString())
-                    question.options = card.getNotSynonymicDefinitions(UserSettings.settings().questionOptions, cards)
+                    question.options = card.getNotSynonymicDefinitions(UserSettings.settings().questionOptions - 1, cards)
+                    question.options += question.correctAnswers[0];
                     if(card.getHintExamples().isNotEmpty()){
                         question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     }
@@ -261,7 +263,8 @@ class QuestionManager
                         arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
                     question.displayTextHint = card.antonyms
-                    question.options = card.getNotSynonymicWords(UserSettings.settings().matchOptions, cards)
+                    question.options = card.getNotSynonymicWords(UserSettings.settings().matchOptions - 1, cards)
+                    question.options += question.correctAnswers[0];
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.synonyms
                     return question
                 }
@@ -272,7 +275,8 @@ class QuestionManager
                         arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
                     question.displayTextHint = card.synonyms
-                    question.options = card.getNotAntonymousWords(UserSettings.settings().matchOptions, cards)
+                    question.options = card.getNotAntonymousWords(UserSettings.settings().matchOptions - 1, cards)
+                    question.options += question.correctAnswers[0];
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.antonyms
                     return question
                 }
