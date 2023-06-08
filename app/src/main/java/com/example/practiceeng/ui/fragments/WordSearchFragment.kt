@@ -16,7 +16,6 @@ import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import com.example.practiceeng.ui.adapters.CardsListAdapter
 import com.example.practiceeng.ui.viewmodels.SearchViewModel
-import com.example.practiceeng.ui.viewmodels.WordSearchFragmentDirections
 import kotlinx.coroutines.launch
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors

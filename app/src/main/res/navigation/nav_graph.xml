@@ -89,6 +89,9 @@
         <action
             android:id="@+id/startTraining"
             app:destination="@id/trainingActivity" />
+        <action
+            android:id="@+id/action_savedFoldersFragment_to_trainingSetupFragment"
+            app:destination="@id/trainingSetupFragment" />
     </fragment>
     <fragment
         android:id="@+id/savedCardsFragment"
@@ -134,4 +137,16 @@
             app:argType="java.util.UUID"
             app:nullable="true" />
     </activity>
+    <fragment
+        android:id="@+id/trainingSetupFragment"
+        android:name="com.example.practiceeng.ui.fragments.TrainingSetupFragment"
+        android:label="TrainingSetupFragment" >
+        <action
+            android:id="@+id/action_trainingSetupFragment_to_trainingActivity"
+            app:destination="@id/trainingActivity" />
+        <argument
+            android:name="folderID"
+            app:argType="java.util.UUID"
+            app:nullable="true" />
+    </fragment>
 </navigation>

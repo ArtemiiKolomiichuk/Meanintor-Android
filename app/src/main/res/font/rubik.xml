@@ -2,8 +2,58 @@
 <font-family xmlns:android="http://schemas.android.com/apk/res/android">
     <font
         android:fontStyle="italic"
-        android:font="@font/rubik_italic" />
+        android:font="@font/rubik_lightitalic"
+        android:fontWeight="200"/>
     <font
         android:fontStyle="normal"
-        android:font="@font/rubik_normal" />
+        android:font="@font/rubik_light"
+        android:fontWeight="200"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_italic"
+        android:fontWeight="400"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_regular"
+        android:fontWeight="400"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_mediumitalic"
+        android:fontWeight="500"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_medium"
+        android:fontWeight="500"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_semibolditalic"
+        android:fontWeight="600"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_semibold"
+        android:fontWeight="600"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_bolditalic"
+        android:fontWeight="700"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_bold"
+        android:fontWeight="700"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_extrabolditalic"
+        android:fontWeight="800"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_extrabold"
+        android:fontWeight="800"/>
+    <font
+        android:fontStyle="italic"
+        android:font="@font/rubik_blackitalic"
+        android:fontWeight="900"/>
+    <font
+        android:fontStyle="normal"
+        android:font="@font/rubik_black"
+        android:fontWeight="900"/>
 </font-family>
