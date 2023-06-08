@@ -30,7 +30,7 @@ class QuestionManager
             this.cards = cards
             var questions = mutableListOf<Question>()
             for (i in 0..amount) {
-                val question = getNextQuestion() ?: return questions.toTypedArray()
+                val question = getNextQuestion(questions) ?: return questions.toTypedArray()
                 questions += question
             }
             return questions.toTypedArray()
@@ -167,19 +167,26 @@ class QuestionManager
          *
          * TODO: test
          */
-        private fun getNextQuestion(): Question? {
+        private fun getNextQuestion(questions: MutableList<Question>): Question? {
             val card = getCard() ?: return null
             counter++
             return try {
-                getNextQuestion(card, card.aptTraining(testTypes))
+                var types = arrayOf<TestType>()
+                for(question in questions){
+                    if(question.wordCards.contains(card)){
+                        types.plus(question.testType)
+                    }
+                }
+                types = (testTypes.toMutableList() - types.toSet()).toTypedArray()
+                getNextQuestion(card, card.aptTraining(types), questions)
             } catch (e: Exception) {
                 println("Error(getNextQuestion): $e\n${e.stackTrace}")
                 cards.remove(card)
-                getNextQuestion()
+                getNextQuestion(questions)
             }
         }
 
-        private fun getNextQuestion(card: WordCard, testType: TestType): Question? {
+        private fun getNextQuestion(card: WordCard, testType: TestType, questions: MutableList<Question>): Question? {
             when (testType) {
                 TestType.FlashCard -> {
                     val question = Question(arrayOf(card), testType = TestType.FlashCard)
@@ -223,15 +230,15 @@ class QuestionManager
                 }
 
                 TestType.Match -> {
-                    val questions = getMatchQuestions(card, cards, UserSettings.settings().matchOptions)
-                    if (questions.isEmpty()) {
+                    val questions2 = getMatchQuestions(card, cards, UserSettings.settings().matchOptions)
+                    if (questions2.isEmpty()) {
                         val types = testTypes.toMutableList()
                         types.remove(TestType.Match)
                         val testTypes = card.aptTrainings(types.toTypedArray())
                         return if(testTypes.isEmpty()) {
-                            getNextQuestion()
+                            getNextQuestion(questions)
                         }else {
-                            getNextQuestion(card, testTypes[0])
+                            getNextQuestion(card, testTypes[0],questions)
                         }
                     }
                     val question = Question(arrayOf(), testType = TestType.Match)
@@ -291,7 +298,7 @@ class QuestionManager
 
                 TestType.NONE -> {
                     cards.remove(card)
-                    return getNextQuestion()
+                    return getNextQuestion(questions)
                 }
             }
         }
