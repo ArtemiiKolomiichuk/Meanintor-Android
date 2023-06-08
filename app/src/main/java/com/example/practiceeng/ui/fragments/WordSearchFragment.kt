@@ -16,6 +16,7 @@ import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.FragmentWordSearchBinding
 import com.example.practiceeng.ui.adapters.CardsListAdapter
 import com.example.practiceeng.ui.viewmodels.SearchViewModel
+import com.example.practiceeng.ui.viewmodels.WordSearchFragmentDirections
 import kotlinx.coroutines.launch
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -39,7 +40,16 @@ class WordSearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             addWordsButton.setOnClickListener {
-               val action = WordSearchFragmentDirections.addWordCard(binding.wordSearch.query.toString(), null, null,null,null,null, null, null)
+               val action = WordSearchFragmentDirections.addWordCard(
+                   binding.wordSearch.query.toString(),
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null,
+                   null
+               )
                 findNavController().navigate(action)
             }
             addWordsButton.visibility = View.GONE
@@ -112,7 +122,7 @@ class WordSearchFragment : Fragment() {
                 val adapter : CardsListAdapter =
                     CardsListAdapter(it.toList(), { card: WordCard ->
                         findNavController().navigate(
-                            com.example.practiceeng.ui.fragments.WordSearchFragmentDirections.addWordCard(
+                            WordSearchFragmentDirections.addWordCard(
                                 card.wordString(),
                                 card.partOfSpeech,
                                 card.definition,

@@ -91,7 +91,10 @@ interface WordDao {
     @Insert
     suspend fun addWordCard(wordCard: WordCard)
     @Query("DELETE FROM wordCard WHERE cardID = :id")
-    fun deleteWordCard(id: UUID)
+    suspend fun deleteWordCard(id: UUID)
+    @Query("DELETE FROM folder WHERE folderID=(:folderID)")
+    suspend fun deleteFolder(folderID: UUID)
+
     @Query("SELECT * FROM word")
     fun getWords(): Flow<List<Word>>
 
@@ -121,9 +124,10 @@ interface WordDao {
 
     @Query("SELECT * FROM wordCard WHERE cardID=(:cardID)")
     suspend fun getWordCard(cardID: UUID): WordCard
-
     @Query("SELECT * FROM word WHERE bookmarked=true")
     fun getBookmarkedWords(): Flow<List<Word>>
+
+
 
 
 }

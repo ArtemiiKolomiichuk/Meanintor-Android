@@ -40,14 +40,11 @@ class SavedFoldersFragment : Fragment() {
                     binding.savedFoldersList.adapter =
                         SavedFolderAdapter(list,
                             { it, amount ->
-                                if (amount > 0)
                                     findNavController().navigate(
                                         SavedFoldersFragmentDirections.openSavedCards(
                                             it
                                         )
                                     )
-                                else
-                                    Toast.makeText(context, "Folder is empty", Toast.LENGTH_SHORT).show()
                             },
                             { it, amount ->
                                 if (amount > 0)

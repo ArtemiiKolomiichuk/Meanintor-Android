@@ -1,27 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragments.SavedCardsFragment"
-    android:orientation="vertical">
+    android:scrollbarStyle="insideInset"
+    tools:context=".ui.fragments.SavedCardsFragment">
 
-<!--
-    <SearchView
-        android:id="@+id/word_search"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:queryHint="@string/search_hint"
-        android:layout_marginBottom="20dp"
-        android:clickable="true"
-        android:iconifiedByDefault="false">
-    </SearchView>
--->
+        android:layout_height="wrap_content">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cards_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/card_item"/>
-</LinearLayout>
+        <ImageView
+            android:id="@+id/folderIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/baseline_folder_open_24"
+            app:layout_constraintBottom_toBottomOf="@+id/folder_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/folder_name" />
+
+        <TextView
+            android:id="@+id/folder_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Folder name"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            app:layout_constraintEnd_toStartOf="@+id/edit_folder_button"
+            app:layout_constraintStart_toEndOf="@+id/folderIcon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/folder_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Description"
+            app:layout_constraintEnd_toEndOf="@+id/folder_name"
+            app:layout_constraintStart_toStartOf="@+id/folder_name"
+            app:layout_constraintTop_toBottomOf="@+id/folder_name" />
+
+        <ImageButton
+            android:id="@+id/edit_folder_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit folder"
+            android:layout_marginEnd="2dp"
+            android:src="@drawable/baseline_edit_24"
+
+            app:layout_constraintBottom_toBottomOf="@+id/folder_description"
+            app:layout_constraintEnd_toStartOf="@+id/delete_folder_button"
+            app:layout_constraintTop_toTopOf="@+id/folder_name" />
+
+        <ImageButton
+            android:id="@+id/delete_folder_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Delete folder"
+            android:src="@drawable/baseline_delete_forever_24"
+            app:layout_constraintBottom_toBottomOf="@+id/folder_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/folder_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cards_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/folder_description"
+            tools:listitem="@layout/card_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
