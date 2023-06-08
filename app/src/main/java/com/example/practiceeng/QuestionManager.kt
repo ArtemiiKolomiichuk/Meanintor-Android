@@ -1,5 +1,6 @@
 package com.example.practiceeng
 
+import android.util.Log
 import com.example.practiceeng.database.WordRepository
 import kotlinx.coroutines.flow.toList
 import java.lang.Exception
@@ -19,7 +20,7 @@ class QuestionManager
         private var testTypes: Array<TestType> = arrayOf()
         private var cards: MutableList<WordCard> = mutableListOf()
         private var counter: Int = 0
-
+        private var ceiling = 300
 
         /**
          * Returns [amount] *(or less)* of questions in
@@ -170,11 +171,15 @@ class QuestionManager
         private fun getNextQuestion(questions: MutableList<Question>): Question? {
             val card = getCard() ?: return null
             counter++
+            ceiling--
+            if(ceiling <= 0){
+                return null
+            }
             return try {
                 var types = arrayOf<TestType>()
                 for(question in questions){
                     if(question.wordCards.contains(card)){
-                        types.plus(question.testType)
+                        types += (question.testType)
                     }
                 }
                 types = (testTypes.toMutableList() - types.toSet()).toTypedArray()
