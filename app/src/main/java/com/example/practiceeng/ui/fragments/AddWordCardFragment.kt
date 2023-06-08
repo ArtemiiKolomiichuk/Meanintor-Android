@@ -6,13 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.get
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -22,12 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.R
 import com.example.practiceeng.databinding.FragmentAddWordCardBinding
-import com.example.practiceeng.ui.StringListAdapter
 import com.example.practiceeng.ui.adapters.StringAdapter
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.AddWordCardViewModelFactory
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 
 class AddWordCardFragment : Fragment() {
 
@@ -164,9 +157,55 @@ class AddWordCardFragment : Fragment() {
     ) {
         label.text = listName
         listView.layoutManager = LinearLayoutManager(context)
-        val adapter: StringAdapter = StringAdapter(arrayList)
+        val adapter: StringAdapter = StringAdapter(arrayList) { oldValue:String, position: Int, adapter: StringAdapter ->
+            val changeElementDialog = changeElementDialog(oldValue, arrayList, position, adapter)
+            changeElementDialog.show()
+        }
         listView.adapter = adapter
 
+        val addElementDialog = addElementDialog(listName, arrayList, adapter)
+
+        addButton.setOnTouchListener { _, _ ->
+            addElementDialog.show()
+            true
+        }
+    }
+
+    private fun changeElementDialog(oldValue:String, arrayList: MutableList<String>, position:Int, adapter: StringAdapter): AlertDialog {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Change an element")
+        val alertDialog: AlertDialog = builder.create()
+        val dialog_layout: View = layoutInflater.inflate(R.layout.dialog_new_string, null)
+        val newString = dialog_layout.findViewById<EditText>(R.id.text)
+        newString.hint = oldValue
+        newString.setText(oldValue)
+        alertDialog.setView(dialog_layout)
+        alertDialog.setButton(
+            AlertDialog.BUTTON_POSITIVE,
+            "Change",
+            { _, _ ->
+                if (newString.text.isNotEmpty()) {
+                    arrayList[position]=newString.text.toString()
+                    adapter.notifyItemChanged(position)
+                }
+            }
+        )
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE,
+            "Cancel", DialogInterface.OnClickListener { _, _ -> }
+        )
+        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
+            override fun onShow(dialog: DialogInterface?) {
+                val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                saveButton.setEnabled(false)
+                newString.doOnTextChanged { text, _, _, _ -> saveButton.setEnabled( !(text.toString().isEmpty()||text.toString().equals(oldValue)))  }
+            }
+        });
+        return alertDialog
+
+    }
+
+    private fun addElementDialog(listName:String, arrayList: MutableList<String>, adapter: StringAdapter) : AlertDialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Add a new element")
         val alertDialog: AlertDialog = builder.create()
@@ -188,11 +227,14 @@ class AddWordCardFragment : Fragment() {
             AlertDialog.BUTTON_NEGATIVE,
             "Cancel", DialogInterface.OnClickListener { _, _ -> }
         )
+        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
+            override fun onShow(dialog: DialogInterface?) {
+                val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                newString.doOnTextChanged { text, _, _, _ -> saveButton.setEnabled( !(text.toString().isEmpty()))  }
+            }
+        });
+        return alertDialog
 
-        addButton.setOnTouchListener { _, _ ->
-            alertDialog.show()
-            true
-        }
     }
 
     override fun onPause() {

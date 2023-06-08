@@ -1,10 +1,8 @@
 package com.example.practiceeng.ui.fragments
 
-import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
@@ -33,6 +31,8 @@ class SavedCardsFragment : Fragment() {
     private var _binding: FragmentSavedCardsBinding? = null
     private val binding get() = _binding!!
     private val args: SavedCardsFragmentArgs by navArgs()
+    private lateinit var editDialog: AlertDialog
+    private var deleteDialog: AlertDialog? = null
     private val cardsViewModel: SavedCardsViewModel by viewModels {
         SavedCardsViewModelFactory(args.folderId)
     }
@@ -43,6 +43,13 @@ class SavedCardsFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentSavedCardsBinding.inflate(layoutInflater, container, false)
         binding.cardsList.layoutManager = LinearLayoutManager(context)
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Edit folder")
+        editDialog = builder.create()
+        editDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE,
+            "Cancel", DialogInterface.OnClickListener { _, _ -> }
+        )
         return binding.root
     }
 
@@ -60,12 +67,15 @@ class SavedCardsFragment : Fragment() {
                             editFolderButton.setOnClickListener(object:OnClickListener{
                                 override fun onClick(v: View?) {
                                     editFolderDialog(folder)
+                                    editDialog.show()
                                 }
                             })
 
                             deleteFolderButton.setOnClickListener(object:OnClickListener{
                                 override fun onClick(v: View?) {
-                                    deleteFolderDialog(folder)
+                                    if(deleteDialog==null)
+                                        deleteDialog = deleteFolderDialog(folder)
+                                    deleteDialog!!.show()
                                 }
                             })
 
@@ -90,7 +100,7 @@ class SavedCardsFragment : Fragment() {
         }
     }
 
-    fun deleteFolderDialog(folder: Folder):Boolean {
+    fun deleteFolderDialog(folder: Folder):AlertDialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Delete folder")
         val alertDialog: AlertDialog = builder.create()
@@ -108,23 +118,19 @@ class SavedCardsFragment : Fragment() {
             "Cancel", DialogInterface.OnClickListener { _, _ -> }
         )
 
-        alertDialog.show()
-        return true
+       return alertDialog
     }
 
-    fun editFolderDialog(folder: Folder):Boolean {
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Edit folder")
-        val alertDialog: AlertDialog = builder.create()
+    fun editFolderDialog(folder: Folder) {
+
         val dialog_layout: View =
             layoutInflater.inflate(R.layout.dialog_new_folder, null)
         val text1 = dialog_layout.findViewById<EditText>(R.id.text1)
         val text2 = dialog_layout.findViewById<EditText>(R.id.text2)
         text1.setText(folder.title)
         text2.setText(folder.description)
-
-        alertDialog.setView(dialog_layout)
-        alertDialog.setButton(
+        editDialog.setView(dialog_layout)
+        editDialog.setButton(
             AlertDialog.BUTTON_POSITIVE,
             "Save",
             { _, _ ->
@@ -135,21 +141,14 @@ class SavedCardsFragment : Fragment() {
                 binding.folderDescription.text=folder.description
             }
         )
-        alertDialog.setButton(
-            AlertDialog.BUTTON_NEGATIVE,
-            "Cancel", DialogInterface.OnClickListener { _, _ -> }
-        )
 
-        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
-
+        editDialog.setOnShowListener(object: DialogInterface.OnShowListener {
             override fun onShow(dialog: DialogInterface?) {
-                val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                val saveButton: Button = editDialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 text1.doOnTextChanged { text, _, _, _ -> disableIfEmpty(saveButton, text.toString(), text2.text.toString())  }
                 text2.doOnTextChanged { text, _, _, _ -> disableIfEmpty(saveButton, text1.text.toString(), text.toString())  }
             }
         });
-        alertDialog.show()
-        return true
     }
 
     fun disableIfEmpty(button:Button, name:String, description: String){

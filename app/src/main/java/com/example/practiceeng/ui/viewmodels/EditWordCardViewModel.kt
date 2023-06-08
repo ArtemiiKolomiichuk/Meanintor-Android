@@ -22,7 +22,7 @@ class EditWordCardViewModelFactory(var id: UUID) : ViewModelProvider.Factory {
 class EditWordCardViewModel(id: UUID) : ViewModel() {
 
     var scrollPosition: Int = 0
-    private val crimeRepository = WordRepository.get()
+    private val wordRepository = WordRepository.get()
     private val _wordCard:MutableStateFlow<WordCard?> = MutableStateFlow(null)
     val wordCard : StateFlow<WordCard?> = _wordCard.asStateFlow()
     var example: MutableList<String> = mutableListOf()
@@ -31,7 +31,7 @@ class EditWordCardViewModel(id: UUID) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            _wordCard.value = crimeRepository.getWordCard(id)
+            _wordCard.value = wordRepository.getWordCard(id)
         }
     }
 
@@ -44,10 +44,14 @@ class EditWordCardViewModel(id: UUID) : ViewModel() {
         _wordCard.update { oldCard ->
             oldCard?.let { it.copy(antonyms = antonyms.toTypedArray(), synonyms = synonyms.toTypedArray(), examples = example.toTypedArray()) }
         }
-        wordCard.value?.let { crimeRepository.updateWordCard(it) }
+        wordCard.value?.let { wordRepository.updateWordCard(it) }
     }
 
     fun deleteWordCard() {
-        wordCard.value?.let { crimeRepository.deleteWordCard(it.cardID) }
+        wordCard.value?.let { wordRepository.deleteWordCard(it.cardID) }
+    }
+
+    fun deleteCard(cardID: UUID) {
+        wordRepository.deleteWordCard(cardID)
     }
 }

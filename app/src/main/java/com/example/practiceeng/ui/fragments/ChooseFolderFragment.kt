@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
@@ -40,6 +40,7 @@ class ChooseFolderFragment : Fragment() {
     private var _binding: FragmentChooseFolderBinding? = null
     val binding get() = _binding!!
     private val args: ChooseFolderFragmentArgs by navArgs()
+    private var createDialog: AlertDialog? = null
     private val viewModel: ChooseFolderViewModel by viewModels {
         ChooseFolderViewModelFactory(
             args.folderId
@@ -60,7 +61,9 @@ class ChooseFolderFragment : Fragment() {
         viewModel.folderID?.let { RESULT_FOLDER_ID = it }
         binding.apply {
             newFolder.setOnClickListener {
-                newFolderDialog()
+                if(createDialog==null)
+                    createDialog = newFolderDialog()
+                createDialog!!.show()
             }
             viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -78,7 +81,7 @@ class ChooseFolderFragment : Fragment() {
 
     }
 
-    private fun newFolderDialog() {
+    private fun newFolderDialog(): AlertDialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("New folder")
         val alertDialog: AlertDialog = builder.create()
@@ -103,10 +106,25 @@ class ChooseFolderFragment : Fragment() {
             AlertDialog.BUTTON_NEGATIVE,
             "Cancel", DialogInterface.OnClickListener { _, _ -> }
         )
-        alertDialog.show()
-    }
 
-    fun setResult() {
+        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
+            override fun onShow(dialog: DialogInterface?) {
+                text1.setText("")
+                text2.setText("")
+            val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            text1.doOnTextChanged { text, _, _, _ -> disableIfEmpty(saveButton, text.toString(), text2.text.toString())  }
+            text2.doOnTextChanged { text, _, _, _ -> disableIfEmpty(saveButton, text1.text.toString(), text.toString())  }
+        }
+    });
+   return alertDialog
+}
+
+fun disableIfEmpty(button: Button, name:String, description: String){
+    button.setEnabled( !(name.isEmpty() || description.isEmpty()))
+}
+
+
+fun setResult() {
         setFragmentResult(
             ChooseFolderFragment.REQUEST_KEY_FOLDER,
             bundleOf(ChooseFolderFragment.BUNDLE_KEY_FOLDER to ChooseFolderFragment.RESULT_FOLDER_ID)

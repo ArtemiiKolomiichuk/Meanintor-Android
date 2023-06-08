@@ -6,10 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResultListener
@@ -24,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.R
 import com.example.practiceeng.WordCard
 import com.example.practiceeng.databinding.FragmentAddWordCardBinding
-import com.example.practiceeng.ui.StringListAdapter
 import com.example.practiceeng.ui.adapters.StringAdapter
 import com.example.practiceeng.ui.viewmodels.EditWordCardViewModel
 import com.example.practiceeng.ui.viewmodels.EditWordCardViewModelFactory
@@ -36,6 +32,7 @@ class EditWordCardFragment : Fragment() {
     private var _binding: FragmentAddWordCardBinding? = null
     private val binding get() = _binding!!
     private val args: EditWordCardFragmentArgs by navArgs()
+    private lateinit var deleteDialog: AlertDialog
     private val editWordCardViewModel: EditWordCardViewModel by viewModels {
         EditWordCardViewModelFactory(
             args.wordCardId
@@ -48,14 +45,13 @@ class EditWordCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAddWordCardBinding.inflate(layoutInflater, container, false)
-        binding.apply {
-        }
+
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.deleteWordCardButton.visibility = View.GONE
         partsOfSpeech = resources.getStringArray(R.array.parts_of_speech)
         binding.apply {
             viewLifecycleOwner.lifecycleScope.launch{
@@ -75,6 +71,7 @@ class EditWordCardFragment : Fragment() {
     }
 
     private fun updateUi(card: WordCard) {
+        deleteCardDialog(card)
         binding.apply {
             word.setText(card.word.word)
             definition.setText(card.definition)
@@ -117,6 +114,9 @@ class EditWordCardFragment : Fragment() {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
+            deleteWordCardButton.setOnClickListener {
+                deleteDialog.show()
+            }
         }
         customPartOfSpeechChecked(isCustomPartOfSpeech(card.partOfSpeech) == -1, card.partOfSpeech)
         editWordCardViewModel.antonyms = card.antonyms.toMutableList()
@@ -126,9 +126,27 @@ class EditWordCardFragment : Fragment() {
         setupDynamicList("Synonyms", editWordCardViewModel.synonyms, binding.synonymsAddButton, binding.synonymsListHeader, binding.synonymsDynamicList)
         setupDynamicList("Antonyms", editWordCardViewModel.antonyms, binding.antonymsAddButton, binding.antonymsListHeader, binding.antonymsDynamicList)
 
-
     }
 
+    fun deleteCardDialog(card: WordCard) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Delete card")
+        deleteDialog = builder.create()
+        deleteDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE,
+            "Cancel", DialogInterface.OnClickListener { _, _ -> }
+        )
+        deleteDialog.setMessage("The card will be deleted\nAre you sure?")
+
+        deleteDialog.setButton(
+            AlertDialog.BUTTON_POSITIVE,
+            "Delete",
+            { _, _ ->
+                editWordCardViewModel.deleteCard(card.cardID)
+                findNavController().navigateUp()
+            }
+        )
+    }
     fun customPartOfSpeechChecked(isChecked: Boolean, pos: String = editWordCardViewModel.wordCard.value!!.partOfSpeech) {
         binding.apply {
             if (isChecked) {
@@ -157,20 +175,7 @@ class EditWordCardFragment : Fragment() {
             }
         } ?: -1
     }
-
-    fun updateSaveButton(card: WordCard? = editWordCardViewModel.wordCard.value) {
-        if (card == null) {
-            binding.saveWordCardButton.isEnabled = false
-            binding.deleteWordCardButton.isEnabled = false
-            return
-        }
-        card!!.apply {
-            val enabled =  !(folderID == null || definition.isNullOrEmpty() || partOfSpeech.isNullOrEmpty())
-            binding.saveWordCardButton.isEnabled =enabled
-            binding.deleteWordCardButton.isEnabled = enabled
-        }
-    }
-    fun setupDynamicList(
+  fun setupDynamicList(
         listName: String,
         arrayList: MutableList<String>,
         addButton: ImageButton,
@@ -179,9 +184,55 @@ class EditWordCardFragment : Fragment() {
     ) {
         label.text = listName
         listView.layoutManager = LinearLayoutManager(context)
-        val adapter: StringAdapter = StringAdapter(arrayList)
+        val adapter: StringAdapter = StringAdapter(arrayList) { oldValue:String, position: Int, adapter: StringAdapter ->
+            val changeElementDialog = changeElementDialog(oldValue, arrayList, position, adapter)
+            changeElementDialog.show()
+        }
         listView.adapter = adapter
 
+        val addElementDialog = addElementDialog(listName, arrayList, adapter)
+
+        addButton.setOnTouchListener { _, _ ->
+            addElementDialog.show()
+            true
+        }
+    }
+
+    private fun changeElementDialog(oldValue:String, arrayList: MutableList<String>, position:Int, adapter: StringAdapter): AlertDialog {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Change an element")
+        val alertDialog: AlertDialog = builder.create()
+        val dialog_layout: View = layoutInflater.inflate(R.layout.dialog_new_string, null)
+        val newString = dialog_layout.findViewById<EditText>(R.id.text)
+        newString.hint = oldValue
+        newString.setText(oldValue)
+        alertDialog.setView(dialog_layout)
+        alertDialog.setButton(
+            AlertDialog.BUTTON_POSITIVE,
+            "Change",
+            { _, _ ->
+                if (newString.text.isNotEmpty()) {
+                    arrayList[position]=newString.text.toString()
+                    adapter.notifyItemChanged(position)
+                }
+            }
+        )
+        alertDialog.setButton(
+            AlertDialog.BUTTON_NEGATIVE,
+            "Cancel", DialogInterface.OnClickListener { _, _ -> }
+        )
+        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
+            override fun onShow(dialog: DialogInterface?) {
+                val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                saveButton.setEnabled(false)
+                newString.doOnTextChanged { text, _, _, _ -> saveButton.setEnabled( !(text.toString().isEmpty()||text.toString().equals(oldValue)))  }
+            }
+        });
+        return alertDialog
+
+    }
+
+    private fun addElementDialog(listName:String, arrayList: MutableList<String>, adapter: StringAdapter) : AlertDialog {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Add a new element")
         val alertDialog: AlertDialog = builder.create()
@@ -203,12 +254,28 @@ class EditWordCardFragment : Fragment() {
             AlertDialog.BUTTON_NEGATIVE,
             "Cancel", DialogInterface.OnClickListener { _, _ -> }
         )
+        alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
+            override fun onShow(dialog: DialogInterface?) {
+                val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                newString.doOnTextChanged { text, _, _, _ -> saveButton.setEnabled( !(text.toString().isEmpty()))  }
+            }
+        });
+        return alertDialog
 
-        addButton.setOnTouchListener { _, _ ->
-            alertDialog.show()
-            true
+    }
+    fun updateSaveButton(card: WordCard? = editWordCardViewModel.wordCard.value) {
+        if (card == null) {
+            binding.saveWordCardButton.isEnabled = false
+            binding.deleteWordCardButton.isEnabled = false
+            return
+        }
+        card!!.apply {
+            val enabled =  !(folderID == null || definition.isNullOrEmpty() || partOfSpeech.isNullOrEmpty())
+            binding.saveWordCardButton.isEnabled =enabled
+            binding.deleteWordCardButton.isEnabled = enabled
         }
     }
+
 
     override fun onPause() {
         super.onPause()
