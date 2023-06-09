@@ -49,22 +49,7 @@ class SavedFoldersFragment : Fragment() {
                             { it, amount ->
                                 if (amount > 0)
                                     findNavController().navigate(
-                                        SavedFoldersFragmentDirections.startTraining(
-                                            amount*5,
-                                            booleanArrayOf(
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                true,
-                                                false
-                                            ),
-                                           it
-                                        )
+                                        SavedFoldersFragmentDirections.setupTraining(it)
                                     )
                                 else
                                     Toast.makeText(context, "Folder is empty", Toast.LENGTH_SHORT)

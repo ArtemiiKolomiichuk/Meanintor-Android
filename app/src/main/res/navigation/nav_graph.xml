@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/wordSearchFragment">
+    app:startDestination="@id/savedFoldersFragment">
 
     <fragment
         android:id="@+id/wordSearchFragment"
@@ -34,8 +34,7 @@
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right"
-            app:popUpTo="@id/addWordCardFragment" />
+            app:popExitAnim="@android:anim/slide_out_right" />
         <argument
             android:name="name"
             app:argType="string" />
@@ -87,10 +86,7 @@
             android:id="@+id/openSavedCards"
             app:destination="@id/savedCardsFragment" />
         <action
-            android:id="@+id/startTraining"
-            app:destination="@id/trainingActivity" />
-        <action
-            android:id="@+id/action_savedFoldersFragment_to_trainingSetupFragment"
+            android:id="@+id/setupTraining"
             app:destination="@id/trainingSetupFragment" />
     </fragment>
     <fragment
@@ -142,8 +138,9 @@
         android:name="com.example.practiceeng.ui.fragments.TrainingSetupFragment"
         android:label="TrainingSetupFragment" >
         <action
-            android:id="@+id/action_trainingSetupFragment_to_trainingActivity"
-            app:destination="@id/trainingActivity" />
+            android:id="@+id/startTraining"
+            app:destination="@id/trainingActivity"
+            app:popUpTo="@id/nav_graph" />
         <argument
             android:name="folderID"
             app:argType="java.util.UUID"

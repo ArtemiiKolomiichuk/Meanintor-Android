@@ -11,6 +11,13 @@ class TrainingSetupViewModelFactory(var folderId: UUID?) : ViewModelProvider.Fac
     }
 }
 
-class TrainingSetupViewModel(folderId:UUID?): ViewModel() {
+class TrainingSetupViewModel(val folderId:UUID?): ViewModel() {
+
+    var maxWords:Int = 15
+    val typesBooleanArray: BooleanArray = booleanArrayOf(false,false,false,false,false,false,false,false,false)
+
+
+
+
 
 }

@@ -67,8 +67,9 @@
                 android:id="@+id/quantity_divider"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="/"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/total_question_number"
+                app:layout_constraintEnd_toStartOf="@+id/total_question_number"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -124,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="?colorPrimary"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:cardCornerRadius="30dp">
 
                 <ImageButton
@@ -137,25 +138,24 @@
                     android:visibility="gone"
                     app:srcCompat="@drawable/baseline_audiotrack_24" />
             </androidx.cardview.widget.CardView>
+            <Button
+                android:id="@+id/hint_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="20dp"
+                android:backgroundTint="@color/dark_grey"
+                android:paddingStart="24dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="24dp"
+                android:paddingRight="24dp"
+                android:paddingBottom="6dp"
+                android:text="Give me a hint"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/question_layout" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/hint_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp"
-            android:backgroundTint="@color/dark_grey"
-            android:paddingStart="24dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="24dp"
-            android:paddingRight="24dp"
-            android:paddingBottom="6dp"
-            android:text="Give me a hint"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_layout" />
 
 
         <LinearLayout

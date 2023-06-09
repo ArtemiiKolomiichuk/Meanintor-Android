@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:text="Correct!"
+        android:textAllCaps="true"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        android:textColor="?colorPrimary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dialog_question"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:text="Word"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="?attr/textAppearanceHeadline5" />
+
+    <TextView
+        android:id="@+id/dialog_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:text="Correct!"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/next_question_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1"
+        android:backgroundTint="?colorPrimary"
+        android:text="Next question"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textColor="?colorOnPrimary" />
+
+    <Button
+        android:id="@+id/correct_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:backgroundTint="?colorSecondary"
+        android:text="I am correct" />
+</LinearLayout>
