@@ -84,6 +84,8 @@ class TrainingSetupFragment : Fragment() {
             }
     }
 
+    //TODO("disable button when no types are selected")
+
     fun selectAllOptions(on: Boolean) {
         TestType.all().forEach { typesMap.getValue(it).isChecked = on }
     }
