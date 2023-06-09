@@ -21,19 +21,26 @@ import com.example.practiceeng.*
 import com.example.practiceeng.TestType.*
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.ActivityTrainingBinding
+import com.example.practiceeng.ui.fragments.TrainingSetupFragment
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModel
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class TrainingActivity : AppCompatActivity() {
+
+
+
     val TAG = "TrainingActivity"
     private var _binding: ActivityTrainingBinding? = null
     val binding get() = _binding!!
-    private val args: TrainingActivityArgs by navArgs()
+
     private val quizViewModel: TrainingFragmentViewModel by viewModels {
-        TrainingFragmentViewModelFactory(args.amount, args.testTypes, args.folders)
+        TrainingFragmentViewModelFactory(intent.getIntExtra(TrainingSetupFragment.KEY_AMOUNT, 15), intent.getBooleanArrayExtra(TrainingSetupFragment.KEY_TESTTYPES)!!,
+            intent.getSerializableExtra(TrainingSetupFragment.KEY_FOLDER_ID) as UUID
+        )
     }
     private lateinit var testAnswersLayouts: Array<View>
 //TODO("restrict popup dismissing with back button press")
@@ -142,7 +149,7 @@ class TrainingActivity : AppCompatActivity() {
                     smallerQuestion.visibility = View.GONE
                     playSoundView.visibility = View.GONE
                     currentTask.text = "Look and Remember"
-                    continueButton.setOnClickListener { showDialog(true, false) }
+                    continueButton.setOnClickListener { checkTestCorrectness(continueButton.text.toString()) }
                 }
             }
             TrueFalse -> {
@@ -163,25 +170,25 @@ class TrainingActivity : AppCompatActivity() {
                 binding.apply {
                     when (quizViewModel.currentTestType()) {
                         MultipleChoiceDefinition -> {
-                            currentTask.text = "Pick a matching definition"
+                            currentTask.text = "Pick a Matching Definition"
                             smallerQuestion.visibility = View.GONE
                             currentQuestion.visibility = View.VISIBLE
                             currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
                         }
                         MultipleChoiceWord -> {
-                            currentTask.text = "Pick a matching word"
+                            currentTask.text = "Pick a Matching Word"
                             smallerQuestion.visibility = View.VISIBLE
                             smallerQuestion.text = quizViewModel.currentDisplayTexts()[0]
                             currentQuestion.visibility = View.GONE
                         }
                         Synonyms -> {
-                            currentTask.text = "Pick a synonym"
+                            currentTask.text = "Pick a Synonym"
                             smallerQuestion.visibility = View.GONE
                             currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
                             currentQuestion.visibility = View.VISIBLE
                         }
                         Antonyms -> {
-                            currentTask.text = "Pick an antonym"
+                            currentTask.text = "Pick an Antonym"
                             smallerQuestion.visibility = View.GONE
                             currentQuestion.visibility = View.VISIBLE
                             currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
@@ -200,12 +207,12 @@ class TrainingActivity : AppCompatActivity() {
                 activateTestLayout(binding.writingLayout)
                 binding.apply {
                     if (quizViewModel.currentTestType() == Writing) {
-                        currentTask.text = "What is this word?"
+                        currentTask.text = "What Is This Word?"
                         smallerQuestion.visibility = View.VISIBLE
                         smallerQuestion.text = quizViewModel.currentDisplayTexts()[0]
                         playSoundView.visibility = View.GONE
                     } else if (quizViewModel.currentTestType() == WritingListening) {
-                        currentTask.text = "What do you hear?"
+                        currentTask.text = "What Do You Hear?"
                         smallerQuestion.visibility = View.GONE
                         playSoundView.visibility = View.VISIBLE
                         playSoundButton.setOnClickListener {
@@ -250,8 +257,9 @@ class TrainingActivity : AppCompatActivity() {
             when (correct) {
                 true -> {
                     dialog_title.setText("Correct!")
-                    if (quizViewModel.hasNext()) {
+                    if (!quizViewModel.hasNext()) {
                         dialog_next.setText("Return to menu")
+                        binding.levelProgressBar.progress = binding.levelProgressBar.max
                     }
 
                     dialog_next.setOnClickListener (object: OnClickListener{
@@ -260,7 +268,7 @@ class TrainingActivity : AppCompatActivity() {
                                 setupQuestion()
                                 bottomSheetDialog.dismiss();
                             } else {
-                                startActivity(Intent(this@TrainingActivity, MainActivity::class.java))
+                                this@TrainingActivity.finish()
                             }
                         }
                     })
@@ -279,10 +287,8 @@ class TrainingActivity : AppCompatActivity() {
                     dialog_correct.visibility = View.VISIBLE
                     dialog_correct.setOnClickListener (object: OnClickListener{
                         override fun onClick(v: View?) {
-                            if (quizViewModel.moveToNext()) {
-                                setupQuestion()
-                                bottomSheetDialog.dismiss();
-                            } else showFinalDialog()
+                                bottomSheetDialog.dismiss()
+                            showDialog(true)
                         }
                     })
                 }
@@ -294,12 +300,8 @@ class TrainingActivity : AppCompatActivity() {
             if (quizViewModel.moveToNext() && correct) {
                 setupQuestion()
                 bottomSheetDialog.dismiss();
-            } else showFinalDialog()
+            }
         }
-    }
-
-    private fun showFinalDialog() {
-        binding.levelProgressBar.progress = binding.levelProgressBar.max
     }
 
     fun showIncorrectDialog(){
