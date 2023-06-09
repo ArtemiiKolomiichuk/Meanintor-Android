@@ -259,6 +259,7 @@ class QuestionManager
                         //would take too much space
                     }
                     question.options = question.options.toMutableList().shuffled().toTypedArray()
+                    testTypes = (testTypes.toMutableList() - TestType.Match).toTypedArray()
                     return question
                 }
 
@@ -268,7 +269,7 @@ class QuestionManager
                         arrayOf(card.synonyms[card.mastery.toInt() % card.synonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
                     question.displayTextHint = card.antonyms
-                    question.options = card.getNotSynonymicWords(UserSettings.settings().matchOptions - 1, cards)
+                    question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions - 1, cards)
                     question.options += question.correctAnswers[0];
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.synonyms
                     return question
@@ -280,7 +281,7 @@ class QuestionManager
                         arrayOf(card.antonyms[card.mastery.toInt() % card.antonyms.size])
                     question.displayTexts = arrayOf(card.wordString(), card.definition)
                     question.displayTextHint = card.synonyms
-                    question.options = card.getNotAntonymousWords(UserSettings.settings().matchOptions - 1, cards)
+                    question.options = card.getNotAntonymousWords(UserSettings.settings().questionOptions - 1, cards)
                     question.options += question.correctAnswers[0];
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.antonyms
                     return question
@@ -299,7 +300,7 @@ class QuestionManager
                 TestType.WritingListening -> {
                     val question = Question(arrayOf(card), testType = TestType.WritingListening)
                     question.correctAnswers = arrayOf(card.wordString())
-                    question.displayTexts = arrayOf(card.word().audioLinks[0])
+                    question.displayTexts = arrayOf(card.word().audioLinks[1])
                     question.displayTextHint = arrayOf(card.definition)
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.word().audioLinks[0])
                     return question

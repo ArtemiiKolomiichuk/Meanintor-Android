@@ -82,7 +82,7 @@ data class WordCard(
      */
     fun getNotSynonymicDefinitions(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicDefinitions = arrayOf<String>()
-        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString()) }
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && it.wordString()!= wordString() && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString()) }
         return if (notSynonymicCards.size > amount*2) {
             notSynonymicCards = notSynonymicCards.shuffled().take(amount)
             for (card in notSynonymicCards) {
@@ -101,7 +101,19 @@ data class WordCard(
      */
     fun getNotSynonymicWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notSynonymicWords = arrayOf<String>()
-        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString())}
+        var notSynonymicCards = cards.filter { it.partOfSpeech == partOfSpeech && it.wordString() != wordString() && !synonyms.contains(it.wordString()) && !it.synonyms.contains(wordString())}
+        val wordBank = mutableListOf<String>()
+        for (card in notSynonymicCards) {
+            if(wordBank.contains(card.wordString())){
+                wordBank.add(card.wordString())
+            }
+            else
+            {
+                notSynonymicCards -= card
+            }
+        }
+
+
         return if (notSynonymicCards.size > amount*2) {
             notSynonymicCards = notSynonymicCards.shuffled().take(amount)
             for (card in notSynonymicCards) {
@@ -120,7 +132,19 @@ data class WordCard(
      */
     fun getNotAntonymousWords(amount : Int, cards: MutableList<WordCard>) : Array<String> {
         var notAntonymousWords = arrayOf<String>()
-        var notAntonymousCards = cards.filter { it.partOfSpeech == partOfSpeech && !antonyms.contains(it.wordString()) && !it.antonyms.contains(wordString()) }
+        var notAntonymousCards = cards.filter { it.partOfSpeech == partOfSpeech && it.wordString() != wordString() && !antonyms.contains(it.wordString()) && !it.antonyms.contains(wordString()) }
+        var wordBank = mutableListOf<String>()
+        for (card in notAntonymousCards) {
+            if(wordBank.contains(card.wordString())){
+                wordBank.add(card.wordString())
+            }
+            else
+            {
+                notAntonymousCards -= card
+            }
+        }
+
+
         return if (notAntonymousCards.size > amount*2) {
             notAntonymousCards = notAntonymousCards.shuffled().take(amount)
             for (card in notAntonymousCards) {
