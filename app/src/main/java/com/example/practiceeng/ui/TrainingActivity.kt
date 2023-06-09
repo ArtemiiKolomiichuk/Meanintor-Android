@@ -36,6 +36,9 @@ class TrainingActivity : AppCompatActivity() {
     }
     private lateinit var testAnswersLayouts: Array<View>
 //TODO("restrict popup dismissing with back button press")
+    //TODO("fix exit")
+    //TODO("popup when no questions are added")
+    //TODO("add matching")
    private lateinit var bottomSheetDialog : BottomSheetDialog
     private lateinit var dialog_title   :TextView
    private lateinit var dialog_question:TextView
@@ -246,7 +249,7 @@ class TrainingActivity : AppCompatActivity() {
             when (correct) {
                 true -> {
                     dialog_title.setText("Correct!")
-                    if (quizViewModel.hasNext()) {
+                    if (!quizViewModel.hasNext()) {
                         dialog_next.setText("Return to menu")
                     }
 
@@ -256,7 +259,7 @@ class TrainingActivity : AppCompatActivity() {
                                 setupQuestion()
                                 bottomSheetDialog.dismiss();
                             } else {
-                                findNavController(R.id.linearLayout3).navigate(TrainingActivityDirections.returnToMenu())
+                                this@TrainingActivity.finish()
                             }
                         }
                     })
