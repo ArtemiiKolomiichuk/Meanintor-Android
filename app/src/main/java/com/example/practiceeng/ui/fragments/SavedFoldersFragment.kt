@@ -50,7 +50,7 @@ class SavedFoldersFragment : Fragment() {
                                 if (amount > 0)
                                     findNavController().navigate(
                                         SavedFoldersFragmentDirections.startTraining(
-                                            amount*10,
+                                            amount*5,
                                             booleanArrayOf(
                                                 true,
                                                 true,

@@ -3,18 +3,23 @@ package com.example.practiceeng.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.OnClickListener
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.Question
 import com.example.practiceeng.QuestionManager
 import com.example.practiceeng.TestType
 import com.example.practiceeng.TestType.*
+import com.example.practiceeng.Utils
 import com.example.practiceeng.database.WordRepository
 import com.example.practiceeng.databinding.ActivityTrainingBinding
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModel
@@ -36,8 +41,11 @@ class TrainingActivity : AppCompatActivity() {
         _binding = ActivityTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.apply {
-            testAnswersLayouts = arrayOf(flashcard, multipleChoice, trueFalse)
+            testAnswersLayouts = arrayOf(flashcardLayout, multipleChoiceLayout, trueFalseLayout, writingLayout)
         }
+        if(quizViewModel.questionBank!=null)
+            setupQuestionActivity()
+        else
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 if (quizViewModel.folderID == null) {
@@ -58,9 +66,11 @@ class TrainingActivity : AppCompatActivity() {
     fun setupQuestionActivity() {
         binding.totalQuestionNumber.text = quizViewModel.size().toString()
         if (quizViewModel.hasNext()) {
-            Log.d(TAG, quizViewModel.questionBank.joinToString(", "))
+            Log.d(TAG, quizViewModel.questionBank!!.joinToString(", "))
             Log.d(TAG, quizViewModel.currentIndex.toString())
             binding.levelProgressBar.max = quizViewModel.size()
+            binding.hintButton.setOnTouchListener { v, event -> showHint()
+                true}
             setupQuestion()
         }
 
@@ -69,14 +79,6 @@ class TrainingActivity : AppCompatActivity() {
    fun setupQuestion() {
        binding.apply {
            currentQuestionNumber.text = (quizViewModel.index()+1).toString()
-           quizViewModel.currentDisplayTexts().let {
-               if (it.isNotEmpty()) {
-                   currentQuestion.text = it[0]
-                   currentQuestion.visibility = View.VISIBLE
-               } else {
-                   currentQuestion.visibility = View.GONE
-               }
-           }
            quizViewModel.currentDisplayTextHint().let {
                if (it.isNotEmpty()) {
                    hintButton.visibility = View.VISIBLE
@@ -90,9 +92,10 @@ class TrainingActivity : AppCompatActivity() {
    }
 
     fun showTest() {
+        binding.currentTask.visibility=View.VISIBLE
         when (quizViewModel.currentTestType()) {
             FlashCard -> {
-                activateTestLayout(binding.flashcard)
+                activateTestLayout(binding.flashcardLayout)
                 val card = quizViewModel.currentWordCards()[0]
                 binding.apply {
                     cardItem.apply {
@@ -118,23 +121,114 @@ class TrainingActivity : AppCompatActivity() {
                             antonyms.visibility = RecyclerView.GONE
                         }
                     }
+                    currentQuestion.visibility = View.GONE
+                    smallerQuestion.visibility = View.GONE
+                    playSoundView.visibility = View.GONE
+                    currentTask.text = "Look and Remember"
                     continueButton.setOnClickListener { showCorrectDialog() }
                 }
             }
             TrueFalse -> {
-                activateTestLayout(binding.trueFalse)
+                activateTestLayout(binding.trueFalseLayout)
+                binding.apply {
+                    currentTask.text = "True or False?"
+                    currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                    smallerQuestion.text = quizViewModel.currentDisplayTexts()[1]
+                    currentQuestion.visibility = View.VISIBLE
+                    smallerQuestion.visibility = View.VISIBLE
+                    playSoundView.visibility = View.GONE
+                    trueButton.setOnClickListener { checkTestCorrectness(trueButton.text.toString()) }
+                    falseButton.setOnClickListener { checkTestCorrectness(falseButton.text.toString()) }
+                }
             }
-            MultipleChoiceWord, MultipleChoiceDefinition -> {
-                activateTestLayout(binding.multipleChoice)
+            MultipleChoiceWord, MultipleChoiceDefinition, Synonyms, Antonyms  -> {
+                activateTestLayout(binding.multipleChoiceLayout)
+                binding.apply {
+                    when (quizViewModel.currentTestType()) {
+                        MultipleChoiceDefinition ->  {
+                            currentTask.text = "Pick a matching definition"
+                            smallerQuestion.visibility = View.GONE
+                            currentQuestion.visibility = View.VISIBLE
+                            currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                        }
+                        MultipleChoiceWord -> {
+                                currentTask.text = "Pick a matching word"
+                            smallerQuestion.visibility = View.VISIBLE
+                            smallerQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                            currentQuestion.visibility = View.GONE
+                        }
+                        Synonyms -> {
+                            currentTask.text = "Pick a synonym"
+                            smallerQuestion.visibility = View.GONE
+                            currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                            currentQuestion.visibility = View.VISIBLE
+                        }
+                        Antonyms -> {
+                            currentTask.text = "Pick an antonym"
+                            smallerQuestion.visibility = View.GONE
+                            currentQuestion.visibility = View.VISIBLE
+                            currentQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                        }
+                        else -> {}
+                    }
+                    playSoundView.visibility = View.GONE
+                    arrayOf(button1, button2, button3, button4).forEachIndexed { index, button ->
+                        button.text = quizViewModel.currentOptions()[index]
+                        button.setOnClickListener { checkTestCorrectness(button.text.toString()) }
+                    }
+                }
             }
             Match -> {}
-            Synonyms, Antonyms -> {}
-            Writing -> {}
-            WritingListening -> {}
+            Writing,  WritingListening -> {
+                activateTestLayout(binding.writingLayout)
+                binding.apply {
+                    if (quizViewModel.currentTestType() == Writing) {
+                        currentTask.text = "What is this word?"
+                        smallerQuestion.visibility = View.VISIBLE
+                        smallerQuestion.text = quizViewModel.currentDisplayTexts()[0]
+                        playSoundView.visibility = View.GONE
+                    } else if (quizViewModel.currentTestType() == WritingListening) {
+                        currentTask.text = "What do you hear?"
+                        smallerQuestion.visibility = View.GONE
+                        playSoundView.visibility = View.VISIBLE
+                        playSoundButton.setOnClickListener {
+                            Utils.playAudio(
+                                quizViewModel.currentDisplayTexts()[0],
+                                this@TrainingActivity
+                            )
+                        }
+                    }
+                    currentQuestion.visibility = View.GONE
+                    writingAnswerField.setText(quizViewModel.writingField)
+                    writingAnswerField.doOnTextChanged { text, _, _, _ ->
+                        quizViewModel.writingField = text as String
+                        checkButton.isEnabled = text.isNotEmpty()
+                    }
+                    writingAnswerField.setOnTouchListener { v, event ->
+                        checkTestCorrectness(quizViewModel.writingField)
+                        true
+                    }
+                }
+
+
+
+            }
             NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
 
 
         }
+    }
+
+    fun showHint() {
+        if(quizViewModel.currentDisplayTextHint().isNotEmpty())
+        Toast.makeText(this@TrainingActivity, quizViewModel.currentDisplayTextHint()[0], Toast.LENGTH_SHORT).show()
+    }
+
+    fun checkTestCorrectness(answer: String) {
+        if(answer in  quizViewModel.currentCorrectAnswers())
+            showCorrectDialog()
+        else
+            showIncorrectDialog()
     }
 
     fun showCorrectDialog(){

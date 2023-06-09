@@ -2,265 +2,295 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:id="@+id/scroll_view"
-    tools:context=".ui.fragments.AddWordCardFragment">
-<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="-50dp"
+    android:background="?colorPrimary"
     android:orientation="vertical"
-    android:padding="16dp">
+    tools:context=".ui.fragments.AddWordCardFragment">
 
-    <TextView
-        android:id="@+id/word"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline4" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="Part of speech"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/is_phrase"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <CheckBox
-            android:id="@+id/is_phrase"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="custom"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textView2" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"
-        android:entries="@array/parts_of_speech"
-        />
-    <EditText
-        android:id="@+id/part_of_speech"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:hint="Part of speech" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="8dp"
-        android:background="?android:attr/listDivider" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceHeadline5"
-        android:text="Definition" />
-
-    <EditText
-        android:id="@+id/definition"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:hint="Definition" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="8dp"
-        android:background="?android:attr/listDivider" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/examples_list_layout"
-        android:scrollbars="none">
-
-        <ImageButton
-            android:id="@+id/examples_add_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/examples_list_header"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/examples_list_header"
-            app:srcCompat="@drawable/baseline_add_24" />
-
-        <TextView
-            android:id="@+id/examples_list_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Examples"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintEnd_toStartOf="@+id/examples_add_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/examples_dynamic_list"
-            android:clickable="true"
+            android:id="@+id/word"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/examples_list_header"
-            tools:listitem="@layout/item_array_string"
-            tools:itemCount="3">
-        </androidx.recyclerview.widget.RecyclerView>
+            android:padding="16dp"
+            android:text="Word"
+            android:textAppearance="?attr/textAppearanceHeadline4"
+            android:textColor="?colorOnPrimary" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="30dp">
 
-   <!-- <EditText
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="36dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Definition"
+                    android:textAppearance="?attr/textAppearanceHeadline5" />
+
+                <EditText
+                    android:id="@+id/definition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Definition"
+                    android:inputType="textMultiLine" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/linearLayout2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="Part of speech"
+                        android:textAppearance="?attr/textAppearanceHeadline5"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/is_phrase"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <CheckBox
+                        android:id="@+id/is_phrase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="custom"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/textView2" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <EditText
+                    android:id="@+id/part_of_speech"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Part of speech"
+                    android:inputType="textMultiLine" />
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/parts_of_speech"
+                    android:spinnerMode="dropdown" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/synonyms_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <ImageButton
+                        android:id="@+id/synonyms_add_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@null"
+                        app:layout_constraintBottom_toBottomOf="@+id/synonyms_list_header"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/synonyms_list_header"
+                        app:srcCompat="@drawable/baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/synonyms_list_header"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/synonyms"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        app:layout_constraintEnd_toStartOf="@+id/synonyms_add_button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/synonyms_dynamic_list"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/synonyms_list_header"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_array_string"></androidx.recyclerview.widget.RecyclerView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/examples_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <ImageButton
+                        android:id="@+id/examples_add_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@null"
+                        app:layout_constraintBottom_toBottomOf="@+id/examples_list_header"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/examples_list_header"
+                        app:srcCompat="@drawable/baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/examples_list_header"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="Examples"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        app:layout_constraintEnd_toStartOf="@+id/examples_add_button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/examples_dynamic_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/examples_list_header"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_array_string"></androidx.recyclerview.widget.RecyclerView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="?android:attr/listDivider" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/antonyms_list_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <ImageButton
+                        android:id="@+id/antonyms_add_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@null"
+                        app:layout_constraintBottom_toBottomOf="@+id/antonyms_list_header"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/antonyms_list_header"
+                        app:srcCompat="@drawable/baseline_add_24" />
+
+                    <TextView
+                        android:id="@+id/antonyms_list_header"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/antonyms"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        app:layout_constraintEnd_toStartOf="@+id/antonyms_add_button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/antonyms_dynamic_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:clickable="true"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/antonyms_list_header"
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_array_string"></androidx.recyclerview.widget.RecyclerView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/delete_word_card_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/red"
+                    android:text="Delete" />
+
+                <Button
+                    android:id="@+id/choose_folder_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Choose folder" />
+
+                <Button
+                    android:id="@+id/save_word_card_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="28dp"
+                    android:text="Save" />
+            </LinearLayout>
+
+            <!-- <EditText
         android:id="@+id/example"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:hint="Example" />-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="8dp"
-        android:background="?android:attr/listDivider" />
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/synonyms_list_layout"
-        android:scrollbars="none">
-
-        <ImageButton
-            android:id="@+id/synonyms_add_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/synonyms_list_header"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/synonyms_list_header"
-            app:srcCompat="@drawable/baseline_add_24" />
-
-        <TextView
-            android:id="@+id/synonyms_list_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/synonyms"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintEnd_toStartOf="@+id/synonyms_add_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/synonyms_dynamic_list"
-
-            android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/synonyms_list_header"
-            tools:listitem="@layout/item_array_string"
-            tools:itemCount="3">
-        </androidx.recyclerview.widget.RecyclerView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="?android:attr/listDivider" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/antonyms_list_layout"
-        android:scrollbars="none">
-
-        <ImageButton
-            android:id="@+id/antonyms_add_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:background="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/antonyms_list_header"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/antonyms_list_header"
-            app:srcCompat="@drawable/baseline_add_24" />
-
-        <TextView
-            android:id="@+id/antonyms_list_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/antonyms"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintEnd_toStartOf="@+id/antonyms_add_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/antonyms_dynamic_list"
-            android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/antonyms_list_header"
-            tools:listitem="@layout/item_array_string"
-            tools:itemCount="3">
-        </androidx.recyclerview.widget.RecyclerView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="8dp"
-        android:background="?android:attr/listDivider" />
-
-    <!--<TextView
+            <!--<TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:textAppearance="?attr/textAppearanceHeadline5"
@@ -286,22 +316,7 @@
       android:inputType="textMultiLine"
       android:hint="Antomyns" />-->
 
-    <Button
-        android:id="@+id/choose_folder_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Choose folder" />
-    <Button
-        android:id="@+id/save_word_card_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save" />
 
-    <Button
-        android:id="@+id/delete_word_card_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/red"
-        android:text="Delete" />
-</LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
 </ScrollView>

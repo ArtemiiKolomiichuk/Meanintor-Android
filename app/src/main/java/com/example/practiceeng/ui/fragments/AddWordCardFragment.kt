@@ -117,11 +117,13 @@ class AddWordCardFragment : Fragment() {
             if (isChecked) {
                 spinner.visibility = View.GONE
                 partOfSpeech.visibility = View.VISIBLE
+                isPhrase.isChecked = true
                 partOfSpeech.setText(addWordCardViewModel.pos)
 
             } else {
                 spinner.visibility = View.VISIBLE
                 partOfSpeech.visibility = View.GONE
+                isPhrase.isChecked = false
                 val spinnerPos = isCustomPartOfSpeech(addWordCardViewModel.pos)
                 if (spinnerPos != -1)
                     spinner.setSelection(spinnerPos)
