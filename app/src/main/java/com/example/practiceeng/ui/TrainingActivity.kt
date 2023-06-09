@@ -2,6 +2,7 @@ package com.example.practiceeng.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -13,6 +14,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.*
@@ -248,7 +250,7 @@ class TrainingActivity : AppCompatActivity() {
             when (correct) {
                 true -> {
                     dialog_title.setText("Correct!")
-                    if (!quizViewModel.hasNext()) {
+                    if (quizViewModel.hasNext()) {
                         dialog_next.setText("Return to menu")
                     }
 
