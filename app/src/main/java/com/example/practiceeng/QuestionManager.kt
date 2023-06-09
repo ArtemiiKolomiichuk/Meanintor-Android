@@ -214,8 +214,10 @@ class QuestionManager
                     val question = Question(arrayOf(card), testType = TestType.MultipleChoiceWord)
                     question.correctAnswers = arrayOf(card.wordString())
                     question.displayTexts = arrayOf(card.definition)
+
                     question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions - 1, cards)
                     question.options += question.correctAnswers[0];
+                    question.options.shuffle()
                     if(card.getHintExamples().isNotEmpty()){
                         question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     }
@@ -228,7 +230,8 @@ class QuestionManager
                     question.correctAnswers = arrayOf(card.definition)
                     question.displayTexts = arrayOf(card.wordString())
                     question.options = card.getNotSynonymicDefinitions(UserSettings.settings().questionOptions - 1, cards)
-                    question.options += question.correctAnswers[0];
+                    question.options += question.correctAnswers[0]
+                    question.options.shuffle()
                     if(card.getHintExamples().isNotEmpty()){
                         question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
                     }
@@ -271,6 +274,7 @@ class QuestionManager
                     question.displayTextHint = card.antonyms
                     question.options = card.getNotSynonymicWords(UserSettings.settings().questionOptions - 1, cards)
                     question.options += question.correctAnswers[0];
+                    question.options.shuffle()
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.synonyms
                     return question
                 }
@@ -283,6 +287,7 @@ class QuestionManager
                     question.displayTextHint = card.synonyms
                     question.options = card.getNotAntonymousWords(UserSettings.settings().questionOptions - 1, cards)
                     question.options += question.correctAnswers[0];
+                    question.options.shuffle()
                     question.displayTextOnAnsweredWrong = arrayOf(card.wordString(), card.definition) + card.antonyms
                     return question
                 }
