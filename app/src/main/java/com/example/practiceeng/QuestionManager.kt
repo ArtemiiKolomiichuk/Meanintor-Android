@@ -248,7 +248,7 @@ class QuestionManager
                         return getNextQuestion(questions)
                     }
                     val question = Question(arrayOf(), testType = TestType.Match)
-                    for (q in questions){
+                    for (q in questions2){
                         question.wordCards += q.wordCards
                         question.correctAnswers += q.correctAnswers
                         question.displayTexts += q.displayTexts

@@ -268,14 +268,13 @@
             android:id="@+id/matching_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <Button
                 android:id="@+id/matching_check_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
-                android:layout_marginTop="24dp"
                 android:layout_marginEnd="60dp"
                 android:layout_marginBottom="32dp"
                 android:text="Check"
@@ -287,16 +286,13 @@
 
             <com.google.android.flexbox.FlexboxLayout
                 android:id="@+id/matching_options"
-                flexWrap="wrap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginBottom="32dp"
+                android:layout_gravity="center_horizontal"
+                android:padding="32dp"
                 app:flexDirection="row"
                 app:flexWrap="wrap"
-                app:justifyContent="space_between"
+                app:justifyContent="space_evenly"
                 app:layout_constraintBottom_toTopOf="@+id/gridLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -307,19 +303,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_background"
-                    android:padding="8dp"
-                    android:text="TextView"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="option"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
-                    app:layout_flexGrow="1" />
+                    app:layout_flexGrow="1"
+                    tools:layout_editor_absoluteX="32dp"
+                    tools:layout_editor_absoluteY="32dp" />
 
                 <TextView
                     android:id="@+id/option2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_background"
-                    android:padding="8dp"
-                    android:text="TextView"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="option"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     app:layout_flexGrow="1"
@@ -332,8 +338,12 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_background"
-                    android:padding="8dp"
-                    android:text="TextView"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="option"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     app:layout_flexGrow="1"
@@ -346,8 +356,12 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_background"
-                    android:padding="8dp"
-                    android:text="TextView"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="option"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     app:layout_flexGrow="1"
@@ -360,8 +374,12 @@
                     android:layout_height="wrap_content"
 
                     android:background="@drawable/round_background"
-                    android:padding="8dp"
-                    android:text="TextView"
+                    android:gravity="center"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp"
+                    android:text="option"
                     android:textAlignment="center"
                     android:textAppearance="?attr/textAppearanceHeadline5"
                     app:layout_flexGrow="1"
@@ -375,11 +393,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="32dp"
-                android:padding="4dp"
+                android:paddingStart="28dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="28dp"
+                android:paddingBottom="20dp"
                 app:layout_constraintBottom_toTopOf="@+id/matching_check_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -393,98 +410,117 @@
                     android:id="@+id/variant1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
-                    android:text="TextView"
+                    android:text="variant"
                     android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_column="0"
                     app:layout_columnWeight="8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_gravity="fill_horizontal|center_vertical" />
+                    app:layout_gravity="fill_horizontal|center_vertical"
+                    app:layout_row="0" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView1"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:minHeight="30dp"
+                    android:minWidth="45dp"
+                    android:minHeight="40dp"
                     app:cardCornerRadius="10dp"
+                    app:layout_column="1"
                     app:layout_columnWeight="5"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center"
+                    app:layout_row="0" />
 
                 <TextView
                     android:id="@+id/variant2"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
-                    android:text="TextView"
+                    android:text="variant"
                     android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_column="0"
                     app:layout_columnWeight="8"
                     app:layout_gravity="center|fill_horizontal"
-                    app:layout_row="0" />
+                    app:layout_row="1" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView2"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:minHeight="30dp"
+                    android:minWidth="45dp"
+                    android:minHeight="40dp"
                     app:cardCornerRadius="10dp"
+                    app:layout_column="1"
                     app:layout_columnWeight="5"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center"
+                    app:layout_row="1" />
 
                 <TextView
                     android:id="@+id/variant3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="TextView"
                     android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_column="0"
                     app:layout_columnWeight="8"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center|fill_horizontal"
+                    app:layout_row="2" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView3"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:minHeight="30dp"
+                    android:minWidth="45dp"
+                    android:minHeight="40dp"
                     app:cardCornerRadius="10dp"
+                    app:layout_column="1"
                     app:layout_columnWeight="5"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center"
+                    app:layout_row="2"></androidx.cardview.widget.CardView>
 
                 <TextView
                     android:id="@+id/variant4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="TextView"
                     android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_column="0"
                     app:layout_columnWeight="8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center|fill_horizontal"
+                    app:layout_row="3" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView4"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:minHeight="30dp"
+                    android:minWidth="45dp"
+                    android:minHeight="40dp"
                     app:cardCornerRadius="10dp"
+                    app:layout_column="1"
                     app:layout_columnWeight="5"
-                    app:layout_gravity="center|fill_horizontal">
+                    app:layout_gravity="center"
+                    app:layout_row="3">
 
                 </androidx.cardview.widget.CardView>
 
@@ -492,29 +528,36 @@
                     android:id="@+id/variant5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
+                    android:layout_margin="4dp"
                     android:gravity="center"
                     android:text="TextView"
                     android:textAppearance="?attr/textAppearanceHeadline6"
-                    app:layout_columnWeight="1"
+                    app:layout_column="0"
+                    app:layout_columnWeight="8"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_gravity="center|fill_horizontal"
+                    app:layout_row="4"
                     tools:layout_columnWeight="1" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardView5"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginBottom="8dp"
                     android:gravity="center"
-                    android:minHeight="30dp"
+                    android:minWidth="45dp"
+                    android:minHeight="40dp"
                     app:cardCornerRadius="10dp"
+                    app:layout_column="1"
                     app:layout_columnWeight="5"
-                    app:layout_gravity="center|fill_horizontal" />
+                    app:layout_gravity="center"
+                    app:layout_row="4" />
 
             </androidx.gridlayout.widget.GridLayout>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

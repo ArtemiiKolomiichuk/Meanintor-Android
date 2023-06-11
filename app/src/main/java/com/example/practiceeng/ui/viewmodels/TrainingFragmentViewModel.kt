@@ -19,7 +19,7 @@ class TrainingFragmentViewModelFactory(val amount:Int, val types: BooleanArray, 
 }
 class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val folder: UUID?) : ViewModel() {
     var currentLayout: View? = null
-    var currentIndex: Int = 0
+    var currentIndex: Int = -1
     private var _questionBank: MutableList<Question>? = null
     val questionBank get() = _questionBank as List<Question>?
     var lastMatching: String? = null

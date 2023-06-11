@@ -1,22 +1,24 @@
 package com.example.practiceeng.ui
 
-import android.content.Intent
+import android.content.ClipData
+import android.content.ClipDescription
 import android.os.Bundle
-import android.util.Log
+import android.view.DragEvent
 import android.view.View
 import android.view.View.OnClickListener
+import android.view.View.OnDragListener
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.findNavController
-import androidx.navigation.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practiceeng.*
 import com.example.practiceeng.TestType.*
@@ -25,6 +27,7 @@ import com.example.practiceeng.databinding.ActivityTrainingBinding
 import com.example.practiceeng.ui.fragments.TrainingSetupFragment
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModel
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModelFactory
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.util.*
@@ -100,7 +103,7 @@ class TrainingActivity : AppCompatActivity() {
 
     fun setupQuestionActivity() {
         binding.totalQuestionNumber.text = quizViewModel.size().toString()
-        if (quizViewModel.hasNext()) {
+        if (quizViewModel.moveToNext()) {
             binding.levelProgressBar.max = quizViewModel.size()
             binding.hintButton.setOnClickListener(object : OnClickListener {
                 override fun onClick(v: View?) {
@@ -216,8 +219,9 @@ class TrainingActivity : AppCompatActivity() {
             Match -> {
                 binding.apply {
                     activateTestLayout(binding.matchingLayout)
-                    val options = arrayOf(option1, option2, option3, option4, option5)
-                    val answers = arrayOf(
+                    val options: Array<TextView> =
+                        arrayOf(option1, option2, option3, option4, option5)
+                    val answers: Array<Pair<TextView, View>> = arrayOf(
                         Pair(variant1, cardView1),
                         Pair(variant2, cardView2),
                         Pair(variant3, cardView3),
@@ -237,7 +241,13 @@ class TrainingActivity : AppCompatActivity() {
                     currentQuestion.visibility = View.GONE
                     smallerQuestion.visibility = View.GONE
                     playSoundView.visibility = View.GONE
+            matchingCheckButton.setOnClickListener(object:OnClickListener{
+                override fun onClick(v: View?) {
+                    TODO("Not yet implemented")
+                }
+            })
 
+                    addDragListeners(options, answers.map { it -> it.second }.toTypedArray())
                     // cardView1.children.firstOrNull()
                 }
 
@@ -277,6 +287,81 @@ class TrainingActivity : AppCompatActivity() {
                 }
             }
             NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
+        }
+    }
+
+    class MatchingItemOnLongListener() : View.OnLongClickListener {
+        override fun onLongClick(v: View?): Boolean {
+            val string = (v as TextView).text.toString()
+            val item = ClipData.Item(string)
+            val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
+            val data = ClipData(string, mimeTypes, item)
+            val dragShadowBuilder = View.DragShadowBuilder(v)
+            v!!.startDragAndDrop(data, dragShadowBuilder, v, 0)
+            return true
+        }
+    }
+
+    private fun addDragListeners(dragViews: Array<TextView>, destinations: Array<View>) {
+        val dragListener = OnDragListener { view, event ->
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    view.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    true
+                }
+
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    view.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    val item = event.clipData.getItemAt(0)
+                    val dragData = item.text
+                 //   Toast.makeText(this@TrainingActivity, dragData, Toast.LENGTH_SHORT)
+                    view.invalidate()
+                    val v = event.localState as View
+                    val owner = v.parent as ViewGroup
+                    owner.removeView(v)
+                    if (view in destinations) {
+                        val cardViewDestination = destinations.first { it == view } as CardView
+                        cardViewDestination.children.forEach { option ->
+                            cardViewDestination.removeView(option)
+                            binding.matchingOptions.addView(option)
+                            binding.matchingOptions.invalidate()
+                        }
+                        val destination =view as CardView
+                        destination.addView(v)
+                    }
+                    if(view == binding.matchingOptions) {
+                        binding.matchingOptions.addView(v)
+                    }
+                    else{
+                        v.visibility = View.VISIBLE
+                        v.invalidate()
+                        false
+                    }
+                    v.visibility = View.VISIBLE
+                    true
+                }
+
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    view.invalidate()
+                    true
+                }
+                else -> false
+            }
+        }
+        for (dragView in dragViews) {
+            dragViews.forEach { it -> it.setOnLongClickListener(MatchingItemOnLongListener()) }
+        }
+        for (destination in destinations + binding.matchingOptions) {
+            destination.setOnDragListener(dragListener)
         }
     }
 
@@ -344,10 +429,6 @@ class TrainingActivity : AppCompatActivity() {
                 bottomSheetDialog.dismiss();
             }
         }
-    }
-
-    fun showIncorrectDialog() {
-
     }
 
     fun activateTestLayout(layout: View) {
