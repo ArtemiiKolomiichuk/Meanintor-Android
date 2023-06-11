@@ -30,6 +30,8 @@ class QuestionManager
             this.testTypes = testTypes
             this.cards = cards
             var questions = mutableListOf<Question>()
+            counter = 0
+            ceiling = 300
             for (i in 0..amount) {
                 val question = getNextQuestion(questions) ?: return questions.toTypedArray()
                 questions += question
@@ -242,14 +244,8 @@ class QuestionManager
                 TestType.Match -> {
                     val questions2 = getMatchQuestions(card, cards, UserSettings.settings().matchOptions)
                     if (questions2.isEmpty()) {
-                        val types = testTypes.toMutableList()
-                        types.remove(TestType.Match)
-                        val testTypes = card.aptTrainings(types.toTypedArray())
-                        return if(testTypes.isEmpty()) {
-                            getNextQuestion(questions)
-                        }else {
-                            getNextQuestion(card, testTypes[0],questions)
-                        }
+                        testTypes = testTypes.toList().minus(TestType.Match).toTypedArray()
+                        return getNextQuestion(questions)
                     }
                     val question = Question(arrayOf(), testType = TestType.Match)
                     for (q in questions){
@@ -326,9 +322,13 @@ class QuestionManager
                 return arrayOf()
             }
             cards.minus(mainCard)
+            cards.removeIf { it.wordString() == mainCard.wordString() }
             cards.sortBy { it.trainingHistory.types[TestType.Match.ordinal].second }
             cards.add(0, mainCard)
 
+            if(cards.size < amount){
+                return arrayOf()
+            }
             val questions = mutableListOf<Question>()
             for (i in 0 until amount){
                 val card = cards[i]
@@ -337,7 +337,9 @@ class QuestionManager
                 question.displayTexts = arrayOf(card.definition)
                 question.correctAnswers = arrayOf(card.wordString())
                 question.options = arrayOf(card.wordString())
-                question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
+                if(card.getHintExamples().isNotEmpty()){
+                    question.displayTextHint = arrayOf(card.getHintExamples()[card.mastery.toInt() % card.getHintExamples().size])
+                }
                 questions.add(question)
             }
 
