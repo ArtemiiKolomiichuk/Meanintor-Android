@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -32,27 +33,29 @@ import java.util.*
 class TrainingActivity : AppCompatActivity() {
 
 
-
     val TAG = "TrainingActivity"
     private var _binding: ActivityTrainingBinding? = null
     val binding get() = _binding!!
 
     private val quizViewModel: TrainingFragmentViewModel by viewModels {
-        TrainingFragmentViewModelFactory(intent.getIntExtra(TrainingSetupFragment.KEY_AMOUNT, 15), intent.getBooleanArrayExtra(TrainingSetupFragment.KEY_TESTTYPES)!!,
+        TrainingFragmentViewModelFactory(
+            intent.getIntExtra(TrainingSetupFragment.KEY_AMOUNT, 15),
+            intent.getBooleanArrayExtra(TrainingSetupFragment.KEY_TESTTYPES)!!,
             intent.getSerializableExtra(TrainingSetupFragment.KEY_FOLDER_ID) as UUID
         )
     }
     private lateinit var testAnswersLayouts: Array<View>
-//TODO("restrict popup dismissing with back button press")
+
+    //TODO("restrict popup dismissing with back button press")
     //TODO("fix exit")
     //TODO("popup when no questions are added")
     //TODO("add matching")
-   private lateinit var bottomSheetDialog : BottomSheetDialog
-    private lateinit var dialog_title   :TextView
-   private lateinit var dialog_question:TextView
-   private lateinit var dialog_answer  :TextView
-   private lateinit var dialog_next    :Button
-   private lateinit var dialog_correct :Button
+    private lateinit var bottomSheetDialog: BottomSheetDialog
+    private lateinit var dialog_title: TextView
+    private lateinit var dialog_question: TextView
+    private lateinit var dialog_answer: TextView
+    private lateinit var dialog_next: Button
+    private lateinit var dialog_correct: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityTrainingBinding.inflate(layoutInflater)
@@ -60,33 +63,41 @@ class TrainingActivity : AppCompatActivity() {
         bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setCanceledOnTouchOutside(false);
         bottomSheetDialog.setContentView(R.layout.dialog_test_question_result)
-          dialog_title = bottomSheetDialog.findViewById<TextView>(R.id.dialog_title)!!
-          dialog_question = bottomSheetDialog.findViewById<TextView>(R.id.dialog_question)!!
-          dialog_answer = bottomSheetDialog.findViewById<TextView>(R.id.dialog_answer)!!
-          dialog_next = bottomSheetDialog.findViewById<Button>(R.id.next_question_button)!!
-          dialog_correct = bottomSheetDialog.findViewById<Button>(R.id.correct_button)!!
+        dialog_title = bottomSheetDialog.findViewById<TextView>(R.id.dialog_title)!!
+        dialog_question = bottomSheetDialog.findViewById<TextView>(R.id.dialog_question)!!
+        dialog_answer = bottomSheetDialog.findViewById<TextView>(R.id.dialog_answer)!!
+        dialog_next = bottomSheetDialog.findViewById<Button>(R.id.next_question_button)!!
+        dialog_correct = bottomSheetDialog.findViewById<Button>(R.id.correct_button)!!
         binding.apply {
-            testAnswersLayouts = arrayOf(flashcardLayout, multipleChoiceLayout, trueFalseLayout, writingLayout)
+            testAnswersLayouts = arrayOf(
+                flashcardLayout,
+                multipleChoiceLayout,
+                trueFalseLayout,
+                writingLayout,
+                matchingLayout
+            )
         }
-        if(quizViewModel.questionBank!=null)
+        if (quizViewModel.questionBank != null)
             setupQuestionActivity()
         else
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                if (quizViewModel.folderID == null) {
-                    WordRepository.get().getWordCards().collect {
-                        quizViewModel.updateQuestionBank(it)
-                        setupQuestionActivity()
-                    }
-                } else {
-                    WordRepository.get().getWordCardsFromFolder(quizViewModel.folderID!!).collect {
-                        quizViewModel.updateQuestionBank(it)
-                        setupQuestionActivity()
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    if (quizViewModel.folderID == null) {
+                        WordRepository.get().getWordCards().collect {
+                            quizViewModel.updateQuestionBank(it)
+                            setupQuestionActivity()
+                        }
+                    } else {
+                        WordRepository.get().getWordCardsFromFolder(quizViewModel.folderID!!)
+                            .collect {
+                                quizViewModel.updateQuestionBank(it)
+                                setupQuestionActivity()
+                            }
                     }
                 }
             }
-        }
     }
+
     fun setupQuestionActivity() {
         binding.totalQuestionNumber.text = quizViewModel.size().toString()
         if (quizViewModel.hasNext()) {
@@ -100,20 +111,20 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-   fun setupQuestion() {
-       binding.apply {
-           currentQuestionNumber.text = (quizViewModel.index()+1).toString()
-           quizViewModel.currentDisplayTextHint().let {
-               if (it.isNotEmpty()) {
-                   hintButton.visibility = View.VISIBLE
-               } else {
-                   hintButton.visibility = View.GONE
-               }
-           }
-           levelProgressBar.progress = quizViewModel.index()
-           showTest()
-       }
-   }
+    fun setupQuestion() {
+        binding.apply {
+            currentQuestionNumber.text = (quizViewModel.index() + 1).toString()
+            quizViewModel.currentDisplayTextHint().let {
+                if (it.isNotEmpty()) {
+                    hintButton.visibility = View.VISIBLE
+                } else {
+                    hintButton.visibility = View.GONE
+                }
+            }
+            levelProgressBar.progress = quizViewModel.index()
+            showTest()
+        }
+    }
 
     fun showTest() {
         binding.currentTask.visibility = View.VISIBLE
@@ -202,7 +213,35 @@ class TrainingActivity : AppCompatActivity() {
                     }
                 }
             }
-            Match -> {}
+            Match -> {
+                binding.apply {
+                    activateTestLayout(binding.matchingLayout)
+                    val options = arrayOf(option1, option2, option3, option4, option5)
+                    val answers = arrayOf(
+                        Pair(variant1, cardView1),
+                        Pair(variant2, cardView2),
+                        Pair(variant3, cardView3),
+                        Pair(variant4, cardView4),
+                        Pair(variant5, cardView5)
+                    )
+                    quizViewModel.currentDisplayTexts().forEachIndexed { index, s ->
+                        answers[index].apply {
+                            first.setText(s)
+                        }
+                    }
+                    quizViewModel.currentOptions().forEachIndexed { index, s ->
+                        options[index].setText(s)
+                    }
+
+                    currentTask.text = "Match the Definitions"
+                    currentQuestion.visibility = View.GONE
+                    smallerQuestion.visibility = View.GONE
+                    playSoundView.visibility = View.GONE
+
+                    // cardView1.children.firstOrNull()
+                }
+
+            }
             Writing, WritingListening -> {
                 activateTestLayout(binding.writingLayout)
                 binding.apply {
@@ -242,14 +281,17 @@ class TrainingActivity : AppCompatActivity() {
     }
 
 
-
     fun showHint() {
-        if(quizViewModel.currentDisplayTextHint().isNotEmpty())
-        Toast.makeText(this@TrainingActivity, quizViewModel.currentDisplayTextHint()[0], Toast.LENGTH_SHORT).show()
+        if (quizViewModel.currentDisplayTextHint().isNotEmpty())
+            Toast.makeText(
+                this@TrainingActivity,
+                quizViewModel.currentDisplayTextHint()[0],
+                Toast.LENGTH_SHORT
+            ).show()
     }
 
     fun checkTestCorrectness(answer: String) {
-        showDialog((answer in  quizViewModel.currentCorrectAnswers()))
+        showDialog((answer in quizViewModel.currentCorrectAnswers()))
     }
 
     fun showDialog(correct: Boolean, show: Boolean = true) {
@@ -262,7 +304,7 @@ class TrainingActivity : AppCompatActivity() {
                         binding.levelProgressBar.progress = binding.levelProgressBar.max
                     }
 
-                    dialog_next.setOnClickListener (object: OnClickListener{
+                    dialog_next.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
                             if (quizViewModel.moveToNext()) {
                                 setupQuestion()
@@ -276,7 +318,7 @@ class TrainingActivity : AppCompatActivity() {
                 }
                 false -> {
                     dialog_title.setText("Incorrect!")
-                    dialog_next.setOnClickListener (object: OnClickListener {
+                    dialog_next.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
                             quizViewModel.pushCurrentToEnd()
                             quizViewModel.moveToNext()
@@ -285,9 +327,9 @@ class TrainingActivity : AppCompatActivity() {
                         }
                     })
                     dialog_correct.visibility = View.VISIBLE
-                    dialog_correct.setOnClickListener (object: OnClickListener{
+                    dialog_correct.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
-                                bottomSheetDialog.dismiss()
+                            bottomSheetDialog.dismiss()
                             showDialog(true)
                         }
                     })
@@ -304,15 +346,19 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    fun showIncorrectDialog(){
+    fun showIncorrectDialog() {
 
     }
+
     fun activateTestLayout(layout: View) {
-        testAnswersLayouts.forEach {
-            if (layout == it)
-                it.visibility = View.VISIBLE
-            else
-                it.visibility = View.GONE
-        }
+        if (layout != quizViewModel.currentLayout)
+            testAnswersLayouts.forEach {
+                if (layout == it)
+                    it.visibility = View.VISIBLE
+                else
+                    it.visibility = View.GONE
+            }
+        quizViewModel.currentLayout = layout
+        quizViewModel.writingField = ""
     }
 }

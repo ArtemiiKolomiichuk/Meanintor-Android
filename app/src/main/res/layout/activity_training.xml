@@ -265,6 +265,259 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/matching_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/matching_check_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginBottom="32dp"
+                android:text="Check"
+                app:layout_column="0"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gridLayout" />
+
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/matching_options"
+                flexWrap="wrap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="32dp"
+                app:flexDirection="row"
+                app:flexWrap="wrap"
+                app:justifyContent="space_between"
+                app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_background"
+                    android:padding="8dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_flexGrow="1" />
+
+                <TextView
+                    android:id="@+id/option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_background"
+                    android:padding="8dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_flexGrow="1"
+                    tools:layout_editor_absoluteX="73dp"
+                    tools:layout_editor_absoluteY="45dp" />
+
+                <TextView
+                    android:id="@+id/option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/round_background"
+                    android:padding="8dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_flexGrow="1"
+                    tools:layout_editor_absoluteX="146dp"
+                    tools:layout_editor_absoluteY="91dp" />
+
+                <TextView
+                    android:id="@+id/option4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/round_background"
+                    android:padding="8dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_flexGrow="1"
+                    tools:layout_editor_absoluteX="218dp"
+                    tools:layout_editor_absoluteY="136dp" />
+
+                <TextView
+                    android:id="@+id/option5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:background="@drawable/round_background"
+                    android:padding="8dp"
+                    android:text="TextView"
+                    android:textAlignment="center"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    app:layout_flexGrow="1"
+                    tools:layout_editor_absoluteX="291dp"
+                    tools:layout_editor_absoluteY="181dp" />
+
+            </com.google.android.flexbox.FlexboxLayout>
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/gridLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="32dp"
+                android:padding="4dp"
+                app:layout_constraintBottom_toTopOf="@+id/matching_check_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/matching_options"
+                tools:alignmentMode="alignBounds"
+                tools:columnCount="2"
+                tools:rowOrderPreserved="false"
+                tools:useDefaultMargins="true">
+
+                <TextView
+                    android:id="@+id/variant1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_columnWeight="8"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_gravity="fill_horizontal|center_vertical" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:minHeight="30dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_columnWeight="5"
+                    app:layout_gravity="center|fill_horizontal" />
+
+                <TextView
+                    android:id="@+id/variant2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_columnWeight="8"
+                    app:layout_gravity="center|fill_horizontal"
+                    app:layout_row="0" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:minHeight="30dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_columnWeight="5"
+                    app:layout_gravity="center|fill_horizontal" />
+
+                <TextView
+                    android:id="@+id/variant3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_columnWeight="8"
+                    app:layout_gravity="center|fill_horizontal" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:minHeight="30dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_columnWeight="5"
+                    app:layout_gravity="center|fill_horizontal" />
+
+                <TextView
+                    android:id="@+id/variant4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_columnWeight="8"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_gravity="center|fill_horizontal" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:minHeight="30dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_columnWeight="5"
+                    app:layout_gravity="center|fill_horizontal">
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/variant5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    app:layout_columnWeight="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_gravity="center|fill_horizontal"
+                    tools:layout_columnWeight="1" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:minHeight="30dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_columnWeight="5"
+                    app:layout_gravity="center|fill_horizontal" />
+
+            </androidx.gridlayout.widget.GridLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/writing_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
