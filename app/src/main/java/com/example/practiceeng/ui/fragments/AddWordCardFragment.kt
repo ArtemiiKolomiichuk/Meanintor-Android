@@ -231,6 +231,7 @@ class AddWordCardFragment : Fragment() {
         )
         alertDialog.setOnShowListener(object: DialogInterface.OnShowListener {
             override fun onShow(dialog: DialogInterface?) {
+                newString.setText("")
                 val saveButton: Button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
                 newString.doOnTextChanged { text, _, _, _ -> saveButton.setEnabled( !(text.toString().isEmpty()))  }
             }

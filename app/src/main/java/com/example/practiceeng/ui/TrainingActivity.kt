@@ -2,6 +2,7 @@ package com.example.practiceeng.ui
 
 import android.content.ClipData
 import android.content.ClipDescription
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.DragEvent
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.View.OnClickListener
 import android.view.View.OnDragListener
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -27,7 +29,7 @@ import com.example.practiceeng.databinding.ActivityTrainingBinding
 import com.example.practiceeng.ui.fragments.TrainingSetupFragment
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModel
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModelFactory
-import com.google.android.flexbox.FlexboxLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.util.*
@@ -44,7 +46,7 @@ class TrainingActivity : AppCompatActivity() {
         TrainingFragmentViewModelFactory(
             intent.getIntExtra(TrainingSetupFragment.KEY_AMOUNT, 15),
             intent.getBooleanArrayExtra(TrainingSetupFragment.KEY_TESTTYPES)!!,
-            intent.getSerializableExtra(TrainingSetupFragment.KEY_FOLDER_ID) as UUID
+            intent.getSerializableExtra(TrainingSetupFragment.KEY_FOLDER_ID) as UUID?
         )
     }
     private lateinit var testAnswersLayouts: Array<View>
@@ -52,7 +54,6 @@ class TrainingActivity : AppCompatActivity() {
     //TODO("restrict popup dismissing with back button press")
     //TODO("fix exit")
     //TODO("popup when no questions are added")
-    //TODO("add matching")
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var dialog_title: TextView
     private lateinit var dialog_question: TextView
@@ -71,6 +72,9 @@ class TrainingActivity : AppCompatActivity() {
         dialog_answer = bottomSheetDialog.findViewById<TextView>(R.id.dialog_answer)!!
         dialog_next = bottomSheetDialog.findViewById<Button>(R.id.next_question_button)!!
         dialog_correct = bottomSheetDialog.findViewById<Button>(R.id.correct_button)!!
+
+        bottomSheetDialog.setCancelable(false)
+
         binding.apply {
             testAnswersLayouts = arrayOf(
                 flashcardLayout,
@@ -243,12 +247,11 @@ class TrainingActivity : AppCompatActivity() {
                     playSoundView.visibility = View.GONE
             matchingCheckButton.setOnClickListener(object:OnClickListener{
                 override fun onClick(v: View?) {
-                    TODO("Not yet implemented")
+                    showDialog(false, checkMatchingAnswers(answers))
                 }
             })
 
                     addDragListeners(options, answers.map { it -> it.second }.toTypedArray())
-                    // cardView1.children.firstOrNull()
                 }
 
             }
@@ -290,6 +293,49 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkMatchingAnswers(answers: Array<Pair<TextView, View>>): Array<String> {
+        val wrongAnswers: MutableList<WordCard> = mutableListOf()
+        val rightAnswers: MutableList<WordCard> = mutableListOf()
+        var currentCard: WordCard? = null
+        answers.forEach { pair ->
+            currentCard = quizViewModel.currentWordCards().find { card -> card.definition == pair.first.text }
+           val answersInField = (pair.second as CardView).children.toList()
+            if(answersInField.isEmpty())
+                wrongAnswers.add(currentCard!!)
+            else {
+                answersInField.first().let { text ->
+                    val textAnswer = text as TextView
+                    if (textAnswer.text != currentCard!!.wordString())
+                        wrongAnswers.add(currentCard!!)
+                    else
+                        rightAnswers.add(currentCard!!)
+                }
+            }
+/*card!!.wordString() == */
+        }
+
+        var incorrectText:String = ""
+        var correctText:String = ""
+
+            var first: Boolean = true
+            for (a in wrongAnswers) {
+                if (first)
+                    first = false
+                else
+                    incorrectText += '\n'
+                incorrectText += "${a.wordString()} - ${a.definition}"
+            }
+        first = true
+        for (a in rightAnswers) {
+            if (first)
+                first = false
+            else
+                correctText += '\n'
+            correctText += "${a.wordString()} - ${a.definition}"
+        }
+          return arrayOf(correctText, incorrectText)
+    }
+
     class MatchingItemOnLongListener() : View.OnLongClickListener {
         override fun onLongClick(v: View?): Boolean {
             val string = (v as TextView).text.toString()
@@ -304,6 +350,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private fun addDragListeners(dragViews: Array<TextView>, destinations: Array<View>) {
         val dragListener = OnDragListener { view, event ->
+        val boxesLayoutCoords = intArrayOf(0, 0)
+        view.getLocationInWindow(boxesLayoutCoords)
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
@@ -313,6 +361,7 @@ class TrainingActivity : AppCompatActivity() {
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION -> {
+                    checkForScroll(event.y, boxesLayoutCoords[1])
                     true
                 }
 
@@ -363,8 +412,32 @@ class TrainingActivity : AppCompatActivity() {
         for (destination in destinations + binding.matchingOptions) {
             destination.setOnDragListener(dragListener)
         }
-    }
 
+        binding.trainingScrollView.setOnDragListener { _, dragEvent ->
+
+            val boxesLayoutCoords = intArrayOf(0, 0)
+            binding.trainingScrollView.getLocationInWindow(boxesLayoutCoords)
+
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    checkForScroll(dragEvent.y, boxesLayoutCoords[1])
+                }
+            }
+            true
+        }
+    }
+    val lowerLimForScroll = (Resources.getSystem().displayMetrics.heightPixels * 0.7).toInt()
+    val upperLimForScroll = (Resources.getSystem().displayMetrics.heightPixels * 0.2).toInt()
+    private fun checkForScroll(pointerY: Float, startOfScrollView: Int) {
+        /* if the upper limit is passed, meaning a pixel height, scroll up */
+        if ((pointerY + startOfScrollView) < upperLimForScroll) {
+            binding.trainingScrollView.smoothScrollBy(0, -20)
+        }
+        /* if the lower limit is passed, meaning a pixel height, scroll down */
+        else if (pointerY + startOfScrollView > lowerLimForScroll) {
+            binding.trainingScrollView.smoothScrollBy(0, 15)
+        }
+    }
 
     fun showHint() {
         if (quizViewModel.currentDisplayTextHint().isNotEmpty())
@@ -379,9 +452,13 @@ class TrainingActivity : AppCompatActivity() {
         showDialog((answer in quizViewModel.currentCorrectAnswers()))
     }
 
-    fun showDialog(correct: Boolean, show: Boolean = true) {
-        if (show) {
-            when (correct) {
+    fun showDialog(correct: Boolean, matchAnswers:Array<String>? = null) {
+        var isMatchingCorrect = false
+        matchAnswers?.let {
+            if(it[1].isEmpty())
+                isMatchingCorrect = true
+        }
+            when (correct||isMatchingCorrect) {
                 true -> {
                     dialog_title.setText("Correct!")
                     if (!quizViewModel.hasNext()) {
@@ -415,20 +492,20 @@ class TrainingActivity : AppCompatActivity() {
                     dialog_correct.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
                             bottomSheetDialog.dismiss()
-                            showDialog(true)
+                            showDialog(true, matchAnswers)
                         }
                     })
                 }
             }
+
+        if(matchAnswers==null) {
             dialog_question.setText(quizViewModel.currentWordCards()[0].wordString())
             dialog_answer.setText(quizViewModel.currentWordCards()[0].definition)
-            bottomSheetDialog.show()
         } else {
-            if (quizViewModel.moveToNext() && correct) {
-                setupQuestion()
-                bottomSheetDialog.dismiss();
-            }
+            dialog_question.setText(matchAnswers[0])
+            dialog_answer.setText(matchAnswers[1])
         }
+            bottomSheetDialog.show()
     }
 
     fun activateTestLayout(layout: View) {
@@ -441,5 +518,10 @@ class TrainingActivity : AppCompatActivity() {
             }
         quizViewModel.currentLayout = layout
         quizViewModel.writingField = ""
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding=null
     }
 }

@@ -140,4 +140,9 @@ class TrainingSetupFragment : Fragment() {
             binding.deselect.visibility = View.VISIBLE
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding=null
+    }
 }

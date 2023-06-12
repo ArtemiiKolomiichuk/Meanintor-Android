@@ -2,6 +2,7 @@ package com.example.practiceeng.ui.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.view.View.OnClickListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -34,6 +35,11 @@ class SavedFoldersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.startTrainingButton.setOnClickListener(object:OnClickListener{
+            override fun onClick(v: View?) {
+                findNavController().navigate(SavedFoldersFragmentDirections.setupTraining(null))
+            }
+        })
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 savedFoldersViewModel.folders.collect { list ->

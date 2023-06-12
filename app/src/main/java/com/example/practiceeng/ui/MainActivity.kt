@@ -28,4 +28,9 @@ class MainActivity : AppCompatActivity() {
         navController = Navigation.findNavController(this, R.id.fragment_container)
         setupWithNavController(binding.bottomNavigationView, navController)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding=null
+    }
 }
