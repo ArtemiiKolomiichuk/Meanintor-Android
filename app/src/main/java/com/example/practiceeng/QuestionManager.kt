@@ -137,6 +137,8 @@ class QuestionManager
                             }
                         }
                     }
+                    if(card.mastery < 0)
+                        card.mastery = 0.0
                     question.wordCards[k] = card
                 }
             }
@@ -167,6 +169,8 @@ class QuestionManager
                         }
                     }
                 }
+                if(card.mastery < 0)
+                    card.mastery = 0.0
                 question.wordCards[0] = card
             }
         }
