@@ -84,21 +84,19 @@ class QuestionManager
             }
         }
 
-        fun submitAnswer(cards: Array<WordCard>, correctness : Array<Boolean>, testType: TestType) : Array<WordCard>{
-            val q = Question(cards, testType = testType)
+        fun submitAnswer(card: WordCard, correctness : Boolean, testType: TestType) : WordCard{
+            val q = Question(arrayOf(card), testType = testType)
             val provided = mutableListOf<String>()
             val needed = mutableListOf<String>()
-            for (correct in correctness){
-                provided += if(correct){
+                provided += if(correctness){
                     "+"
                 } else{
                     "-"
                 }
                 needed += "+"
-            }
             q.correctAnswers = needed.toTypedArray()
             submitAnswer(provided.toTypedArray(), q)
-            return q.wordCards
+            return q.wordCards[0]
         }
 
         /**

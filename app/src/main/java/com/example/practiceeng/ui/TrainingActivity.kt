@@ -10,7 +10,6 @@ import android.view.View.OnClickListener
 import android.view.View.OnDragListener
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -29,7 +28,6 @@ import com.example.practiceeng.databinding.ActivityTrainingBinding
 import com.example.practiceeng.ui.fragments.TrainingSetupFragment
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModel
 import com.example.practiceeng.ui.viewmodels.TrainingFragmentViewModelFactory
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 import java.util.*
@@ -247,7 +245,7 @@ class TrainingActivity : AppCompatActivity() {
                     playSoundView.visibility = View.GONE
             matchingCheckButton.setOnClickListener(object:OnClickListener{
                 override fun onClick(v: View?) {
-                    showDialog(false, checkMatchingAnswers(answers))
+                    checkMatchingAnswers(answers)
                 }
             })
 
@@ -293,7 +291,7 @@ class TrainingActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkMatchingAnswers(answers: Array<Pair<TextView, View>>): Array<String> {
+    private fun checkMatchingAnswers(answers: Array<Pair<TextView, View>>) {
         val wrongAnswers: MutableList<WordCard> = mutableListOf()
         val rightAnswers: MutableList<WordCard> = mutableListOf()
         var currentCard: WordCard? = null
@@ -314,26 +312,7 @@ class TrainingActivity : AppCompatActivity() {
 /*card!!.wordString() == */
         }
 
-        var incorrectText:String = ""
-        var correctText:String = ""
-
-            var first: Boolean = true
-            for (a in wrongAnswers) {
-                if (first)
-                    first = false
-                else
-                    incorrectText += '\n'
-                incorrectText += "${a.wordString()} - ${a.definition}"
-            }
-        first = true
-        for (a in rightAnswers) {
-            if (first)
-                first = false
-            else
-                correctText += '\n'
-            correctText += "${a.wordString()} - ${a.definition}"
-        }
-          return arrayOf(correctText, incorrectText)
+      showDialog(wrongAnswers.isEmpty(), rightAnswers.toTypedArray(), wrongAnswers.toTypedArray())
     }
 
     class MatchingItemOnLongListener() : View.OnLongClickListener {
@@ -452,13 +431,8 @@ class TrainingActivity : AppCompatActivity() {
         showDialog((answer in quizViewModel.currentCorrectAnswers()))
     }
 
-    fun showDialog(correct: Boolean, matchAnswers:Array<String>? = null) {
-        var isMatchingCorrect = false
-        matchAnswers?.let {
-            if(it[1].isEmpty())
-                isMatchingCorrect = true
-        }
-            when (correct||isMatchingCorrect) {
+    fun showDialog(correct: Boolean,  correctMatchAnswers:Array<WordCard>? = null, incorrectMatchAnswers:Array<WordCard>? = null) {
+            when (correct) {
                 true -> {
                     dialog_title.setText("Correct!")
                     if (!quizViewModel.hasNext()) {
@@ -468,6 +442,14 @@ class TrainingActivity : AppCompatActivity() {
 
                     dialog_next.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
+                            if(quizViewModel.currentTestType()!=Match)
+                                quizViewModel.updateCardsInfo(quizViewModel.currentWordCards().map{it-> it.cardID}.toTypedArray(), arrayOf(true))
+                            else{
+                                val array = arrayOf(false, false, false, false, false)
+                                correctMatchAnswers!!.forEachIndexed { index, wordCard -> array[index]=true }
+                                quizViewModel.updateCardsInfo((correctMatchAnswers!!+incorrectMatchAnswers!!).map{it-> it.cardID}.toTypedArray(), array)
+
+                            }
                             if (quizViewModel.moveToNext()) {
                                 setupQuestion()
                                 bottomSheetDialog.dismiss();
@@ -482,6 +464,13 @@ class TrainingActivity : AppCompatActivity() {
                     dialog_title.setText("Incorrect!")
                     dialog_next.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
+                            if(quizViewModel.currentTestType()!=Match)
+                                quizViewModel.updateCardsInfo(quizViewModel.currentWordCards().map{it-> it.cardID}.toTypedArray(), arrayOf(false))
+                            else{
+                                val array = arrayOf(false, false, false, false, false)
+                                correctMatchAnswers!!.forEachIndexed { index, wordCard -> array[index]=true }
+                                quizViewModel.updateCardsInfo((correctMatchAnswers!!+incorrectMatchAnswers!!).map{it-> it.cardID}.toTypedArray(), array)
+                            }
                             quizViewModel.pushCurrentToEnd()
                             quizViewModel.moveToNext()
                             setupQuestion()
@@ -492,18 +481,18 @@ class TrainingActivity : AppCompatActivity() {
                     dialog_correct.setOnClickListener(object : OnClickListener {
                         override fun onClick(v: View?) {
                             bottomSheetDialog.dismiss()
-                            showDialog(true, matchAnswers)
+                            showDialog(true, correctMatchAnswers, incorrectMatchAnswers)
                         }
                     })
                 }
             }
 
-        if(matchAnswers==null) {
+        if(quizViewModel.currentTestType()!=Match) {
             dialog_question.setText(quizViewModel.currentWordCards()[0].wordString())
             dialog_answer.setText(quizViewModel.currentWordCards()[0].definition)
         } else {
-            dialog_question.setText(matchAnswers[0])
-            dialog_answer.setText(matchAnswers[1])
+            dialog_question.setText(incorrectMatchAnswers?.let { getMatchingCardsAnswerText(it) })
+            dialog_answer.setText(correctMatchAnswers?.let { getMatchingCardsAnswerText(it) })
         }
             bottomSheetDialog.show()
     }
@@ -524,4 +513,17 @@ class TrainingActivity : AppCompatActivity() {
         super.onDestroy()
         _binding=null
     }
+}
+fun getMatchingCardsAnswerText(answers: Array<WordCard>) :String {
+    var answer: String = ""
+
+    var first: Boolean = true
+    for (a in answers) {
+        if (first)
+            first = false
+        else
+            answer += '\n'
+        answer += "${a.wordString()} - ${a.definition}"
+    }
+    return answer
 }

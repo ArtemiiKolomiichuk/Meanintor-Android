@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.practiceeng.*
+import com.example.practiceeng.database.WordRepository
 import java.util.*
 
 class TrainingFragmentViewModelFactory(val amount:Int, val types: BooleanArray, val folders: UUID?)
@@ -59,4 +60,8 @@ class TrainingFragmentViewModel(val amount:Int, val types: Array<TestType>, val 
     fun currentOptions(): Array<String> = _questionBank!![currentIndex].options
     fun currentTestType(): TestType = _questionBank!![currentIndex].testType
     fun isNotEmpty(): Boolean = size()>0
+
+    fun updateCardsInfo(cards:Array<UUID>,correctness: Array<Boolean>){
+       WordRepository.get().updateCardsInfo(cards,correctness, currentTestType());
+    }
 }

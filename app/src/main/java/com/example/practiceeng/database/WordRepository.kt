@@ -124,6 +124,14 @@ class WordRepository private constructor(context: Context,
             addWord(word)
     }
 
+    fun updateCardsInfo(cards: Array<UUID>, correctness: Array<Boolean>, testType: TestType) {
+        coroutineScope.launch {
+            cards.forEachIndexed { index, uuid ->
+                updateWordCard(QuestionManager.submitAnswer(getWordCard(uuid), correctness[index], testType))
+            }
+        }
+    }
+
     companion object {
         private var INSTANCE: WordRepository? = null
         fun initialize(context: Context) {
