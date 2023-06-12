@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipDescription
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.view.DragEvent
 import android.view.View
 import android.view.View.OnClickListener
@@ -49,9 +50,6 @@ class TrainingActivity : AppCompatActivity() {
     }
     private lateinit var testAnswersLayouts: Array<View>
 
-    //TODO("restrict popup dismissing with back button press")
-    //TODO("fix exit")
-    //TODO("popup when no questions are added")
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var dialog_title: TextView
     private lateinit var dialog_question: TextView
@@ -82,9 +80,6 @@ class TrainingActivity : AppCompatActivity() {
                 matchingLayout
             )
         }
-        if (quizViewModel.questionBank != null)
-            setupQuestionActivity()
-        else
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     if (quizViewModel.folderID == null) {
@@ -104,8 +99,9 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     fun setupQuestionActivity() {
+        Log.d(TAG, "setup the activity")
         binding.totalQuestionNumber.text = quizViewModel.size().toString()
-        if (quizViewModel.moveToNext()) {
+        if (!quizViewModel.isEmpty()) {
             binding.levelProgressBar.max = quizViewModel.size()
             binding.hintButton.setOnClickListener(object : OnClickListener {
                 override fun onClick(v: View?) {
@@ -113,10 +109,27 @@ class TrainingActivity : AppCompatActivity() {
                 }
             })
             setupQuestion()
+        } else {
+            showEmptyTestDialog()
         }
     }
 
+    private fun showEmptyTestDialog() {
+        dialog_title.setText("Oops...")
+        dialog_question.setText("Seems like we have trouble generating questions for you")
+        dialog_answer.setText("Try picking other modes or add more cards")
+        dialog_next.setText("Return to menu")
+        dialog_next.setOnClickListener(object : OnClickListener {
+            override fun onClick(v: View?) {
+                this@TrainingActivity.finish()
+            }
+        })
+        dialog_correct.visibility = View.GONE
+        bottomSheetDialog.show()
+    }
+
     fun setupQuestion() {
+        Log.d(TAG, "Setup Question")
         binding.apply {
             currentQuestionNumber.text = (quizViewModel.index() + 1).toString()
             quizViewModel.currentDisplayTextHint().let {
@@ -132,6 +145,8 @@ class TrainingActivity : AppCompatActivity() {
     }
 
     fun showTest() {
+
+        Log.d(TAG, "showTest")
         binding.currentTask.visibility = View.VISIBLE
         when (quizViewModel.currentTestType()) {
             FlashCard -> {
@@ -243,11 +258,11 @@ class TrainingActivity : AppCompatActivity() {
                     currentQuestion.visibility = View.GONE
                     smallerQuestion.visibility = View.GONE
                     playSoundView.visibility = View.GONE
-            matchingCheckButton.setOnClickListener(object:OnClickListener{
-                override fun onClick(v: View?) {
-                    checkMatchingAnswers(answers)
-                }
-            })
+                    matchingCheckButton.setOnClickListener(object : OnClickListener {
+                        override fun onClick(v: View?) {
+                            checkMatchingAnswers(answers)
+                        }
+                    })
 
                     addDragListeners(options, answers.map { it -> it.second }.toTypedArray())
                 }
@@ -289,6 +304,8 @@ class TrainingActivity : AppCompatActivity() {
             }
             NONE -> throw IllegalArgumentException("\"NONE\" is not a valid test type")
         }
+
+        Log.d(TAG, "showTest ended")
     }
 
     private fun checkMatchingAnswers(answers: Array<Pair<TextView, View>>) {
@@ -296,9 +313,10 @@ class TrainingActivity : AppCompatActivity() {
         val rightAnswers: MutableList<WordCard> = mutableListOf()
         var currentCard: WordCard? = null
         answers.forEach { pair ->
-            currentCard = quizViewModel.currentWordCards().find { card -> card.definition == pair.first.text }
-           val answersInField = (pair.second as CardView).children.toList()
-            if(answersInField.isEmpty())
+            currentCard =
+                quizViewModel.currentWordCards().find { card -> card.definition == pair.first.text }
+            val answersInField = (pair.second as CardView).children.toList()
+            if (answersInField.isEmpty())
                 wrongAnswers.add(currentCard!!)
             else {
                 answersInField.first().let { text ->
@@ -311,8 +329,7 @@ class TrainingActivity : AppCompatActivity() {
             }
 /*card!!.wordString() == */
         }
-
-      showDialog(wrongAnswers.isEmpty(), rightAnswers.toTypedArray(), wrongAnswers.toTypedArray())
+        showDialog(wrongAnswers.isEmpty(), rightAnswers.toTypedArray(), wrongAnswers.toTypedArray())
     }
 
     class MatchingItemOnLongListener() : View.OnLongClickListener {
@@ -329,8 +346,8 @@ class TrainingActivity : AppCompatActivity() {
 
     private fun addDragListeners(dragViews: Array<TextView>, destinations: Array<View>) {
         val dragListener = OnDragListener { view, event ->
-        val boxesLayoutCoords = intArrayOf(0, 0)
-        view.getLocationInWindow(boxesLayoutCoords)
+            val boxesLayoutCoords = intArrayOf(0, 0)
+            view.getLocationInWindow(boxesLayoutCoords)
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)
@@ -351,7 +368,7 @@ class TrainingActivity : AppCompatActivity() {
                 DragEvent.ACTION_DROP -> {
                     val item = event.clipData.getItemAt(0)
                     val dragData = item.text
-                 //   Toast.makeText(this@TrainingActivity, dragData, Toast.LENGTH_SHORT)
+                    //   Toast.makeText(this@TrainingActivity, dragData, Toast.LENGTH_SHORT)
                     view.invalidate()
                     val v = event.localState as View
                     val owner = v.parent as ViewGroup
@@ -363,13 +380,12 @@ class TrainingActivity : AppCompatActivity() {
                             binding.matchingOptions.addView(option)
                             binding.matchingOptions.invalidate()
                         }
-                        val destination =view as CardView
+                        val destination = view as CardView
                         destination.addView(v)
                     }
-                    if(view == binding.matchingOptions) {
+                    if (view == binding.matchingOptions) {
                         binding.matchingOptions.addView(v)
-                    }
-                    else{
+                    } else {
                         v.visibility = View.VISIBLE
                         v.invalidate()
                         false
@@ -405,6 +421,7 @@ class TrainingActivity : AppCompatActivity() {
             true
         }
     }
+
     val lowerLimForScroll = (Resources.getSystem().displayMetrics.heightPixels * 0.7).toInt()
     val upperLimForScroll = (Resources.getSystem().displayMetrics.heightPixels * 0.2).toInt()
     private fun checkForScroll(pointerY: Float, startOfScrollView: Int) {
@@ -422,79 +439,103 @@ class TrainingActivity : AppCompatActivity() {
         if (quizViewModel.currentDisplayTextHint().isNotEmpty())
             Toast.makeText(
                 this@TrainingActivity,
-                quizViewModel.currentDisplayTextHint()[0],
+                quizViewModel.currentDisplayTextHint().random(),
                 Toast.LENGTH_SHORT
             ).show()
     }
 
     fun checkTestCorrectness(answer: String) {
+        Log.d(TAG, "checkTestCorrectness")
         showDialog((answer in quizViewModel.currentCorrectAnswers()))
     }
 
-    fun showDialog(correct: Boolean,  correctMatchAnswers:Array<WordCard>? = null, incorrectMatchAnswers:Array<WordCard>? = null) {
-            when (correct) {
-                true -> {
-                    dialog_title.setText("Correct!")
-                    if (!quizViewModel.hasNext()) {
-                        dialog_next.setText("Return to menu")
-                        binding.levelProgressBar.progress = binding.levelProgressBar.max
-                    }
-
-                    dialog_next.setOnClickListener(object : OnClickListener {
-                        override fun onClick(v: View?) {
-                            if(quizViewModel.currentTestType()!=Match)
-                                quizViewModel.updateCardsInfo(quizViewModel.currentWordCards().map{it-> it.cardID}.toTypedArray(), arrayOf(true))
-                            else{
-                                val array = arrayOf(false, false, false, false, false)
-                                correctMatchAnswers!!.forEachIndexed { index, wordCard -> array[index]=true }
-                                quizViewModel.updateCardsInfo((correctMatchAnswers!!+incorrectMatchAnswers!!).map{it-> it.cardID}.toTypedArray(), array)
-
-                            }
-                            if (quizViewModel.moveToNext()) {
-                                setupQuestion()
-                                bottomSheetDialog.dismiss();
-                            } else {
-                                this@TrainingActivity.finish()
-                            }
-                        }
-                    })
-                    dialog_correct.visibility = View.GONE
+    fun showDialog(
+        correct: Boolean,
+        correctMatchAnswers: Array<WordCard>? = null,
+        incorrectMatchAnswers: Array<WordCard>? = null
+    ) {
+        Log.d(TAG, "showDialog")
+        when (correct) {
+            true -> {
+                dialog_title.setText("Correct!")
+                if (!quizViewModel.hasNext()) {
+                    dialog_next.setText("Return to menu")
+                    binding.levelProgressBar.progress = binding.levelProgressBar.max
                 }
-                false -> {
-                    dialog_title.setText("Incorrect!")
-                    dialog_next.setOnClickListener(object : OnClickListener {
-                        override fun onClick(v: View?) {
-                            if(quizViewModel.currentTestType()!=Match)
-                                quizViewModel.updateCardsInfo(quizViewModel.currentWordCards().map{it-> it.cardID}.toTypedArray(), arrayOf(false))
-                            else{
-                                val array = arrayOf(false, false, false, false, false)
-                                correctMatchAnswers!!.forEachIndexed { index, wordCard -> array[index]=true }
-                                quizViewModel.updateCardsInfo((correctMatchAnswers!!+incorrectMatchAnswers!!).map{it-> it.cardID}.toTypedArray(), array)
+
+                dialog_next.setOnClickListener(object : OnClickListener {
+                    override fun onClick(v: View?) {
+                        Log.d(TAG, "dialog_next onClick")
+                        if (quizViewModel.currentTestType() != Match)
+                            quizViewModel.updateCardsInfo(
+                                quizViewModel.currentWordCards().map { it -> it.cardID }
+                                    .toTypedArray(), arrayOf(true)
+                            )
+                        else {
+                            val array = arrayOf(false, false, false, false, false)
+                            correctMatchAnswers!!.forEachIndexed { index, wordCard ->
+                                array[index] = true
                             }
-                            quizViewModel.pushCurrentToEnd()
-                            quizViewModel.moveToNext()
+                            quizViewModel.updateCardsInfo((correctMatchAnswers!! + incorrectMatchAnswers!!).map { it -> it.cardID }
+                                .toTypedArray(), array)
+                        }
+                        if (quizViewModel.moveToNext()) {
                             setupQuestion()
                             bottomSheetDialog.dismiss();
+                        } else {
+                            this@TrainingActivity.finish()
                         }
-                    })
-                    dialog_correct.visibility = View.VISIBLE
-                    dialog_correct.setOnClickListener(object : OnClickListener {
-                        override fun onClick(v: View?) {
-                            bottomSheetDialog.dismiss()
-                            showDialog(true, correctMatchAnswers, incorrectMatchAnswers)
-                        }
-                    })
-                }
+                    }
+                })
+                dialog_correct.visibility = View.GONE
             }
+            false -> {
+                dialog_title.setText("Incorrect!")
+                dialog_next.setOnClickListener(object : OnClickListener {
+                    override fun onClick(v: View?) {
+                        Log.d(TAG, "dialog_next onClick")
+                        if (quizViewModel.currentTestType() != Match)
+                            quizViewModel.updateCardsInfo(
+                                quizViewModel.currentWordCards().map { it -> it.cardID }
+                                    .toTypedArray(), arrayOf(false)
+                            )
+                        else {
+                            val array = arrayOf(false, false, false, false, false)
+                            correctMatchAnswers!!.forEachIndexed { index, wordCard ->
+                                array[index] = true
+                            }
+                            quizViewModel.updateCardsInfo((correctMatchAnswers!! + incorrectMatchAnswers!!).map { it -> it.cardID }
+                                .toTypedArray(), array)
+                        }
+                        quizViewModel.pushCurrentToEnd()
+                        quizViewModel.moveToNext()
+                        setupQuestion()
+                        bottomSheetDialog.dismiss();
+                    }
+                })
+                dialog_correct.visibility = View.VISIBLE
+                dialog_correct.setOnClickListener(object : OnClickListener {
+                    override fun onClick(v: View?) {
+                        Log.d(TAG, "dialog_next onClick")
+                        bottomSheetDialog.dismiss()
+                        Log.d(TAG, "dialog_next onClick dismiss")
+                        showDialog(true, correctMatchAnswers, incorrectMatchAnswers)
+                        Log.d(TAG, "dialog_next onClick showDialog")
+                    }
+                })
+            }
+        }
 
-        if(quizViewModel.currentTestType()!=Match) {
+        if (quizViewModel.currentTestType() != Match) {
             dialog_question.setText(quizViewModel.currentWordCards()[0].wordString())
             dialog_answer.setText(quizViewModel.currentWordCards()[0].definition)
         } else {
             dialog_question.setText(incorrectMatchAnswers?.let { getMatchingCardsAnswerText(it) })
             dialog_answer.setText(correctMatchAnswers?.let { getMatchingCardsAnswerText(it) })
         }
-            bottomSheetDialog.show()
+        Log.d(TAG, "dialog show")
+        bottomSheetDialog.show()
+        Log.d(TAG, "dialog shown")
     }
 
     fun activateTestLayout(layout: View) {
@@ -511,19 +552,20 @@ class TrainingActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding=null
+        _binding = null
     }
-}
-fun getMatchingCardsAnswerText(answers: Array<WordCard>) :String {
-    var answer: String = ""
 
-    var first: Boolean = true
-    for (a in answers) {
-        if (first)
-            first = false
-        else
-            answer += '\n'
-        answer += "${a.wordString()} - ${a.definition}"
+    fun getMatchingCardsAnswerText(answers: Array<WordCard>): String {
+        var answer: String = ""
+        var first: Boolean = true
+        for (a in answers) {
+            if (first)
+                first = false
+            else
+                answer += '\n'
+            answer += "${a.wordString()} - ${a.definition}"
+        }
+        return answer
     }
-    return answer
+
 }
