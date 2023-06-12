@@ -126,8 +126,8 @@ interface WordDao {
     suspend fun getWordCard(cardID: UUID): WordCard
     @Query("SELECT * FROM word WHERE bookmarked=true")
     fun getBookmarkedWords(): Flow<List<Word>>
-
-
+    @Query("DELETE FROM word WHERE word NOT IN (SELECT word FROM wordCard)")
+    abstract fun deleteUnusedWords()
 
 
 }

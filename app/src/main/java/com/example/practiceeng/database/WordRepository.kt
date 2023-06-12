@@ -132,6 +132,12 @@ class WordRepository private constructor(context: Context,
         }
     }
 
+    fun deleteUnusedWords() {
+        coroutineScope.launch {
+            database.wordDao().deleteUnusedWords()
+        }
+    }
+
     companion object {
         private var INSTANCE: WordRepository? = null
         fun initialize(context: Context) {

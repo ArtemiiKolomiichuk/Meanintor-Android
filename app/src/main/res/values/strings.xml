@@ -48,4 +48,5 @@
     <string name="import_cards_key">import_cards</string>
     <string name="send_notifications_key">send_notifications</string>
     <string name="notifications_time_key">notifications_time</string>
+    <string name="clean_unused_words">clean_unused_words</string>
 </resources>
