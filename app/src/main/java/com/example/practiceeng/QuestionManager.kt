@@ -84,6 +84,23 @@ class QuestionManager
             }
         }
 
+        fun submitAnswer(cards: Array<WordCard>, correctness : Array<Boolean>, testType: TestType) : Array<WordCard>{
+            val q = Question(cards, testType = testType)
+            val provided = mutableListOf<String>()
+            val needed = mutableListOf<String>()
+            for (correct in correctness){
+                provided += if(correct){
+                    "+"
+                } else{
+                    "-"
+                }
+                needed += "+"
+            }
+            q.correctAnswers = needed.toTypedArray()
+            submitAnswer(provided.toTypedArray(), q)
+            return q.wordCards
+        }
+
         /**
          * Updates [WordCard], including [TrainingHistory] and [WordCard.mastery]
          *
@@ -122,7 +139,7 @@ class QuestionManager
                             }
                         }
                     }
-
+                    question.wordCards[k] = card
                 }
             }
             else{
@@ -152,6 +169,7 @@ class QuestionManager
                         }
                     }
                 }
+                question.wordCards[0] = card
             }
         }
 
