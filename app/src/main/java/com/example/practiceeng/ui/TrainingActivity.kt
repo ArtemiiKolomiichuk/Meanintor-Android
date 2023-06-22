@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.View.OnDragListener
@@ -280,6 +281,7 @@ class TrainingActivity : AppCompatActivity() {
                         currentTask.text = "What Do You Hear?"
                         smallerQuestion.visibility = View.GONE
                         playSoundView.visibility = View.VISIBLE
+                        playSoundButton.visibility = View.VISIBLE
                         playSoundButton.setOnClickListener {
                             Utils.playAudio(
                                 quizViewModel.currentDisplayTexts()[0],
@@ -332,8 +334,8 @@ class TrainingActivity : AppCompatActivity() {
         showDialog(wrongAnswers.isEmpty(), rightAnswers.toTypedArray(), wrongAnswers.toTypedArray())
     }
 
-    class MatchingItemOnLongListener() : View.OnLongClickListener {
-        override fun onLongClick(v: View?): Boolean {
+    class MatchingItemOnTouchListener() : View.OnTouchListener {
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
             val string = (v as TextView).text.toString()
             val item = ClipData.Item(string)
             val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
@@ -402,7 +404,8 @@ class TrainingActivity : AppCompatActivity() {
             }
         }
         for (dragView in dragViews) {
-            dragViews.forEach { it -> it.setOnLongClickListener(MatchingItemOnLongListener()) }
+            dragViews.forEach { it -> it.setOnTouchListener(MatchingItemOnTouchListener())
+            }
         }
         for (destination in destinations + binding.matchingOptions) {
             destination.setOnDragListener(dragListener)

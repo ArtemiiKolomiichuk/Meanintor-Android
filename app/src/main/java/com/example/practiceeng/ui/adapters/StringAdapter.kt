@@ -41,6 +41,7 @@ class StringAdapter(
         holder.bind(string, {
             strings.removeAt(position)
             notifyItemRemoved(position)
+            notifyDataSetChanged()
         }, {oldValue:String -> editFunction(oldValue, position, this)})
     }
 }

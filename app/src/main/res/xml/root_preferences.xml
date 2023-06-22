@@ -1,30 +1,36 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Import and export">
+<!--    <PreferenceCategory app:title="Import and export">-->
 
-        <Preference
-            app:title="Export cards"
-            app:key="@string/export_cards_key"
-            app:summary="Create a text file with your data"
-            />
+<!--        <Preference-->
+<!--            app:title="Export cards"-->
+<!--            app:key="@string/export_cards_key"-->
+<!--            app:summary="Create a text file with your data"-->
+<!--            />-->
 
         <Preference
             app:title="Delete unused words from database"
             app:key="@string/clean_unused_words"
             />
 
-    </PreferenceCategory>
+       <Preference
+        app:title="Meanintor"
+        app:key="@string/app_info"
+           app:summary="v1.0 by Artemii Kolomiichuk + Stanislav Orlov"
+        />
 
-    <PreferenceCategory app:title="Notifications">
-        <SwitchPreferenceCompat
-            app:key="@string/send_notifications_key"
-            app:title="Send daily reminders" />
+<!--    </PreferenceCategory>-->
 
-        <Preference
-            app:dependency="@string/send_notifications_key"
-            app:key="@string/notifications_time_key"
-            app:title="Notifications time"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+<!--    <PreferenceCategory app:title="Notifications">-->
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="@string/send_notifications_key"-->
+<!--            app:title="Send daily reminders" />-->
+
+<!--        <Preference-->
+<!--            app:dependency="@string/send_notifications_key"-->
+<!--            app:key="@string/notifications_time_key"-->
+<!--            app:title="Notifications time"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+<!--    </PreferenceCategory>-->
 
 </PreferenceScreen>

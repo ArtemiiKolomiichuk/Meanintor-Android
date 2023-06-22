@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PracticeEng</string>
+    <string name="app_name">Meanintor - Practice English everyday</string>
     <string name="select_all">Select all</string>
     <string name="true_false">True/False</string>
     <string name="multiple_choice_definition">Multiple Choice (Definition)</string>
@@ -49,4 +49,5 @@
     <string name="send_notifications_key">send_notifications</string>
     <string name="notifications_time_key">notifications_time</string>
     <string name="clean_unused_words">clean_unused_words</string>
+    <string name="app_info">app_info_key</string>
 </resources>
