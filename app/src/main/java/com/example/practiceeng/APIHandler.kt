@@ -14,6 +14,11 @@ import java.util.concurrent.Executors
 class APIHandler{
     companion object {
         /**
+         * RapidAPI application key for WordsAPI and XFEnglishDictionary
+         */
+        private val applicationKey : String = TODO()
+
+        /**
          * Get an array of [WordCard]s for a given word,
          * may return empty array if word is not found
          * @param word the word to get cards for
@@ -29,7 +34,7 @@ class APIHandler{
                         .get()
                         .addHeader(
                             "X-RapidAPI-Key",
-                            "364859fdf5msh35332022afd4d68p15abf5jsn8e6c3ef6b1d0"
+                            applicationKey
                         )
                         .addHeader("X-RapidAPI-Host", "wordsapiv1.p.rapidapi.com")
                         .build()
@@ -157,7 +162,7 @@ class APIHandler{
                         .url("https://xf-english-dictionary1.p.rapidapi.com/v1/dictionary?selection=$selection&synonyms=true&audioFileLinks=true&pronunciations=true&relatedWords=false&antonyms=true")
                         .post(body)
                         .addHeader("content-type", "application/json")
-                        .addHeader("X-RapidAPI-Key", "364859fdf5msh35332022afd4d68p15abf5jsn8e6c3ef6b1d0")
+                        .addHeader("X-RapidAPI-Key", applicationKey)
                         .addHeader("X-RapidAPI-Host", "xf-english-dictionary1.p.rapidapi.com")
                         .build()
 
